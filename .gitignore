@@ -1,0 +1,5 @@
+﻿*.db
+obj
+bin
+appsettings.json
+.idea
