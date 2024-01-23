@@ -75,7 +75,7 @@ namespace AsparagusN.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("HomeAddressId")
+                    b.Property<int?>("HomeAddressId")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsMealPlanMember")
@@ -122,7 +122,7 @@ namespace AsparagusN.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("WorkAddressId")
+                    b.Property<int?>("WorkAddressId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -270,15 +270,11 @@ namespace AsparagusN.Migrations
                 {
                     b.HasOne("AsparagusN.Entities.UserAddress", "HomeAddress")
                         .WithMany()
-                        .HasForeignKey("HomeAddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HomeAddressId");
 
                     b.HasOne("AsparagusN.Entities.UserAddress", "WorkAddress")
                         .WithMany()
-                        .HasForeignKey("WorkAddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("WorkAddressId");
 
                     b.Navigation("HomeAddress");
 

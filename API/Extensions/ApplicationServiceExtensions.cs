@@ -15,6 +15,7 @@ public static class ApplicationServiceExtensions
         services.AddAutoMapper(typeof(MappingProfiles));
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IEmailService, EmailService>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddDbContext<DataContext>(opt =>
         {
