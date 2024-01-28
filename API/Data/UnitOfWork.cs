@@ -29,7 +29,7 @@ public class UnitOfWork : IUnitOfWork
         return (IGenericRepository<TEntity>)_repositories[type]!;
     }
 
-    public async Task<bool> Save()
+    public async Task<bool> SaveChanges()
     {
         return await _context.SaveChangesAsync() > 0;
     }

@@ -1,4 +1,7 @@
-﻿using AsparagusN.Entities.Identity;
+﻿using AsparagusN.Data.Config;
+using AsparagusN.Entities;
+using AsparagusN.Entities.Identity;
+using AsparagusN.Entities.OrderAggregate;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +19,16 @@ public class DataContext : IdentityDbContext<AppUser,AppRole,int,
         
     }
 
+    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Order> Orders{ get; set; }
+    public DbSet<Meal> Meals { get; set; }
+    public DbSet<Ingredient> Ingredients { get; set; }
+    public DbSet<Allergy> Allergies { get; set; }
+    public DbSet<MealIngredient> MealIngredients { get; set; }
+    public DbSet<MealAllergy> MealAllergies { get; set; }
+    public DbSet<Category> Categories { get; set; }
+
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -28,6 +41,13 @@ public class DataContext : IdentityDbContext<AppUser,AppRole,int,
             .WithOne(u => u.Role)
             .HasForeignKey(ur => ur.RoleId)
             .IsRequired();
+        builder.ApplyConfiguration(new OrderConfiguration());
+        builder.ApplyConfiguration(new OrderItemConfiguration());
+        builder.ApplyConfiguration(new MealConfiguration());
+        builder.ApplyConfiguration(new MealAllergyConfiguration());
+        builder.ApplyConfiguration(new MealIngredientConfiguration());
+        builder.ApplyConfiguration(new IngredientConfiguration());
+        
         
         var sqlite = Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite";
         foreach (var entityType in builder.Model.GetEntityTypes())

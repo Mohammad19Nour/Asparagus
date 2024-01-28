@@ -1,6 +1,7 @@
 ﻿using AsparagusN.DTOs;
 using AsparagusN.Entities.Identity;
 using AsparagusN.Errors;
+using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
 using AsparagusN.Services;
 using AutoMapper;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace AsparagusN.Controllers;
+namespace AsparagusN.Controllers.User;
 
 public class AccountController : BaseApiController
 {
@@ -32,7 +33,7 @@ public class AccountController : BaseApiController
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login(LoginDto loginDto)
+    public async Task<ActionResult<AccountDto>> Login(LoginDto loginDto)
     {
         loginDto.Email = loginDto.Email.ToLower();
 
@@ -45,9 +46,9 @@ public class AccountController : BaseApiController
         
         var res = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
         if (!res.Succeeded) return Ok(new ApiResponse(400, "Invalid password", "كلمة السر خاطئة"));
-        var userDto = _mapper.Map<AppUser, UserDto>(user);
+        var userDto = _mapper.Map<AppUser, AccountDto>(user);
         userDto.Token = _tokenService.CreateToken(user);
-        return Ok(new ApiOkResponse<UserDto>(userDto));
+        return Ok(new ApiOkResponse<AccountDto>(userDto));
     }
 
     [HttpPost("register")]
@@ -211,5 +212,33 @@ public class AccountController : BaseApiController
         if (!res.Succeeded) return BadRequest(new ApiResponse(400, "confirmation failed"));
 
         return Ok("Your Email is Confirmed try to login in now");
+    }
+    
+    [HttpPut("change-password")]
+    public async Task<ActionResult> UpdatePassword([FromBody] UpdatePasswordDto dto)
+    {
+        try
+        {
+            var email = User.GetEmail();
+
+            if (email == null) return Ok(new ApiResponse(401));
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == email);
+
+            if (user is null)
+                return Unauthorized(new ApiResponse(403));
+
+            var res =
+                await _userManager.ChangePasswordAsync(user, dto.OldPassword, dto.NewPassword);
+
+            if (!res.Succeeded)
+                return BadRequest(new ApiResponse(400, "Failed to update password"));
+
+            return Ok(new ApiResponse(200, "updated successfully"));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using AsparagusN.Data;
 using AsparagusN.Errors;
 using AsparagusN.Helpers;
+using AsparagusN.Helpers.MappingProfiles;
 using AsparagusN.Interfaces;
 using AsparagusN.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 namespace AsparagusN.Extensions;
 
@@ -12,14 +14,20 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
-        services.AddAutoMapper(typeof(MappingProfiles));
+        services.AddAutoMapper(typeof(CategoryProfile), typeof(SomeProfile), typeof(UserProfile), typeof(MealProfile),
+            typeof(IngredientProfile));
+        services.AddScoped<IPhotoService, PhotoService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IBasketRepository, BasketRepository>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        services.AddDbContext<DataContext>(opt =>
+        services.AddDbContext<DataContext>(opt => { opt.UseSqlite(config.GetConnectionString("DefaultConnection")); });
+        services.AddSingleton<IConnectionMultiplexer>(c =>
         {
-            opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
+            var configuration = ConfigurationOptions.Parse(config.GetConnectionString("Redis"), true);
+            return ConnectionMultiplexer.Connect(configuration);
         });
         services.Configure<ApiBehaviorOptions>(opt =>
         {

@@ -1,8 +1,13 @@
-﻿namespace AsparagusN.Enums;
+﻿using System.Runtime.Serialization;
+
+namespace AsparagusN.Enums;
 
 public enum Gender
 {
-    Male = 1,
-    Female = 2 
+    [EnumMember(Value = "male")]
+    Male,
+    [EnumMember(Value = "female")]
+
+    Female 
     
 }

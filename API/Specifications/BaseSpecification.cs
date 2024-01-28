@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace AsparagusN.Specifications;
 
@@ -10,10 +11,10 @@ public class BaseSpecification<T> : ISpecification<T>
     }
 
     public Expression<Func<T, bool>> Criteria { get; }
-    public List<Expression<Func<T, object>>> Includes { get; } = new List<Expression<Func<T, object>>>();
-
-    protected void AddInclude(Expression<Func<T,object>> exp)
+    public  List<Func<IQueryable<T>, IIncludableQueryable<T, object>>> Includes { get; } = new List<Func<IQueryable<T>, IIncludableQueryable<T, object>>>();
+    protected void AddInclude(Func<IQueryable<T>, IIncludableQueryable<T, object>>exp)
     {
       Includes.Add(exp);   
     }
+   
 }

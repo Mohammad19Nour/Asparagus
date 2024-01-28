@@ -2,11 +2,11 @@
 
 public class ApiOkResponse <T>: ApiResponse
 {
-    public T Result { get; }
+    public T Data { get; }
     public int StatusCode { get; set; }
     public ApiOkResponse(T result) : base(200)
     {
-        Result = result;
+        Data = result;
         StatusCode = 200;
     }
 }

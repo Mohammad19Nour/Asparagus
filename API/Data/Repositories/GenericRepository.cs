@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Data;
 
-public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
+public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
     private readonly DataContext _context;
 
@@ -29,7 +29,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
         return await ApplySpecification(spec).FirstOrDefaultAsync();
     }
 
-    public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec)
+    public async Task<IReadOnlyList<T>> ListWithSpecAsync(ISpecification<T> spec)
     {
         return (await ApplySpecification(spec).ToListAsync())!;
     }

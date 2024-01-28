@@ -1,6 +1,7 @@
 using AsparagusN.Data;
 using AsparagusN.Entities.Identity;
 using AsparagusN.Extensions;
+using AsparagusN.Helpers;
 using AsparagusN.Middleware;
 using Microsoft.AspNetCore.Identity;
 
@@ -8,7 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opt =>
+{
+    opt.JsonSerializerOptions.Converters.Add(new RoundedNumberConverter(3));
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices(builder.Configuration);
