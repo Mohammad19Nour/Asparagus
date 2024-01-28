@@ -4,7 +4,9 @@ using AsparagusN.Helpers;
 using AsparagusN.Helpers.MappingProfiles;
 using AsparagusN.Interfaces;
 using AsparagusN.Services;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
@@ -14,9 +16,13 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
+        services.Configure<KestrelServerOptions>(options =>
+        {
+            options.Limits.MaxRequestBodySize = null;
+        });
         services.AddAutoMapper(typeof(CategoryProfile), typeof(SomeProfile), typeof(UserProfile), typeof(MealProfile),
             typeof(IngredientProfile));
-        services.AddScoped<IPhotoService, PhotoService>();
+        services.AddScoped<IMediaService, MediaService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IEmailService, EmailService>();

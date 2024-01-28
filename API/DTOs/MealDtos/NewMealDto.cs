@@ -16,4 +16,7 @@ public class NewMealDto
     public int CategoryId { get; set; }
     [Required(ErrorMessage = "Image is required")]
     public IFormFile ImageFile { get; set; }
+
+    public bool IsMealPlan { get; set; }
+    public bool IsMainMenu { get; set; }
 }   

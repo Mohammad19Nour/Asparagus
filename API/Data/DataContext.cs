@@ -27,6 +27,7 @@ public class DataContext : IdentityDbContext<AppUser,AppRole,int,
     public DbSet<MealIngredient> MealIngredients { get; set; }
     public DbSet<MealAllergy> MealAllergies { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<MediaUrl> MediaUrls { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder builder)

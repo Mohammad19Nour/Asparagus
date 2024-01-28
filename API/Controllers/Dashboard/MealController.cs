@@ -12,17 +12,35 @@ public class MealController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-    private readonly IPhotoService _photoService;
+    private readonly IMediaService _mediaService;
 
-    public MealController(IUnitOfWork unitOfWork, IMapper mapper, IPhotoService photoService)
+    public MealController(IUnitOfWork unitOfWork, IMapper mapper, IMediaService mediaService)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
-        _photoService = photoService;
+        _mediaService = mediaService;
+    }
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<List<MealDto>>> GetMealById(int id)
+    {
+        var spec = new MealWithIngredientsAdnAllergiesSpecification(id);
+        var d = await _unitOfWork.Repository<Meal>().GetEntityWithSpec(spec);
+
+        if (d == null) return Ok(new ApiResponse(404,"Meal not found"));
+
+        return Ok(_mapper.Map<MealDto>(d));
     }
 
-    [HttpGet("meals")]
-    public async Task<ActionResult<List<MealDto>>> GetMeals()
+    [HttpGet("menu")]
+    public async Task<ActionResult<List<MealDto>>> GetMenu()
+    {
+        var spec = new MealWithIngredientsAdnAllergiesSpecification(true);
+        var d = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
+
+        return Ok(_mapper.Map<List<MealDto>>(d));
+    }
+    [HttpGet("plan-menu")]
+    public async Task<ActionResult<List<MealDto>>> GetMenuMealPlan()
     {
         var spec = new MealWithIngredientsAdnAllergiesSpecification();
         var d = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
@@ -59,7 +77,7 @@ public class MealController : BaseApiController
 
         if (updateMealDto.ImageFile != null)
         {
-            var res = await _photoService.AddPhotoAsync(updateMealDto.ImageFile);
+            var res = await _mediaService.AddPhotoAsync(updateMealDto.ImageFile);
             if (!res.Success) return Ok(new ApiResponse(400, res.Message));
 
             meal.PictureUrl = res.Url;
@@ -80,6 +98,10 @@ public class MealController : BaseApiController
 
         if (category == null) return Ok(new ApiResponse(404, "category not found"));
 
+        if (!newMealDto.IsMealPlan && !newMealDto.IsMainMenu)
+        {
+            return Ok(new ApiResponse(400, "You should specify meal plan or menu item"));
+        }
         var meal = _mapper.Map<Meal>(newMealDto);
 
 
@@ -98,7 +120,7 @@ public class MealController : BaseApiController
 
         meal.Category = category;
 
-        var res = await _photoService.AddPhotoAsync(newMealDto.ImageFile);
+        var res = await _mediaService.AddPhotoAsync(newMealDto.ImageFile);
         if (!res.Success) return Ok(new ApiResponse(400, res.Message));
 
         meal.PictureUrl = res.Url;

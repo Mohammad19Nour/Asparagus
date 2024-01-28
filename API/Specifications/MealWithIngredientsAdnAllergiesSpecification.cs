@@ -11,7 +11,8 @@ public class MealWithIngredientsAdnAllergiesSpecification : BaseSpecification<Me
         AddInclude(x=>x.Include(y=>y.Ingredients));
         AddInclude(x=>x.Include(y=>y.Allergies));
     }
-    public MealWithIngredientsAdnAllergiesSpecification() : base(x=>!x.IsDeleted)
+    public MealWithIngredientsAdnAllergiesSpecification(bool isMenu = false ) 
+        : base(x=>!x.IsDeleted && (isMenu ? x.IsMainMenu:x.IsMealPlan))
     {
         AddInclude(x=>x.Include(y=>y.Ingredients).ThenInclude(d=>d.Ingredient));
         AddInclude(x=>x.Include(y=>y.Allergies));

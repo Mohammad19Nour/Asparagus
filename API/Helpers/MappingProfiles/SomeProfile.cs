@@ -13,6 +13,7 @@ public class SomeProfile : Profile
 
         CreateMap<CustomerBasketDto, CustomerBasket>();
         CreateMap<BasketItemDto, BasketItem>();
+        CreateMap<MediaUrl, MediaUrlDto>();
 
     }
 }
