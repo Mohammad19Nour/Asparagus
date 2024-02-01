@@ -24,8 +24,10 @@ public class MealDto
     public int CategoryId { get; set; }
     public IEnumerable<MealIngredientDetailsDto>Ingredients { get; set; }
     public IEnumerable<AllergyDto> Allergies { get; set; }
+    public int BranchId { get; set; }
     private decimal _getPriceForItem(decimal ingredientWeight,decimal tmp)
     {
+        if (ingredientWeight == 0 || tmp == 0) return 0;
         return tmp / ingredientWeight;
         
     }

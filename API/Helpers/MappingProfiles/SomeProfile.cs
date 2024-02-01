@@ -10,7 +10,7 @@ public class SomeProfile : Profile
     public SomeProfile()
     {
         CreateMap<Allergy, AllergyDto>();
-
+        CreateMap<decimal?, decimal>().ConvertUsing((src, dest) => src ?? dest);
         CreateMap<CustomerBasketDto, CustomerBasket>();
         CreateMap<BasketItemDto, BasketItem>();
         CreateMap<MediaUrl, MediaUrlDto>();

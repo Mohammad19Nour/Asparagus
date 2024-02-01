@@ -14,8 +14,8 @@ public class AppUser : IdentityUser<int>
     public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
     public Gender Gender { get; set; } = Gender.Male;
     public bool IsMealPlanMember { get; set; } = false;
-    public UserAddress? HomeAddress { get; set; }
-    public UserAddress? WorkAddress { get; set; }
+    public Address? HomeAddress { get; set; }
+    public Address? WorkAddress { get; set; }
     public ICollection<AppUserRole> UserRoles { get; set; }
 
     public int GetAge()

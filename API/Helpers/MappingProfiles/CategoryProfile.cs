@@ -13,13 +13,12 @@ public class CategoryProfile : Profile
 {
     public CategoryProfile()
     {
-       
         CreateMap<Category, CategoryDto>().ReverseMap();
         CreateMap<NewCategoryDto, Category>().ReverseMap();
-       
-        CreateMap<UpdateCategoryDto,Category>().ForAllMembers
-        (opt =>
-            opt.Condition((src, dest, srcMember) => srcMember != null));
-       
+
+        CreateMap<UpdateCategoryDto, Category>()
+            .ForAllMembers
+            (opt =>
+                opt.Condition((src, dest, srcMember) => srcMember != null));
     }
 }

@@ -20,7 +20,7 @@ public static class ApplicationServiceExtensions
         {
             options.Limits.MaxRequestBodySize = null;
         });
-        services.AddAutoMapper(typeof(CategoryProfile), typeof(SomeProfile), typeof(UserProfile), typeof(MealProfile),
+        services.AddAutoMapper(typeof(AdminPlanProfile),typeof(AdditionsProfile),typeof(AddressProfile),typeof(BranchProfile),typeof(CategoryProfile), typeof(SomeProfile), typeof(UserProfile), typeof(MealProfile),
             typeof(IngredientProfile));
         services.AddScoped<IMediaService, MediaService>();
         services.AddScoped<ITokenService, TokenService>();
@@ -35,6 +35,10 @@ public static class ApplicationServiceExtensions
             var configuration = ConfigurationOptions.Parse(config.GetConnectionString("Redis"), true);
             return ConnectionMultiplexer.Connect(configuration);
         });
+        services.AddControllersWithViews()
+            .AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
         services.Configure<ApiBehaviorOptions>(opt =>
         {
             opt.InvalidModelStateResponseFactory = actionContext =>

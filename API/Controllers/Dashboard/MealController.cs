@@ -31,18 +31,10 @@ public class MealController : BaseApiController
         return Ok(_mapper.Map<MealDto>(d));
     }
 
-    [HttpGet("menu")]
-    public async Task<ActionResult<List<MealDto>>> GetMenu()
+    [HttpGet("{branchId:int}/menu")]
+    public async Task<ActionResult<List<MealDto>>> GetMenu(int branchId)
     {
-        var spec = new MealWithIngredientsAdnAllergiesSpecification(true);
-        var d = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
-
-        return Ok(_mapper.Map<List<MealDto>>(d));
-    }
-    [HttpGet("plan-menu")]
-    public async Task<ActionResult<List<MealDto>>> GetMenuMealPlan()
-    {
-        var spec = new MealWithIngredientsAdnAllergiesSpecification();
+        var spec = new MealWithIngredientsAdnAllergiesSpecification(branchId:branchId);
         var d = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
 
         return Ok(_mapper.Map<List<MealDto>>(d));
@@ -94,11 +86,15 @@ public class MealController : BaseApiController
     [HttpPost("add")]
     public async Task<ActionResult<MealDto>> AddMeal([FromForm] NewMealDto newMealDto)
     {
+        var branch = await _unitOfWork.Repository<Branch>().GetByIdAsync(newMealDto.BranchId);
+
+        if (branch == null) return Ok(new ApiResponse(404, "Branch not found"));
         var category = await _unitOfWork.Repository<Category>().GetByIdAsync(newMealDto.CategoryId);
 
         if (category == null) return Ok(new ApiResponse(404, "category not found"));
 
-        if (!newMealDto.IsMealPlan && !newMealDto.IsMainMenu)
+
+        if (newMealDto is { IsMealPlan: false, IsMainMenu: false })
         {
             return Ok(new ApiResponse(400, "You should specify meal plan or menu item"));
         }
@@ -119,6 +115,7 @@ public class MealController : BaseApiController
         }
 
         meal.Category = category;
+        meal.Branch = branch;
 
         var res = await _mediaService.AddPhotoAsync(newMealDto.ImageFile);
         if (!res.Success) return Ok(new ApiResponse(400, res.Message));

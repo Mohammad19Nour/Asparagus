@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using AsparagusN.Data;
 using AsparagusN.Entities.Identity;
 using AsparagusN.Extensions;
@@ -12,7 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.Converters.Add(new RoundedNumberConverter(3));
-});
+    
+});/*
+builder.Services.AddMvc().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    // Other options as needed
+});*/
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices(builder.Configuration);
@@ -37,5 +44,18 @@ app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapControllers();
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+try
+{
+    var context = services.GetRequiredService<DataContext>();
+    await Seed.SeedCategories(context);
+    await Seed.SeedData(context);
+}
+catch (Exception e)
+{
+    Console.WriteLine(e);
+    throw;
+}
 
 app.Run();

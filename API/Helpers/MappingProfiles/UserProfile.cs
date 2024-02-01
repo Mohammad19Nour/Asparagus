@@ -10,7 +10,6 @@ public class UserProfile : Profile
     public UserProfile()
     {
         CreateMap<AppUser, AccountDto>();
-        CreateMap<UserAddress,AddressDto>().ReverseMap();
         CreateMap<AppUser, UserInfoDto>();
         CreateMap<UpdateUserInfoDto, AppUser>().ForAllMembers
         (opt =>
