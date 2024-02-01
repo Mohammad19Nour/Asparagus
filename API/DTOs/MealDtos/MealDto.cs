@@ -3,7 +3,7 @@
 namespace AsparagusN.DTOs.MealDtos;
 
 public class MealDto
-{
+{  
     public int Id { get; set; }
     public string NameEN { get; set; }
     public string NameAR { get; set; }
