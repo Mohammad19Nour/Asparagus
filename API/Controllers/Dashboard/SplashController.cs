@@ -26,7 +26,7 @@ public class SplashController : BaseApiController
     {
         var res = await _mediaService.AddVideoAsync(file);
 
-        if (!res.Success) return Ok(new ApiResponse(400,res.Message));
+        if (!res.Success) return Ok(new ApiResponse(400,messageEN:res.Message));
 
         var spec = new SplashScreenAndSliderSpecification();
          var video = await _unitOfWork.Repository<MediaUrl>().GetEntityWithSpec(spec);
@@ -44,7 +44,7 @@ public class SplashController : BaseApiController
          }
 
          if (await _unitOfWork.SaveChanges()) return Ok(new ApiOkResponse<string>(res.Url));
-        return Ok(new ApiResponse(400,"Failed to upload video"));
+        return Ok(new ApiResponse(400,messageEN:"Failed to upload video"));
 
     }   
 
@@ -54,7 +54,7 @@ public class SplashController : BaseApiController
         var spec = new SplashScreenAndSliderSpecification();
         var media = await _unitOfWork.Repository<MediaUrl>().GetEntityWithSpec(spec);
 
-        return Ok(media == null ? new ApiResponse(404,"Video not found") 
+        return Ok(media == null ? new ApiResponse(404,messageEN:"Video not found") 
             : new ApiOkResponse<string>(media.Url));
     }
 }

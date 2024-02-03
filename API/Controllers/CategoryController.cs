@@ -27,7 +27,7 @@ public class CategoryController : BaseApiController
         if (await _unitOfWork.SaveChanges()) return 
             Ok(new ApiOkResponse<CategoryDto>(_mapper.Map<CategoryDto>(category)));
 
-        return Ok(new ApiResponse(400, "Failed to save category"));
+        return Ok(new ApiResponse(400, messageEN: "Failed to save category"));
     }
     
     [HttpGet("categories")]
@@ -42,7 +42,7 @@ public class CategoryController : BaseApiController
     {
         var category = await _unitOfWork.Repository<Category>().GetByIdAsync(categoryId);
 
-        return Ok(category == null ? new ApiResponse(404, "category not found") : new ApiOkResponse<CategoryDto>(_mapper.Map<CategoryDto>(category)));
+        return Ok(category == null ? new ApiResponse(404, messageEN:"category not found") : new ApiOkResponse<CategoryDto>(_mapper.Map<CategoryDto>(category)));
     }
 
     [HttpPut("update/{categoryId:int}")]
@@ -50,7 +50,7 @@ public class CategoryController : BaseApiController
     {
         var category = await _unitOfWork.Repository<Category>().GetByIdAsync(categoryId);
 
-        if (category == null) return Ok(new ApiResponse(404, "category not found"));
+        if (category == null) return Ok(new ApiResponse(404, messageEN:"category not found"));
 
         _mapper.Map(dto,category);
         _unitOfWork.Repository<Category>().Update(category);
@@ -58,7 +58,7 @@ public class CategoryController : BaseApiController
         if (await _unitOfWork.SaveChanges()) return Ok(new ApiOkResponse<CategoryDto>
             (_mapper.Map<CategoryDto>(category)));
 
-        return Ok(new ApiResponse(400, "Failed to update category"));
+        return Ok(new ApiResponse(400, messageEN:"Failed to update category"));
     }
 
     [HttpDelete("{id:int}")]
@@ -66,12 +66,12 @@ public class CategoryController : BaseApiController
     {
         var category = await _unitOfWork.Repository<Category>().GetByIdAsync(id);
 
-        if (category == null) return Ok(new ApiResponse(404, "category not found"));
+        if (category == null) return Ok(new ApiResponse(404, messageEN:"category not found"));
 
         _unitOfWork.Repository<Category>().Delete(category);
 
         if (await _unitOfWork.SaveChanges()) return Ok(new ApiResponse(200));
-        return Ok(new ApiResponse(400, "Failed to delete category"));
+        return Ok(new ApiResponse(400, messageEN:"Failed to delete category"));
     }
     
 }

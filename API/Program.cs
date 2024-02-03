@@ -11,15 +11,23 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers().AddJsonOptions(opt =>
+    {
+        opt.JsonSerializerOptions.Converters.Add(new RoundedNumberConverter(3));
+    }); /*
+    builder.Services.AddMvc().AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        // Other options as needed
+    });*/
+builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
 {
-    opt.JsonSerializerOptions.Converters.Add(new RoundedNumberConverter(3));
-    
-});/*
-builder.Services.AddMvc().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    // Other options as needed
-});*/
+    builder
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+       
+        .SetIsOriginAllowed((_) => true);
+}));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices(builder.Configuration);
@@ -57,5 +65,11 @@ catch (Exception e)
     Console.WriteLine(e);
     throw;
 }
+
+app.UseCors(x => x
+    .AllowAnyOrigin()
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .SetIsOriginAllowed((_) => true));
 
 app.Run();

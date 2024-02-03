@@ -6,6 +6,8 @@ public class ApiResponse
     {
         StatusCode = statusCode;
         MessageEN = messageEN ?? GetDefaultMessageForStatusCode(statusCode);
+
+        if (StatusCode == 200) Status = true;
     }
 
     private string GetDefaultMessageForStatusCode(int statusCode)
@@ -25,6 +27,7 @@ public class ApiResponse
     }
 
     public int StatusCode { get; set; }
+    public bool Status { get; set; } = false;
     public string MessageEN { get; set; }
     public string MessageAR { get; set; }
 }

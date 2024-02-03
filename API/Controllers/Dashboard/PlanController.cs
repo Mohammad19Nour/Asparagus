@@ -45,7 +45,7 @@ public class PlanController : BaseApiController
 
         var plan = await _unitOfWork.Repository<AdminPlan>().GetEntityWithSpec(spec);
 
-        if (plan == null) return Ok(new ApiResponse(404, "Plan not found"));
+        if (plan == null) return Ok(new ApiResponse(404,messageEN: "Plan not found"));
 
         // var response = new ApiOkResponse<Dictionary<MealPlanType, List<PlanDayDto>>>(groupedPlans);
         return Ok(new ApiOkResponse<AdminPlanDto>(_mapper.Map<AdminPlanDto>(plan)));
@@ -55,17 +55,17 @@ public class PlanController : BaseApiController
     public async Task<ActionResult<AdminPlanDto>> UpdatePlanDayPoints([FromQuery] int dayId,
         [FromQuery] int updatedPoints)
     {
-        if (updatedPoints < 0) return Ok(new ApiResponse(400, "Points should be positive"));
+        if (updatedPoints < 0) return Ok(new ApiResponse(400,messageEN: "Points should be positive"));
 
         var plan = await _unitOfWork.Repository<AdminPlan>().GetByIdAsync(dayId);
 
-        if (plan == null) return Ok(new ApiResponse(404, "Plan not found"));
+        if (plan == null) return Ok(new ApiResponse(404, messageEN:"Plan not found"));
 
         plan.Points = updatedPoints;
         _unitOfWork.Repository<AdminPlan>().Update(plan);
         if (await _unitOfWork.SaveChanges())
             return Ok(new ApiOkResponse<AdminPlanDto>(_mapper.Map<AdminPlanDto>(plan)));
-        return Ok(new ApiResponse(400, "Failed to update"));
+        return Ok(new ApiResponse(400, messageEN:"Failed to update"));
     }
 
     [HttpGet("plan-menu")]
@@ -86,7 +86,7 @@ public class PlanController : BaseApiController
 
         var plan = await _unitOfWork.Repository<AdminPlan>().GetEntityWithSpec(spec);
 
-        if (plan == null) return Ok(new ApiResponse(404, "Plan not found"));
+        if (plan == null) return Ok(new ApiResponse(404,messageEN: "Plan not found"));
 
         if (newAdminPlanDto.MealIds != null)
         {
@@ -113,7 +113,7 @@ public class PlanController : BaseApiController
         _unitOfWork.Repository<AdminPlan>().Update(plan);
         await _unitOfWork.SaveChanges();
 
-        if (!ok) return Ok(new ApiResponse(404, "not found"));
+        if (!ok) return Ok(new ApiResponse(404,messageEN: "not found"));
 
         return Ok(new ApiOkResponse<AdminPlanDto>(_mapper.Map<AdminPlanDto>(plan)));
     }
@@ -127,7 +127,7 @@ public class PlanController : BaseApiController
 
         var plan = await _unitOfWork.Repository<AdminPlan>().GetEntityWithSpec(spec);
 
-        if (plan == null) return Ok(new ApiResponse(404, "Plan not found"));
+        if (plan == null) return Ok(new ApiResponse(404,messageEN: "Plan not found"));
 
         if (newAdminPlanDto.MealIds != null)
         {
@@ -154,7 +154,7 @@ public class PlanController : BaseApiController
         _unitOfWork.Repository<AdminPlan>().Update(plan);
         await _unitOfWork.SaveChanges();
 
-        if (!ok) return Ok(new ApiResponse(404, "not found"));
+        if (!ok) return Ok(new ApiResponse(404,messageEN: "not found"));
 
         return Ok(new ApiOkResponse<AdminPlanDto>(_mapper.Map<AdminPlanDto>(plan)));
     }

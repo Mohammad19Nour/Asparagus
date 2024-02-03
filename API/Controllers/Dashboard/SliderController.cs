@@ -28,7 +28,7 @@ public class SliderController : BaseApiController
             var result = await _mediaService.AddPhotoAsync(file);
 
             if (!result.Success)
-                return BadRequest(new ApiResponse(400, result.Message));
+                return BadRequest(new ApiResponse(400,messageEN: result.Message));
 
             var photo = new MediaUrl
             {
@@ -39,9 +39,9 @@ public class SliderController : BaseApiController
 
 
             if (await _unitOfWork.SaveChanges())
-                return Ok(new ApiResponse(200, "Added successfully"));
+                return Ok(new ApiResponse(200, messageEN:"Added successfully"));
 
-            return BadRequest(new ApiResponse(400, "Failed to upload photo"));
+            return BadRequest(new ApiResponse(400,messageEN: "Failed to upload photo"));
         }
         catch (Exception e)
         {

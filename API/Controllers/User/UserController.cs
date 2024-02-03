@@ -33,7 +33,7 @@ public class UserController : BaseApiController
             var user = await GetUser();
             Console.WriteLine(user == null);
 
-            return Ok(user == null ? new ApiResponse(404, "user not found") 
+            return Ok(user == null ? new ApiResponse(404, messageEN:"user not found") 
                 : new ApiOkResponse<UserInfoDto>(_mapper.Map<UserInfoDto>(user)));
         }
         catch (Exception e)
@@ -49,12 +49,13 @@ public class UserController : BaseApiController
         {
             var user = await GetUser();
 
-            if (user is null) return Ok(new ApiResponse(401, "user not fount"));
+            if (user is null) return Ok(new ApiResponse(401,messageEN: "user not fount"));
 
             _mapper.Map(updateUserInfoDto, user);
           _unitOfWork.Repository<AppUser>().Update(user);
 
-         return Ok(await _unitOfWork.SaveChanges()? new ApiResponse(200, "Updated") : new ApiResponse(400, "Failed to update"));
+         return Ok(await _unitOfWork.SaveChanges()? new ApiResponse(200, messageEN:"Updated")
+             : new ApiResponse(400, messageEN:"Failed to update"));
         }
         catch (Exception e)
         {
