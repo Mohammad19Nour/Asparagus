@@ -49,6 +49,7 @@ public class DataContext : IdentityDbContext<AppUser,AppRole,int,
             .HasForeignKey(ur => ur.RoleId)
             .IsRequired();
         builder.Entity<DrinkItem>().HasKey(x => new { x.AdminPlanId, x.DrinkId });
+        builder.Entity<AdminSelectedMeal>().HasKey(x=>new {x.AdminPlanId,x.MealId});
         
         
         builder.ApplyConfiguration(new OrderConfiguration());

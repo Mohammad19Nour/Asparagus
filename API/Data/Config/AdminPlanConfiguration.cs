@@ -14,16 +14,13 @@ public class AdminPlanConfiguration : IEntityTypeConfiguration<AdminPlan>
     {
         builder.Property(x => x.AvailableDate).HasColumnType("date");
         builder.Property(s => s.PlanType).HasConversion(o => o.ToString(),
-            o => (MealPlanType)Enum.Parse(typeof(MealPlanType), o));
+            o => (PlanType)Enum.Parse(typeof(PlanType), o));
         builder.HasMany(x=>x.Meals)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
-        
-        var dateOnlyConverter = new ValueConverter<DateTime, string>(
-            v => v.ToString("yyyy-MM-dd"),
-            v => DateTime.ParseExact(v, "yyyy-MM-dd", CultureInfo.InvariantCulture)
-        );
-        
-        
+
+        builder.HasMany(x => x.Meals)
+            .WithOne(x => x.AdminPlan)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

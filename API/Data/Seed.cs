@@ -27,7 +27,6 @@ public static class Seed
             
         context.Meals.Add(new Meal
         {
-            BranchId = 1,
             CategoryId = 1,
             NameEN = "ee",
             NameAR = "eww",
@@ -54,7 +53,7 @@ public static class Seed
             var date = DateTime.Now.AddDays(j).Date;
             context.AdminPlans.Add(new AdminPlan
             {
-                PlanType = MealPlanType.MaintainWeight,
+                PlanType = PlanType.MaintainWeight,
                 AvailableDate = date
             });
         }

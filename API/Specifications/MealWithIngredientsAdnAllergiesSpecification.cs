@@ -6,16 +6,16 @@ namespace AsparagusN.Specifications;
 
 public class MealWithIngredientsAdnAllergiesSpecification : BaseSpecification<Meal>
 {
-    public MealWithIngredientsAdnAllergiesSpecification(int mealId, int branchId) : 
-        base(x=> x.Id == mealId && !x.IsDeleted && x.BranchId == branchId && x.IsMainMenu)
+    public MealWithIngredientsAdnAllergiesSpecification(int mealId) : 
+        base(x=> x.Id == mealId && !x.IsDeleted && x.IsMainMenu)
     {
-        AddInclude(x=>x.Include(y=>y.Ingredients));
+        AddInclude(x=>x.Include(y=>y.Ingredients).ThenInclude(y=>y.Ingredient));
         AddInclude(x=>x.Include(y=>y.Allergies));
     }
-    public MealWithIngredientsAdnAllergiesSpecification(int branchId) 
-        : base(x=> x.BranchId == branchId && !x.IsDeleted && x.IsMainMenu )
+    public MealWithIngredientsAdnAllergiesSpecification() : 
+        base(x=> !x.IsDeleted && x.IsMainMenu)
     {
-        AddInclude(x=>x.Include(y=>y.Ingredients).ThenInclude(d=>d.Ingredient));
+        AddInclude(x=>x.Include(y=>y.Ingredients).ThenInclude(y=>y.Ingredient));
         AddInclude(x=>x.Include(y=>y.Allergies));
     }
     

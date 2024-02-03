@@ -8,7 +8,7 @@ public class OrderedMealPlan
     public int Id { get; set; }
     public AppUser User { get; set; }
     
-    public MealPlanType PlanType { get; set; }
+    public PlanType PlanType { get; set; }
     
     public DateTime CreatedDate { get; set; } = new DateTime();
     public DateTime StartDate { get; set; }

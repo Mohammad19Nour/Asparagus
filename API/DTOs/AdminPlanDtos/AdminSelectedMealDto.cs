@@ -6,5 +6,5 @@ namespace AsparagusN.DTOs.AdminPlanDtos;
 public class AdminSelectedMealDto
 {
     public int Id { get; set; }
-    public MealDto Meal { get; set; }
+    public MealWithoutIngredientsDto Meal { get; set; }
 }

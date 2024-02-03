@@ -2,7 +2,7 @@
 
 namespace AsparagusN.Enums;
 
-public enum MealPlanType
+public enum PlanType
 {
     [EnumMember(Value = "Loss Weight")]
     LossWeight,

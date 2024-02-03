@@ -7,6 +7,7 @@ public class AdminPlan
 {
     public int Id { get; set; }
     public DateTime AvailableDate { get; set; }
-    public MealPlanType PlanType { get; set; }
+    public PlanType PlanType { get; set; }
+    public int Points { get; set; }
     public List<AdminSelectedMeal> Meals { get; set; } = new List<AdminSelectedMeal>();
 }

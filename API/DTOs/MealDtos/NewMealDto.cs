@@ -14,7 +14,6 @@ public class NewMealDto
     public List<int>? Allergies { get; set; } = new List<int>();
     public List<MealIngredientDto> Ingredients { get; set; }
     public int CategoryId { get; set; }
-    public int BranchId { get; set; }
     [Required(ErrorMessage = "Image is required")]
     public IFormFile ImageFile { get; set; }
 

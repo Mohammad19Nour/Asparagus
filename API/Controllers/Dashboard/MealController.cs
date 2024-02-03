@@ -21,23 +21,23 @@ public class MealController : BaseApiController
         _mediaService = mediaService;
     }
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<List<MealDto>>> GetMealById(int id)
+    public async Task<ActionResult<MealWithIngredientsDto>> GetMealById(int id)
     {
         var spec = new MealWithIngredientsAdnAllergiesSpecification(id);
         var d = await _unitOfWork.Repository<Meal>().GetEntityWithSpec(spec);
 
         if (d == null) return Ok(new ApiResponse(404,"Meal not found"));
 
-        return Ok(_mapper.Map<MealDto>(d));
+        return Ok(new ApiOkResponse<MealWithIngredientsDto>(_mapper.Map<MealWithIngredientsDto>(d)));
     }
 
-    [HttpGet("{branchId:int}/menu")]
-    public async Task<ActionResult<List<MealDto>>> GetMenu(int branchId)
+    [HttpGet("menu")]
+    public async Task<ActionResult<List<MealWithoutIngredientsDto>>> GetMenu()
     {
-        var spec = new MealWithIngredientsAdnAllergiesSpecification(branchId:branchId);
+        var spec = new MealWithIngredientsAdnAllergiesSpecification();
         var d = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
 
-        return Ok(_mapper.Map<List<MealDto>>(d));
+        return Ok(new  ApiOkResponse<List<MealWithoutIngredientsDto>>(_mapper.Map<List<MealWithoutIngredientsDto>>(d)));
     }
 
     [HttpPut("update/{id:int}")]
@@ -78,17 +78,14 @@ public class MealController : BaseApiController
         _unitOfWork.Repository<Meal>().Update(meal);
 
         if (await _unitOfWork.SaveChanges())
-            return Ok(new ApiOkResponse<MealDto>(_mapper.Map<MealDto>(meal)));
+            return Ok(new ApiOkResponse<MealWithIngredientsDto>(_mapper.Map<MealWithIngredientsDto>(meal)));
         return Ok(new ApiResponse(400, "baaad"));
     }
 
 
     [HttpPost("add")]
-    public async Task<ActionResult<MealDto>> AddMeal([FromForm] NewMealDto newMealDto)
+    public async Task<ActionResult<MealWithIngredientsDto>> AddMeal([FromForm] NewMealDto newMealDto)
     {
-        var branch = await _unitOfWork.Repository<Branch>().GetByIdAsync(newMealDto.BranchId);
-
-        if (branch == null) return Ok(new ApiResponse(404, "Branch not found"));
         var category = await _unitOfWork.Repository<Category>().GetByIdAsync(newMealDto.CategoryId);
 
         if (category == null) return Ok(new ApiResponse(404, "category not found"));
@@ -115,7 +112,6 @@ public class MealController : BaseApiController
         }
 
         meal.Category = category;
-        meal.Branch = branch;
 
         var res = await _mediaService.AddPhotoAsync(newMealDto.ImageFile);
         if (!res.Success) return Ok(new ApiResponse(400, res.Message));
@@ -125,7 +121,7 @@ public class MealController : BaseApiController
         _unitOfWork.Repository<Meal>().Add(meal);
 
         if (await _unitOfWork.SaveChanges())
-            return Ok(new ApiOkResponse<MealDto>(_mapper.Map<MealDto>(meal)));
+            return Ok(new ApiOkResponse<MealWithIngredientsDto>(_mapper.Map<MealWithIngredientsDto>(meal)));
         return Ok(new ApiResponse(400, "baaad"));
     }
 

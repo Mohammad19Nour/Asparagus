@@ -10,7 +10,8 @@ public class AdminPlanDto
 {
     public int Id { get; set; }
     public DateTime AvailableDate { get; set; }
-    public MealPlanType PlanType { get; set; }
-    public List<AdminSelectedMealDto> Meals { get; set; }
+    public string PlanType { get; set; }
+    public int Points { get; set; }
+    public List<MealWithoutIngredientsDto> Meals { get; set; }
    
 }

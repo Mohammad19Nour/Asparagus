@@ -1,4 +1,6 @@
-﻿namespace AsparagusN.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace AsparagusN.Entities;
 
 public class Meal
 {
@@ -19,6 +21,20 @@ public class Meal
 
     public Category Category { get; set; }
     public int CategoryId { get; set; }
-    public Branch Branch { get; set; }
-    public int BranchId { get; set; }
+
+    public decimal Protein() => Ingredients.Sum(i=> i.Weight * _getPriceForItem(i.Ingredient.Weight,i.Ingredient.Protein) );
+
+    public decimal Carbs()=> Ingredients.Sum(i=> i.Weight * _getPriceForItem(i.Ingredient.Weight,i.Ingredient.Carb) );
+
+    
+    public decimal Fats() => Ingredients.Sum(i=> i.Weight * _getPriceForItem(i.Ingredient.Weight,i.Ingredient.Fat) );
+
+    public decimal Fibers ()=> Ingredients.Sum(i=> i.Weight * _getPriceForItem(i.Ingredient.Weight,i.Ingredient.Fiber) );
+
+    public decimal Calories() =>Protein() * 4 + Carbs() * 4 + Fats() * 9;
+    private decimal _getPriceForItem(decimal ingredientWeight,decimal tmp)
+    {
+        if (ingredientWeight == 0 || tmp == 0) return 0;
+        return tmp / ingredientWeight;
+    }
 }

@@ -20,8 +20,5 @@ public class AdminPlanSpecification : BaseSpecification<AdminPlan>
         AddInclude(x => x.Include(y => y.Meals)
             .ThenInclude(y=>y.Meal).ThenInclude(y=>y.Category)
         );
-        AddInclude(x => x.Include(y => y.Meals)
-            .ThenInclude(y=>y.Meal).ThenInclude(y=>y.Branch)
-        );
     }
 }

@@ -19,7 +19,7 @@ public class PlanController : BaseApiController
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public PlanController(IUnitOfWork unitOfWork,IMapper mapper)
+    public PlanController(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
@@ -31,68 +31,85 @@ public class PlanController : BaseApiController
         var plans = await _unitOfWork.Repository<AdminPlan>().ListAllAsync();
         var groupedPlans = plans.GroupBy(plan => plan.PlanType)
             .ToDictionary(g => g.Key,
-                g => g.Select(x => new PlanDayDto{Id = x.Id,Day = x.AvailableDate}).ToList());
-       
-      
-        var response = new ApiOkResponse<Dictionary<MealPlanType, List<PlanDayDto>>>(groupedPlans);
+                g => g.Select(x => new PlanDayDto { Id = x.Id, Day = x.AvailableDate,Points = x.Points}).ToList());
+
+
+        var response = new ApiOkResponse<Dictionary<PlanType, List<PlanDayDto>>>(groupedPlans);
         return Ok(response);
     }
+
     [HttpGet("day")]
     public async Task<ActionResult<AdminPlanDto>> GetPlanDay([FromQuery] int dayId)
     {
-        var spec = new AdminPlanSpecification(dayId) ;
-        
+        var spec = new AdminPlanSpecification(dayId);
+
         var plan = await _unitOfWork.Repository<AdminPlan>().GetEntityWithSpec(spec);
 
         if (plan == null) return Ok(new ApiResponse(404, "Plan not found"));
-        
-       // var response = new ApiOkResponse<Dictionary<MealPlanType, List<PlanDayDto>>>(groupedPlans);
+
+        // var response = new ApiOkResponse<Dictionary<MealPlanType, List<PlanDayDto>>>(groupedPlans);
         return Ok(new ApiOkResponse<AdminPlanDto>(_mapper.Map<AdminPlanDto>(plan)));
     }
-    
-    [HttpGet("plan-menu")]
-    public async Task<ActionResult<List<MealDto>>> GetMenuMealPlan()
+
+    [HttpPut("day")]
+    public async Task<ActionResult<AdminPlanDto>> UpdatePlanDayPoints([FromQuery] int dayId,
+        [FromQuery] int updatedPoints)
     {
-        var spec = new MealWithIngredientsAdnAllergiesSpecification(includeIngredients:true,mealPlansOnly:true);
+        if (updatedPoints < 0) return Ok(new ApiResponse(400, "Points should be positive"));
+
+        var plan = await _unitOfWork.Repository<AdminPlan>().GetByIdAsync(dayId);
+
+        if (plan == null) return Ok(new ApiResponse(404, "Plan not found"));
+
+        plan.Points = updatedPoints;
+        _unitOfWork.Repository<AdminPlan>().Update(plan);
+        if (await _unitOfWork.SaveChanges())
+            return Ok(new ApiOkResponse<AdminPlanDto>(_mapper.Map<AdminPlanDto>(plan)));
+        return Ok(new ApiResponse(400, "Failed to update"));
+    }
+
+    [HttpGet("plan-menu")]
+    public async Task<ActionResult<List<MealWithoutIngredientsDto>>> GetMenuMealPlan()
+    {
+        var spec = new MealWithIngredientsAdnAllergiesSpecification(includeIngredients: true, mealPlansOnly: true);
         var d = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
 
-        return Ok(_mapper.Map<List<MealDto>>(d));
+        return Ok(new ApiOkResponse<List<MealWithoutIngredientsDto>>(_mapper.Map<List<MealWithoutIngredientsDto>>(d)));
     }
 
     [HttpPost("additems/{dayId:int}")]
     public async Task<ActionResult<AdminPlanDto>> AddItems(NewAdminPlanDto newAdminPlanDto, int dayId)
     {
-        var ok = true ;
+        var ok = true;
 
-        var spec = new AdminPlanSpecification(dayId) ;
-        
+        var spec = new AdminPlanSpecification(dayId);
+
         var plan = await _unitOfWork.Repository<AdminPlan>().GetEntityWithSpec(spec);
 
         if (plan == null) return Ok(new ApiResponse(404, "Plan not found"));
 
         if (newAdminPlanDto.MealIds != null)
         {
-           // return Ok(plan);
-             ok = await  _addMeals(newAdminPlanDto.MealIds, plan);
-
+            ok = await _addMeals(newAdminPlanDto.MealIds, plan);
         }
+
         if (newAdminPlanDto.DrinkIds != null)
         {
-            ok &= await  _addDrinks(newAdminPlanDto.DrinkIds, plan);
+            ok &= await _addDrinks(newAdminPlanDto.DrinkIds, plan);
         }
+
         if (newAdminPlanDto.SaladIds != null)
         {
-            
         }
+
         if (newAdminPlanDto.SauceIds != null)
         {
-            
         }
+
         if (newAdminPlanDto.NutIds != null)
         {
-            
         }
-        
+
         _unitOfWork.Repository<AdminPlan>().Update(plan);
         await _unitOfWork.SaveChanges();
 
@@ -100,40 +117,40 @@ public class PlanController : BaseApiController
 
         return Ok(new ApiOkResponse<AdminPlanDto>(_mapper.Map<AdminPlanDto>(plan)));
     }
-    
+
     [HttpDelete("deleteItems/{dayId:int}")]
     public async Task<ActionResult<AdminPlanDto>> DeleteItems(NewAdminPlanDto newAdminPlanDto, int dayId)
     {
-        var ok = true ;
+        var ok = true;
 
-        var spec = new AdminPlanSpecification(dayId) ;
-        
+        var spec = new AdminPlanSpecification(dayId);
+
         var plan = await _unitOfWork.Repository<AdminPlan>().GetEntityWithSpec(spec);
 
         if (plan == null) return Ok(new ApiResponse(404, "Plan not found"));
 
         if (newAdminPlanDto.MealIds != null)
         {
-            ok = await  _addMeals(newAdminPlanDto.MealIds, plan);
-
+            ok = await _addMeals(newAdminPlanDto.MealIds, plan);
         }
+
         if (newAdminPlanDto.DrinkIds != null)
         {
-            ok &= await  _addDrinks(newAdminPlanDto.DrinkIds, plan);
+            ok &= await _addDrinks(newAdminPlanDto.DrinkIds, plan);
         }
+
         if (newAdminPlanDto.SaladIds != null)
         {
-            
         }
+
         if (newAdminPlanDto.SauceIds != null)
         {
-            
         }
+
         if (newAdminPlanDto.NutIds != null)
         {
-            
         }
-        
+
         _unitOfWork.Repository<AdminPlan>().Update(plan);
         await _unitOfWork.SaveChanges();
 
@@ -149,9 +166,9 @@ public class PlanController : BaseApiController
         {
             var spec = new DrinkItemSpecification(id, plan.Id);
             var drink = await _unitOfWork.Repository<Drink>().GetByIdAsync(id);
-           
+
             if (drink == null) return false;
-           // plan.Drinks.Add(new DrinkItem{Drink = drink});
+            // plan.Drinks.Add(new DrinkItem{Drink = drink});
         }
 
         return true;
@@ -162,12 +179,13 @@ public class PlanController : BaseApiController
         foreach (var id in mealIds)
         {
             var meal = await _unitOfWork.Repository<Meal>().GetByIdAsync(id);
-          
-            if (meal == null) return false ;
-            
+
+            if (meal is not { IsMealPlan: true }) return false;
+
             if (plan.Meals.Any(x => x.MealId == meal.Id)) continue;
-            plan.Meals.Add(new AdminSelectedMeal{MealId = meal.Id});
+            plan.Meals.Add(new AdminSelectedMeal { MealId = meal.Id });
         }
+
         return true;
     }
 }
