@@ -2,6 +2,6 @@
 
 public class NewAllergyDto
 {
-    public string NameAR { get; set; }
-    public string NameEN { get; set; }
+    public string ArabicName { get; set; }
+    public string EnglishName { get; set; }
 }

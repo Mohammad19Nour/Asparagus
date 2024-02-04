@@ -1,4 +1,5 @@
-﻿using AsparagusN.DTOs;
+﻿using System.Security.Cryptography;
+using AsparagusN.DTOs;
 using AsparagusN.DTOs.AllergyDtos;
 using AsparagusN.Entities;
 using AutoMapper;
@@ -10,6 +11,9 @@ public class SomeProfile : Profile
     public SomeProfile()
     {
         CreateMap<Allergy, AllergyDto>();
+        CreateMap<NewAllergyDto,Allergy>();
+        CreateMap<UpdateAllergyDto,Allergy>().ForAllMembers(x=>
+            x.Condition((src,dest,srcMember)=>srcMember != null));
         CreateMap<decimal?, decimal>().ConvertUsing((src, dest) => src ?? dest);
         CreateMap<int?, int>().ConvertUsing((src, dest) => src ?? dest);
         CreateMap<CustomerBasketDto, CustomerBasket>();

@@ -4,6 +4,7 @@ using AsparagusN.Helpers;
 using AsparagusN.Helpers.MappingProfiles;
 using AsparagusN.Interfaces;
 using AsparagusN.Services;
+using AsparagusN.SignalR;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -22,6 +23,7 @@ public static class ApplicationServiceExtensions
         });
         services.AddAutoMapper(typeof(DriverProfile),typeof(AdminPlanProfile),typeof(AdditionsProfile),typeof(AddressProfile),typeof(BranchProfile),typeof(CategoryProfile), typeof(SomeProfile), typeof(UserProfile), typeof(MealProfile),
             typeof(IngredientProfile));
+        services.AddSingleton<PresenceTracker>();
         services.AddScoped<IMediaService, MediaService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
