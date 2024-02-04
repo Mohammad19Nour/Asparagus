@@ -59,9 +59,4 @@ catch (Exception e)
     Console.WriteLine(e);
     throw;
 }
-app.UseCors(x => x
-    .AllowAnyOrigin()
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-    .SetIsOriginAllowed((_) => true));
 app.Run();
