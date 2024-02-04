@@ -36,6 +36,8 @@ public class DataContext : IdentityDbContext<AppUser,AppRole,int,
     public DbSet<Drink> Drinks { get; set; }
     public DbSet<AdminSelectedMeal> AdminSelectedMeals { get; set; }
     public DbSet<AdminPlan> AdminPlans { get; set; }
+    public DbSet<Driver> Drivers { get; set; }
+    public DbSet<Zone> Zones { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -52,6 +54,7 @@ public class DataContext : IdentityDbContext<AppUser,AppRole,int,
         builder.Entity<AdminSelectedMeal>().HasKey(x=>new {x.AdminPlanId,x.MealId});
         
         
+        builder.ApplyConfiguration(new DriverConfiguration());
         builder.ApplyConfiguration(new OrderConfiguration());
         builder.ApplyConfiguration(new OrderItemConfiguration());
         builder.ApplyConfiguration(new MealConfiguration());

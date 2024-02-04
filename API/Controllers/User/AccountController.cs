@@ -57,13 +57,13 @@ public class AccountController : BaseApiController
         try
         {
             registerDto.Email = registerDto.Email.ToLower();
-
-            var user = await _userManager.FindByEmailAsync(registerDto.Email);
-            if (user != null)
-            {
-                if (user.EmailConfirmed)
-                    return Ok(new ApiResponse(400, messageEN:"This email is already used", messageAR:"هذا الحساب مستخدم من قبل"));
-                var response = await GenerateTokenAndSendEmailForUser(user);
+                
+                            var user = await _userManager.FindByEmailAsync(registerDto.Email);
+                            if (user != null)
+                            {
+                                if (user.EmailConfirmed)
+                                    return Ok(new ApiResponse(400, messageEN:"This email is already used", messageAR:"هذا الحساب مستخدم من قبل"));
+                                var response = await GenerateTokenAndSendEmailForUser(user);
 
                 if (!response)
                     return Ok(new ApiResponse(400, messageEN:"Failed to send email.",messageAR: "فشل ارسال الايميل"));

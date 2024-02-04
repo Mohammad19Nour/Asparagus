@@ -11,6 +11,10 @@ public static class IdentityServiceExtensions
 {
     public static IServiceCollection AddIdentityService(this IServiceCollection services,IConfiguration config)
     {
+        services.AddAuthorization(opts =>
+        {
+            opts.AddPolicy("Driver_Role",policy => policy.RequireRole("Driver"));
+        });
         services.AddIdentityCore<AppUser>(opt =>
             {
                 opt.Password.RequireNonAlphanumeric = false;

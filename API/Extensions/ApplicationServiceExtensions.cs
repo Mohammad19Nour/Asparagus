@@ -20,7 +20,7 @@ public static class ApplicationServiceExtensions
         {
             options.Limits.MaxRequestBodySize = null;
         });
-        services.AddAutoMapper(typeof(AdminPlanProfile),typeof(AdditionsProfile),typeof(AddressProfile),typeof(BranchProfile),typeof(CategoryProfile), typeof(SomeProfile), typeof(UserProfile), typeof(MealProfile),
+        services.AddAutoMapper(typeof(DriverProfile),typeof(AdminPlanProfile),typeof(AdditionsProfile),typeof(AddressProfile),typeof(BranchProfile),typeof(CategoryProfile), typeof(SomeProfile), typeof(UserProfile), typeof(MealProfile),
             typeof(IngredientProfile));
         services.AddScoped<IMediaService, MediaService>();
         services.AddScoped<ITokenService, TokenService>();
@@ -51,7 +51,7 @@ public static class ApplicationServiceExtensions
                 {
                     Errors = errors
                 };
-                return new BadRequestObjectResult(errorResponse);
+                return new OkObjectResult(errorResponse);
             };
         });
         return services;

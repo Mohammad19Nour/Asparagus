@@ -153,6 +153,33 @@ namespace AsparagusN.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("AsparagusN.Entities.Driver", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ZoneId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ZoneId");
+
+                    b.ToTable("Drivers");
+                });
+
             modelBuilder.Entity("AsparagusN.Entities.Identity.AppRole", b =>
                 {
                     b.Property<int>("Id")
@@ -525,6 +552,21 @@ namespace AsparagusN.Migrations
                     b.ToTable("OrderItems");
                 });
 
+            modelBuilder.Entity("AsparagusN.Entities.Zone", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Zones");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -618,6 +660,17 @@ namespace AsparagusN.Migrations
                         .IsRequired();
 
                     b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("AsparagusN.Entities.Driver", b =>
+                {
+                    b.HasOne("AsparagusN.Entities.Zone", "Zone")
+                        .WithMany("Drivers")
+                        .HasForeignKey("ZoneId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Zone");
                 });
 
             modelBuilder.Entity("AsparagusN.Entities.Identity.AppUser", b =>
@@ -856,6 +909,11 @@ namespace AsparagusN.Migrations
             modelBuilder.Entity("AsparagusN.Entities.OrderAggregate.Order", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("AsparagusN.Entities.Zone", b =>
+                {
+                    b.Navigation("Drivers");
                 });
 #pragma warning restore 612, 618
         }

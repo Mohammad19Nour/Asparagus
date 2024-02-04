@@ -14,7 +14,7 @@ public class RoundedNumberConverter : JsonConverter<decimal>
 
     public override bool CanConvert(Type objectType)
     {
-        return objectType == typeof(decimal) || objectType == typeof(double) || objectType == typeof(float);
+        return objectType == typeof(decimal) || objectType == typeof(double) || objectType == typeof(float) ||objectType == typeof(int) ;
     }
 
     public override decimal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

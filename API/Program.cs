@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddJsonOptions(opt =>
     {
-        opt.JsonSerializerOptions.Converters.Add(new RoundedNumberConverter(3));
+        opt.JsonSerializerOptions.Converters.Add(new RoundedNumberConverter(2));
     }); /*
     builder.Services.AddMvc().AddJsonOptions(options =>
     {
@@ -57,8 +57,8 @@ var services = scope.ServiceProvider;
 try
 {
     var context = services.GetRequiredService<DataContext>();
-    await Seed.SeedCategories(context);
-    await Seed.SeedData(context);
+    var roleContext = services.GetRequiredService<RoleManager<AppRole>>();
+    await Seed.SeedData(context,roleContext);
 }
 catch (Exception e)
 {

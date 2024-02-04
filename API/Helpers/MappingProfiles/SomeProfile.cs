@@ -11,6 +11,7 @@ public class SomeProfile : Profile
     {
         CreateMap<Allergy, AllergyDto>();
         CreateMap<decimal?, decimal>().ConvertUsing((src, dest) => src ?? dest);
+        CreateMap<int?, int>().ConvertUsing((src, dest) => src ?? dest);
         CreateMap<CustomerBasketDto, CustomerBasket>();
         CreateMap<BasketItemDto, BasketItem>();
         CreateMap<MediaUrl, MediaUrlDto>();

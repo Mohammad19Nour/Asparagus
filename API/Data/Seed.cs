@@ -1,15 +1,18 @@
 ﻿using AsparagusN.Data.Entities.MealPlan.Admin;
 using AsparagusN.Entities;
+using AsparagusN.Entities.Identity;
 using AsparagusN.Entities.MealPlan;
 using AsparagusN.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Data;
 
 public static class Seed
 {
-    public static async Task SeedData(DataContext context)
+    public static async Task SeedData(DataContext context,RoleManager<AppRole> roleManager)
     {
+        await SeedRoles(roleManager);
         await SeedBranches(context);
         await SeedCategories(context);
         await SeedIngre(context);
@@ -17,7 +20,22 @@ public static class Seed
         await SeedMeals(context);
 
     }
+    public static async Task SeedRoles(RoleManager<AppRole> roleManager)
+    {
+        if (await roleManager.Roles.AnyAsync()) return;
 
+        var roles = new List<AppRole>
+        {
+            new() { Name = "Admin" },
+            new() { Name = "Driver" },
+            new() { Name = "User" }
+        };
+
+        foreach (var role in roles)
+        {
+            await roleManager.CreateAsync(role);
+        }
+    }
     public static async Task SeedMeals(DataContext context)
     {
         if (await context.Meals.AnyAsync()) return;
