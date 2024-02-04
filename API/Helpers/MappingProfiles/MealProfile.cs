@@ -1,4 +1,6 @@
 ﻿using AsparagusN.DTOs.AdminPlanDtos;
+using AsparagusN.DTOs.AllergyDtos;
+using AsparagusN.DTOs.IngredientDtos;
 using AsparagusN.DTOs.MealDtos;
 using AsparagusN.Entities;
 using AutoMapper;
@@ -9,6 +11,12 @@ public class MealProfile : Profile
 {
     public MealProfile()
     {
+        CreateMap<MealAllergy, AllergyDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.Allergy.Id))
+            .ForMember(dest => dest.ArabicName, opt => opt.MapFrom(x => x.Allergy.ArabicName))
+            .ForMember(dest => dest.EnglishName, opt => opt.MapFrom(x => x.Allergy.EnglishName))
+            .ForMember(dest => dest.PictureUrl, opt => opt.MapFrom(x => x.Allergy.PictureUrl));
+            
         CreateMap<MealIngredient,MealIngredientDetailsDto>();
         CreateMap<Meal, MealWithIngredientsDto>()
             .ForMember(dest => dest.PricePerProtein, opt => opt.MapFrom(src => Convert.ToDecimal(src.PricePerProtein())))

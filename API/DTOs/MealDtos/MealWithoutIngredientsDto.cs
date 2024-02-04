@@ -23,6 +23,6 @@ public class MealWithoutIngredientsDto
     public decimal PricePerCarb;
     public decimal PricePerProtein;
     public int CategoryId { get; set; }
-    public IEnumerable<AllergyDto> Allergies { get; set; }
+    public ICollection<AllergyDto> Allergies { get; set; }
    
 }

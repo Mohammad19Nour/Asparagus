@@ -20,7 +20,7 @@ public class PresenceHub : Hub
         // send notifiaction to all users except ont who connected
         await Clients.Others.SendAsync("UserIsOnline", Context.User.GetEmail());
 
-        await Clients.All.SendAsync("GetOnlineUsers", "ok tested");
+        await Clients.Caller.SendAsync("GetOnlineUsers", "ok tested");
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
