@@ -5,6 +5,7 @@ using AsparagusN.Extensions;
 using AsparagusN.Helpers;
 using AsparagusN.Middleware;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +59,7 @@ try
 {
     var context = services.GetRequiredService<DataContext>();
     var roleContext = services.GetRequiredService<RoleManager<AppRole>>();
+   await context.Database.MigrateAsync();
     await Seed.SeedData(context,roleContext);
 }
 catch (Exception e)
