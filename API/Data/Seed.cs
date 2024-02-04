@@ -13,8 +13,8 @@ public static class Seed
         await SeedBranches(context);
         await SeedCategories(context);
         await SeedIngre(context);
-        await SeedAdminPlans(context);
         await SeedMeals(context);
+        await SeedAdminPlans(context);
 
     }
 
@@ -105,7 +105,7 @@ public static class Seed
 
     public static async Task SeedIngre(DataContext context)
     {
-        if (await context.Categories.AnyAsync()) return;
+        if (await context.Ingredients.AnyAsync()) return;
         context.Ingredients.Add(new Ingredient { NameAR = "EAE",NameEN = "WFWe",});
         await context.SaveChangesAsync();
     }

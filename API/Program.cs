@@ -5,6 +5,7 @@ using AsparagusN.Extensions;
 using AsparagusN.Helpers;
 using AsparagusN.Middleware;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +50,7 @@ var services = scope.ServiceProvider;
 try
 {
     var context = services.GetRequiredService<DataContext>();
+    await context.Database.MigrateAsync();
     await Seed.SeedCategories(context);
     await Seed.SeedData(context);
 }
@@ -57,5 +59,9 @@ catch (Exception e)
     Console.WriteLine(e);
     throw;
 }
-
+app.UseCors(x => x
+    .AllowAnyOrigin()
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .SetIsOriginAllowed((_) => true));
 app.Run();
