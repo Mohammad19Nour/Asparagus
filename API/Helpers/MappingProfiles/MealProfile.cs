@@ -11,6 +11,9 @@ public class MealProfile : Profile
     {
         CreateMap<MealIngredient,MealIngredientDetailsDto>();
         CreateMap<Meal, MealWithIngredientsDto>()
+            .ForMember(dest => dest.PricePerProtein, opt => opt.MapFrom(src => Convert.ToDecimal(src.PricePerProtein())))
+            .ForMember(dest => dest.PricePerCarb, opt => opt.MapFrom(src => Convert.ToDecimal(src.PricePerCarb())))
+
             .ForMember(dest => dest.Protein, opt => opt.MapFrom(src => Convert.ToDecimal(src.Protein())))
             .ForMember(dest => dest.Carbs, opt => opt.MapFrom(src => Convert.ToDecimal(src.Carbs())))
             .ForMember(dest => dest.Fats, opt => opt.MapFrom(src => Convert.ToDecimal(src.Fats())))

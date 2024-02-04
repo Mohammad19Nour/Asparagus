@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using AsparagusN.Enums;
 
 namespace AsparagusN.Entities;
 
@@ -31,10 +32,28 @@ public class Meal
 
     public decimal Fibers ()=> Ingredients.Sum(i=> i.Weight * _getPriceForItem(i.Ingredient.Weight,i.Ingredient.Fiber) );
 
+    public decimal PricePerProtein() => _pricePer(IngredientType.Protein);
+    public decimal PricePerCarb() => _pricePer(IngredientType.Carb);
     public decimal Calories() =>Protein() * 4 + Carbs() * 4 + Fats() * 9;
     private decimal _getPriceForItem(decimal ingredientWeight,decimal tmp)
     {
         if (ingredientWeight == 0 || tmp == 0) return 0;
         return tmp / ingredientWeight;
+    }
+
+    private decimal _pricePer(IngredientType type)
+    {
+        decimal w = 0;
+        decimal pri = 0;
+        foreach (var item in Ingredients)
+        {
+            if (item.Ingredient.TypeOfIngredient != type) continue;
+            w = item.Ingredient.Weight;
+            pri = item.Ingredient.Price;
+            break;
+        }
+
+        if (w != 0) return pri / w;
+        return 0;
     }
 }

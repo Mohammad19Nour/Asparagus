@@ -38,6 +38,10 @@ public static class IdentityServiceExtensions
                     ValidateAudience = false,
                     ValidateLifetime = true
                 };
+
+               /* opt.Events = new JwtBearerEvents
+                {OnMessageReceived = con
+                };*/
             });
         return services;
     }

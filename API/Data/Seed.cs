@@ -123,7 +123,7 @@ public static class Seed
     public static async Task SeedIngre(DataContext context)
     {
         if (await context.Ingredients.AnyAsync()) return;
-        context.Ingredients.Add(new Ingredient { NameAR = "EAE",NameEN = "WFWe",});
+        context.Ingredients.Add(new Ingredient { NameAR = "EAE",NameEN = "WFWe",Price = 15});
         await context.SaveChangesAsync();
     }
     

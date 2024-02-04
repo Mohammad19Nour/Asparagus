@@ -4,6 +4,7 @@ using AsparagusN.Entities.Identity;
 using AsparagusN.Extensions;
 using AsparagusN.Helpers;
 using AsparagusN.Middleware;
+using AsparagusN.SignalR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,6 +35,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityService(builder.Configuration);
 builder.Services.AddSwaggerAuthorization();
+builder.Services.AddSignalR();      
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -50,9 +52,10 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseStaticFiles();
 
-app.UseAuthorization();
+app.UseAuthorization(); 
 
 app.MapControllers();
+app.MapHub<PresenceHub>("hubs/presence");
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try

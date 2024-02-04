@@ -20,6 +20,8 @@ public class MealWithoutIngredientsDto
     public decimal Fats;
     public decimal Fibers;
     public decimal Calories;
+    public decimal PricePerCarb;
+    public decimal PricePerProtein;
     public int CategoryId { get; set; }
     public IEnumerable<AllergyDto> Allergies { get; set; }
    

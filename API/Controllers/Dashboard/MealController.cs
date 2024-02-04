@@ -32,12 +32,12 @@ public class MealController : BaseApiController
     }
 
     [HttpGet("menu")]
-    public async Task<ActionResult<List<MealWithoutIngredientsDto>>> GetMenu()
+    public async Task<ActionResult<List<MealWithIngredientsDto>>> GetMenu()
     {
         var spec = new MealWithIngredientsAdnAllergiesSpecification();
         var d = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
 
-        return Ok(new  ApiOkResponse<List<MealWithoutIngredientsDto>>(_mapper.Map<List<MealWithoutIngredientsDto>>(d)));
+        return Ok(new  ApiOkResponse<List<MealWithIngredientsDto>>(_mapper.Map<List<MealWithIngredientsDto>>(d)));
     }
 
     [HttpPut("update/{id:int}")]
