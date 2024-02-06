@@ -2,6 +2,7 @@
 
 public class NewBranchDto
 {
-    public string Name { get; set; }
-    public AddressDto Address { get; set; }
+    public string NameAR { get; set; }
+    public string NameEN { get; set; }
+    public LocationDto Address { get; set; }
 }

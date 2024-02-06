@@ -16,6 +16,7 @@ public class SomeProfile : Profile
             x.Condition((src,dest,srcMember)=>srcMember != null));
         CreateMap<decimal?, decimal>().ConvertUsing((src, dest) => src ?? dest);
         CreateMap<int?, int>().ConvertUsing((src, dest) => src ?? dest);
+        CreateMap<string?, string>().ConvertUsing((src, dest) => src ?? dest);
         CreateMap<CustomerBasketDto, CustomerBasket>();
         CreateMap<BasketItemDto, BasketItem>();
         CreateMap<MediaUrl, MediaUrlDto>();

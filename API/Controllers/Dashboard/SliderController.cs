@@ -14,12 +14,13 @@ public class SliderController : BaseApiController
     private readonly IMediaService _mediaService;
     private readonly IMapper _mapper;
 
-    public SliderController(IUnitOfWork unitOfWork,IMediaService mediaService,IMapper mapper)
+    public SliderController(IUnitOfWork unitOfWork, IMediaService mediaService, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _mediaService = mediaService;
         _mapper = mapper;
     }
+
     [HttpPost("add-photo")]
     public async Task<ActionResult> AddPhoto([FromForm] IFormFile file)
     {
@@ -28,20 +29,19 @@ public class SliderController : BaseApiController
             var result = await _mediaService.AddPhotoAsync(file);
 
             if (!result.Success)
-                return BadRequest(new ApiResponse(400,messageEN: result.Message));
+                return BadRequest(new ApiResponse(400, messageEN: result.Message));
 
             var photo = new MediaUrl
             {
                 Url = result.Url,
-                
             };
-            _unitOfWork.Repository<MediaUrl>().Add(photo) ;
+            _unitOfWork.Repository<MediaUrl>().Add(photo);
 
 
             if (await _unitOfWork.SaveChanges())
-                return Ok(new ApiResponse(200, messageEN:"Added successfully"));
+                return Ok(new ApiResponse(200, messageEN: "Added successfully"));
 
-            return BadRequest(new ApiResponse(400,messageEN: "Failed to upload photo"));
+            return BadRequest(new ApiResponse(400, messageEN: "Failed to upload photo"));
         }
         catch (Exception e)
         {
@@ -57,25 +57,23 @@ public class SliderController : BaseApiController
         var res = await _unitOfWork.Repository<MediaUrl>().ListWithSpecAsync(spec);
         return Ok(new ApiOkResponse<IReadOnlyList<MediaUrlDto>>(_mapper.Map<IReadOnlyList<MediaUrlDto>>(res)));
     }
-/*
-    [HttpDelete("delete-photo")]
+
+    [HttpDelete("delete/{photoId:int}")]
     public async Task<ActionResult> DeletePhoto(int photoId)
     {
         try
         {
-            var photo = await _unitOfWork.SliderRepository.GetPhotoNoTrackingByIdAsync(photoId);
+            var spec = new SplashScreenAndSliderSpecification(sliderPhotoId: photoId);
+            var photo = await _unitOfWork.Repository<MediaUrl>().GetEntityWithSpec(spec);
 
             if (photo is null) return NotFound(new ApiResponse(404, "photo not found"));
 
-            _unitOfWork.SliderRepository.DeletePhoto(photo);
+            _unitOfWork.Repository<MediaUrl>().Delete(photo);
 
-            if (!await _unitOfWork.Complete()) return BadRequest(new ApiResponse(400, "Something went wrong"));
-            await _unitOfWork.PhotoRepository.DeletePhotoByIdAsync(photo.PhotoId);
-            await _unitOfWork.Complete();
-            if (photo.Photo.Url != null) await _photoService.DeletePhotoAsync(photo.Photo.Url);
+            if (!await _unitOfWork.SaveChanges()) return BadRequest(new ApiResponse(400, "Something went wrong"));
+
+            await _mediaService.DeletePhotoAsync(photo.Url);
             return Ok(new ApiResponse(200, "Deleted successfully"));
-
-            return BadRequest(new ApiResponse(400, "Something went wrong"));
         }
         catch (Exception e)
         {
@@ -83,5 +81,4 @@ public class SliderController : BaseApiController
             throw;
         }
     }
-*/
 }

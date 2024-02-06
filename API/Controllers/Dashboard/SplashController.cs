@@ -13,7 +13,7 @@ public class SplashController : BaseApiController
     private readonly IMediaService _mediaService;
     private readonly IMapper _mapper;
 
-    public SplashController(IUnitOfWork unitOfWork,IMediaService mediaService,IMapper mapper)
+    public SplashController(IUnitOfWork unitOfWork, IMediaService mediaService, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _mediaService = mediaService;
@@ -26,27 +26,26 @@ public class SplashController : BaseApiController
     {
         var res = await _mediaService.AddVideoAsync(file);
 
-        if (!res.Success) return Ok(new ApiResponse(400,messageEN:res.Message));
+        if (!res.Success) return Ok(new ApiResponse(400, messageEN: res.Message));
 
         var spec = new SplashScreenAndSliderSpecification();
-         var video = await _unitOfWork.Repository<MediaUrl>().GetEntityWithSpec(spec);
+        var video = await _unitOfWork.Repository<MediaUrl>().GetEntityWithSpec(spec);
 
-         if (video != null)
-         {
-             video.Url = res.Url;
-             
-             _unitOfWork.Repository<MediaUrl>().Update(video);
-         }
-         else
-         {
-             video = new MediaUrl { Url = res.Url,IsSplashScreenUrl = true};
-             _unitOfWork.Repository<MediaUrl>().Add(video);
-         }
+        if (video != null)
+        {
+            video.Url = res.Url;
 
-         if (await _unitOfWork.SaveChanges()) return Ok(new ApiOkResponse<string>(res.Url));
-        return Ok(new ApiResponse(400,messageEN:"Failed to upload video"));
+            _unitOfWork.Repository<MediaUrl>().Update(video);
+        }
+        else
+        {
+            video = new MediaUrl { Url = res.Url, IsSplashScreenUrl = true };
+            _unitOfWork.Repository<MediaUrl>().Add(video);
+        }
 
-    }   
+        if (await _unitOfWork.SaveChanges()) return Ok(new ApiOkResponse<string>(res.Url));
+        return Ok(new ApiResponse(400, messageEN: "Failed to upload video"));
+    }
 
     [HttpGet]
     public async Task<ActionResult<string>> GetSplashUrl()
@@ -54,7 +53,22 @@ public class SplashController : BaseApiController
         var spec = new SplashScreenAndSliderSpecification();
         var media = await _unitOfWork.Repository<MediaUrl>().GetEntityWithSpec(spec);
 
-        return Ok(media == null ? new ApiResponse(404,messageEN:"Video not found") 
+        return Ok(media == null
+            ? new ApiResponse(404, messageEN: "Video not found")
             : new ApiOkResponse<string>(media.Url));
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult> DeleteSplashVideo()
+    {
+        var spec = new SplashScreenAndSliderSpecification();
+        var media = await _unitOfWork.Repository<MediaUrl>().GetEntityWithSpec(spec);
+
+        if (media == null)
+            return Ok(new ApiResponse(404, messageEN: "Video not found"));
+        _unitOfWork.Repository<MediaUrl>().Delete(media);
+
+        if (await _unitOfWork.SaveChanges()) return Ok(new ApiResponse(200));
+        return Ok(new ApiResponse(400, messageEN: "Failed to delete video"));
     }
 }

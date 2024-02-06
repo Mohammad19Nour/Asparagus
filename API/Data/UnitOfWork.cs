@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using AsparagusN.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AsparagusN.Data;
 
@@ -32,6 +33,11 @@ public class UnitOfWork : IUnitOfWork
     public async Task<bool> SaveChanges()
     {
         return await _context.SaveChangesAsync() > 0;
+    }
+
+    public IDbContextTransaction BeginTransaction()
+    {
+        return _context.Database.BeginTransaction();
     }
 
     public bool HasChanges()

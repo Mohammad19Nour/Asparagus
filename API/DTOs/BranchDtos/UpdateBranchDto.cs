@@ -2,6 +2,7 @@
 
 public class UpdateBranchDto
 {
-    public string? Name { get; set; }
-    public UpdateAddressDto? UpdatedAddress { get; set; }
+    public string? NameAR { get; set; }
+    public string? NameEN { get; set; }
+    public UpdateLocationDto? UpdatedAddress { get; set; }
 }

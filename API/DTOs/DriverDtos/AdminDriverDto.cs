@@ -1,7 +1,6 @@
 ﻿namespace AsparagusN.DTOs.DriverDtos;
 
-public class LoginDto
+public class AdminDriverDto : DriverDto
 {
-    public string UserName { get; set; }
     public string Password { get; set; }
 }

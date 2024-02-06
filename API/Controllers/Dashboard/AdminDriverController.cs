@@ -7,129 +7,200 @@ using AsparagusN.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.Dashboard;
 
 public class AdminDriverController : BaseApiController
 {
+    private readonly IMediaService _mediaService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly UserManager<AppUser> _userManager;
 
-    public AdminDriverController(IUnitOfWork unitOfWork,IMapper mapper,UserManager<AppUser> userManager)
+    public AdminDriverController(IMediaService mediaService, IUnitOfWork unitOfWork, IMapper mapper,
+        UserManager<AppUser> userManager)
     {
+        _mediaService = mediaService;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _userManager = userManager;
     }
 
     [HttpPost("add")]
-    public async Task<ActionResult<DriverDto>> AddDriver(NewDriverDto newDriverDto)
+    public async Task<ActionResult<AdminDriverDto>> AddDriver([FromForm] NewDriverDto newDriverDto)
     {
-        try
+        using (var transaction = _unitOfWork.BeginTransaction())
         {
-            var zone = await _unitOfWork.Repository<Zone>().GetByIdAsync(newDriverDto.ZoneId);
-            
-            if (zone == null)
-                return Ok(new ApiResponse(404,"Zone not found"));
-            
-            var driver = _mapper.Map<Driver>(newDriverDto);
-            driver.Zone = zone;
-            newDriverDto.UserName = newDriverDto.UserName.ToLower();
-            
-            var driverUser = new AppUser
+            try
             {
-                UserName = newDriverDto.UserName,
-                Email = newDriverDto.UserName
-            };
+                var zone = await _unitOfWork.Repository<Zone>().GetByIdAsync(newDriverDto.ZoneId);
 
-            var result = await _userManager.CreateAsync(driverUser, newDriverDto.Password);
-            if (!result.Succeeded) return Ok(new ApiResponse(400, "Failed"));
-            IdentityResult roleResult =  await _userManager.AddToRoleAsync(driverUser, "Driver");
-            if (!roleResult.Succeeded) return BadRequest(new ApiResponse(400, "Failed to add roles"));
-            
-            _unitOfWork.Repository<Driver>().Add(driver);
+                if (zone == null)
+                    return Ok(new ApiResponse(404, "Zone not found"));
 
-            if (await _unitOfWork.SaveChanges())
-                return Ok(new ApiOkResponse<DriverDto>(_mapper.Map<DriverDto>(driver)));
-            return Ok(new ApiResponse(400,"Failed to add driver"));
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return Ok(new ApiResponse(400,"Exception happened.. failed to add driver"));
-            throw;
+                newDriverDto.Email = newDriverDto.Email.ToLower();
+
+                var driver = _mapper.Map<Driver>(newDriverDto);
+
+                var img = await _mediaService.AddPhotoAsync(newDriverDto.Image);
+                if (!img.Success) return Ok(new ApiResponse(400, img.Message));
+
+                driver.PictureUrl = img.Url;
+                driver.Zone = zone;
+
+                var driverUser = new AppUser
+                {
+                    UserName = newDriverDto.Email,
+                    Email = newDriverDto.Email
+                };
+
+                var result = await _userManager.CreateAsync(driverUser, newDriverDto.Password);
+                if (!result.Succeeded)
+                {
+                    await transaction.RollbackAsync();
+                    return Ok(new ApiResponse(400, result.Errors.Aggregate("",(error, identityError) => error+identityError.Description)));
+                }
+
+                IdentityResult roleResult = await _userManager.AddToRoleAsync(driverUser, "Driver");
+
+                if (!roleResult.Succeeded)
+                {
+                    await transaction.RollbackAsync();
+                    return BadRequest(new ApiResponse(400, "Failed to add roles"));
+                }
+
+                _unitOfWork.Repository<Driver>().Add(driver);
+
+                if (await _unitOfWork.SaveChanges())
+                {
+                    await transaction.CommitAsync();
+                    return Ok(new ApiOkResponse<AdminDriverDto>(_mapper.Map<AdminDriverDto>(driver)));
+                }
+
+                await transaction.RollbackAsync();
+                return Ok(new ApiResponse(400, "Failed to add driver"));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+
+                await transaction.RollbackAsync();
+                return Ok(new ApiResponse(400, "Exception happened.. failed to add driver"));
+                throw;
+            }
         }
     }
+
     [HttpGet]
-    public async Task<ActionResult<List<DriverDto>>> GetAllDriver()
+    public async Task<ActionResult<List<AdminDriverDto>>> GetAllDriver()
     {
         try
         {
             var spec = new DriverSpecification();
             var drivers = await _unitOfWork.Repository<Driver>().ListWithSpecAsync(spec);
 
-            return Ok(new ApiOkResponse<List<DriverDto>>(_mapper.Map<List<DriverDto>>(drivers)));
+            return Ok(new ApiOkResponse<List<AdminDriverDto>>(_mapper.Map<List<AdminDriverDto>>(drivers)));
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return Ok(new ApiResponse(400,"Exception happened..."));
+            return Ok(new ApiResponse(400, "Exception happened..."));
             throw;
         }
     }
+
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<DriverDto>> GetDriver(int id)
+    public async Task<ActionResult<AdminDriverDto>> GetDriver(int id)
     {
         try
         {
             var spec = new DriverSpecification(id);
             var driver = await _unitOfWork.Repository<Driver>().GetEntityWithSpec(spec);
 
-            return Ok(driver == null ? new ApiResponse(404, "Driver not found") : new ApiOkResponse<DriverDto>(_mapper.Map<DriverDto>(driver)));
+            return Ok(driver == null
+                ? new ApiResponse(404, "Driver not found")
+                : new ApiOkResponse<AdminDriverDto>(_mapper.Map<AdminDriverDto>(driver)));
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return Ok(new ApiResponse(400,"Exception happened..."));
+            return Ok(new ApiResponse(400, "Exception happened..."));
             throw;
         }
     }
+
     [HttpPut("{id:int}")]
-    public async Task<ActionResult<DriverDto>> UpdateDriver(int id,UpdateDriverDto updateDriverDto)
+    public async Task<ActionResult<AdminDriverDto>> UpdateDriver(int id, [FromForm] UpdateDriverDto updateDriverDto)
     {
-        try
+        using (var transaction = _unitOfWork.BeginTransaction())
         {
-            var spec = new DriverSpecification(id);
-            var driver = await _unitOfWork.Repository<Driver>().GetEntityWithSpec(spec);
-
-            if (driver == null)
-                return Ok(new ApiResponse(404, "Driver not found"));
-            
-            _mapper.Map(updateDriverDto, driver);
-            
-            if (updateDriverDto.ZoneId != null)
+            try
             {
-                var zone = await _unitOfWork.Repository<Zone>().GetByIdAsync(updateDriverDto.ZoneId.Value);
-                if (zone == null)
-                    return Ok(new ApiResponse(404, "Zone not found"));
-                
-                driver.Zone = zone;
+                var spec = new DriverSpecification(id);
+                var driver = await _unitOfWork.Repository<Driver>().GetEntityWithSpec(spec);
+
+                if (driver == null)
+                    return Ok(new ApiResponse(404, "Driver not found"));
+
+                _mapper.Map(updateDriverDto, driver);
+
+                if (updateDriverDto.ZoneId != null)
+                {
+                    var zone = await _unitOfWork.Repository<Zone>().GetByIdAsync(updateDriverDto.ZoneId.Value);
+                    if (zone == null)
+                        return Ok(new ApiResponse(404, "Zone not found"));
+
+                    driver.Zone = zone;
+                }
+
+                if (updateDriverDto.Image != null)
+                {
+                    var img = await _mediaService.AddPhotoAsync(updateDriverDto.Image);
+                    if (!img.Success) return Ok(new ApiResponse(400, img.Message));
+                    driver.PictureUrl = img.Url;
+                }
+
+                if (updateDriverDto.Password != null && !string.IsNullOrEmpty(updateDriverDto.Password.Trim()))
+                {
+                    var driverUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == driver.Email);
+                    if (driverUser == null) return Ok(new ApiResponse(404, "driver not found"));
+
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(driverUser);
+                    var result = await _userManager.ResetPasswordAsync(driverUser, token, updateDriverDto.Password);
+                    if (!result.Succeeded)
+                    {
+                        foreach (var r in result.Errors)
+                        {
+                            Console.WriteLine(r.Description);
+                        }
+
+                        await transaction.RollbackAsync();
+                        return Ok(new ApiResponse(404, "Failed to update password"));
+                    }
+
+                    driver.Password = updateDriverDto.Password;
+                }
+
+                _unitOfWork.Repository<Driver>().Update(driver);
+
+                if (await _unitOfWork.SaveChanges())
+                {
+                    await transaction.CommitAsync();
+                    return Ok(new ApiOkResponse<AdminDriverDto>(_mapper.Map<AdminDriverDto>(driver)));
+                }
+
+                await transaction.RollbackAsync();
+                return Ok(new ApiResponse(400, "Failed to update  driver"));
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                await transaction.RollbackAsync();
+                return Ok(new ApiResponse(400, "Exception happened.. failed to update driver"));
 
-            _unitOfWork.Repository<Driver>().Update(driver);
-            
-            if (await _unitOfWork.SaveChanges())
-                return Ok(new ApiOkResponse<DriverDto>(_mapper.Map<DriverDto>(driver)));
-            return Ok(new ApiResponse(400,"Failed to update  driver"));
-
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return Ok(new ApiResponse(400,"Exception happened.. failed to add driver"));
-
-            throw;
+                throw;
+            }
         }
     }
 
@@ -142,18 +213,17 @@ public class AdminDriverController : BaseApiController
 
             if (driver == null)
                 return Ok(new ApiResponse(404, "Driver not found"));
-            
+
             _unitOfWork.Repository<Driver>().Delete(driver);
-            
+
             if (await _unitOfWork.SaveChanges())
                 return Ok(new ApiResponse(200));
-            return Ok(new ApiResponse(400,"Failed to delete driver"));
-
+            return Ok(new ApiResponse(400, "Failed to delete driver"));
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return Ok(new ApiResponse(400,"Exception happened.. failed to add driver"));
+            return Ok(new ApiResponse(400, "Exception happened.. failed to add driver"));
 
             throw;
         }

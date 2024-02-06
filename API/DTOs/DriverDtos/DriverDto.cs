@@ -8,5 +8,7 @@ public class DriverDto
     public string Name { get; set; }
     public string PhoneNumber { get; set; }
     public bool IsActive { get; set; }
+    public string Period { get; set; }
     public ZoneDto Zone { get; set; }
+    public string PictureUrl { get; set; }
 }

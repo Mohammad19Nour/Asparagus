@@ -39,6 +39,11 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await ApplySpecification(spec).CountAsync();
     }
 
+    public IQueryable<T> GetQueryable()
+    {
+        return _context.Set<T>().AsQueryable();
+    }
+
     public void Add(T entity)
     {
         _context.Set<T>().Add(entity);

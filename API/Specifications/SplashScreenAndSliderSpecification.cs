@@ -9,4 +9,8 @@ public class SplashScreenAndSliderSpecification : BaseSpecification<MediaUrl>
         : base(x=>(x.IsSplashScreenUrl == isSplash))
     {
     }
+    public SplashScreenAndSliderSpecification(int sliderPhotoId)
+        : base(x=>(x.IsSplashScreenUrl == false) && x.Id == sliderPhotoId)
+    {
+    }
 }

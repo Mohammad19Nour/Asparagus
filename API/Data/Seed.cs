@@ -18,8 +18,19 @@ public static class Seed
         await SeedIngre(context);
         await SeedMeals(context);
         await SeedAdminPlans(context);
+        await SeedZones(context);
 
     }
+
+    private static async Task SeedZones(DataContext context)
+    {
+        if (await context.Zones.AnyAsync()) return;
+
+        context.Zones.Add(new Zone {NameEN = "Test 1",NameAR = "سنسس 1"});
+        context.Zones.Add(new Zone {NameEN = "Test 2",NameAR = "سن2"});
+        await context.SaveChangesAsync();
+    }
+
     public static async Task SeedRoles(RoleManager<AppRole> roleManager)
     {
         if (await roleManager.Roles.AnyAsync()) return;
@@ -85,26 +96,29 @@ public static class Seed
 
         context.Branches.Add(new Branch
         {
-            Name = "branch 1",
-            Address = new Address
+            NameEN = "branch 1",
+            NameAR = "فرع 1",
+            Address = new Location
             {
-                City = "drr", BuildingName = "t", StreetName = "aee", ApartmentNumber = 20, Longitude = 20, Latitude = 5
+                City = "drr",StreetName = "aee", Longitude = 20, Latitude = 5
             }
         });
         context.Branches.Add(new Branch
         {
-            Name = "branch 2",
-            Address = new Address
+            NameEN = "branch 2",
+            NameAR = "فرع 2",
+            Address = new Location
             {
-                City = "drr", BuildingName = "t", StreetName = "aee", ApartmentNumber = 20, Longitude = 20, Latitude = 5
+                City = "drr",StreetName = "aee",Longitude = 20, Latitude = 5
             }
         });
         context.Branches.Add(new Branch
         {
-            Name = "branch 3",
-            Address = new Address
+            NameEN = "branch 3",
+            NameAR = "فرع 3",
+            Address = new Location
             {
-                City = "drr", BuildingName = "t", StreetName = "aee", ApartmentNumber = 20, Longitude = 20, Latitude = 5
+                City = "drr",StreetName = "aee", Longitude = 20, Latitude = 5
             }
         });
         await context.SaveChangesAsync();
