@@ -12,15 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddJsonOptions(opt =>
-    {
-        opt.JsonSerializerOptions.Converters.Add(new RoundedNumberConverter(2));
-    }); /*
-    builder.Services.AddMvc().AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-        // Other options as needed
-    });*/
+    builder.Services.AddControllers().AddJsonOptions(opt =>
+        {
+            opt.JsonSerializerOptions.Converters.Add(new RoundedNumberConverter(3));
+        });
 builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
 {
     builder

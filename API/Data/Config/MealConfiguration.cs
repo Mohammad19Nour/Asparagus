@@ -11,6 +11,6 @@ public class MealConfiguration : IEntityTypeConfiguration<Meal>
         builder.HasMany(i => i.Ingredients).WithOne().OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(i => i.Allergies).WithOne().OnDelete(DeleteBehavior.Cascade);
         builder.Property(i => i.Price).HasColumnType("decimal(18,2)");
-        builder.HasOne(i => i.Category).WithMany().HasForeignKey(c => c.CategoryId);
+        builder.HasOne(i => i.Category).WithMany(x=>x.Meals).HasForeignKey(c => c.CategoryId);
     }
 }

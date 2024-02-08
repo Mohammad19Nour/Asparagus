@@ -1,8 +1,9 @@
 ﻿using AsparagusN.Enums;
+using AsparagusN.Interfaces;
 
 namespace AsparagusN.Entities;
 
-public class Ingredient
+public class Ingredient : ISoftDeletable
 {
     public Ingredient()
     {
@@ -20,7 +21,6 @@ public class Ingredient
     public decimal Fiber { get; set; } = 0.0m;
     public IngredientType TypeOfIngredient { get; set; } = IngredientType.Carb;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public bool IsDeleted { get; set; } = false;
     
     public Ingredient(string nameEN, string nameAR, string extraInfo, decimal weight, decimal price,
         decimal protein, decimal carb, decimal fat, decimal fiber, IngredientType typeOfIngredient, DateTime? createdAt = null)
@@ -37,4 +37,6 @@ public class Ingredient
         TypeOfIngredient = typeOfIngredient;
         CreatedAt = createdAt ?? DateTime.Now;
     }
+
+    public bool IsDeleted { get; set; }
 }

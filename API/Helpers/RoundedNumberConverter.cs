@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Runtime.InteropServices.JavaScript;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace AsparagusN.Helpers;
@@ -8,8 +9,9 @@ public class RoundedNumberConverter : JsonConverter<decimal>
      private readonly int decimalPlaces;
 
     public RoundedNumberConverter(int decimalPlaces)
-    {
+    { 
         this.decimalPlaces = decimalPlaces;
+        Console.WriteLine(decimalPlaces);
     }
 
     public override bool CanConvert(Type objectType)
@@ -30,6 +32,7 @@ public class RoundedNumberConverter : JsonConverter<decimal>
 
     public override void Write(Utf8JsonWriter writer, decimal value, JsonSerializerOptions options)
     {
+
         writer.WriteNumberValue(Math.Round(value,decimalPlaces));
     }
 

@@ -9,6 +9,7 @@ public class UserProfile : Profile
 {
     public UserProfile()
     {
+        CreateMap<RegisterDto, AppUser>();
         CreateMap<AppUser, AccountDto>();
         CreateMap<AppUser, UserInfoDto>();
         CreateMap<UpdateUserInfoDto, AppUser>().ForAllMembers

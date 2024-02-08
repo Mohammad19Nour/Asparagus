@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240206082442_Initial")]
+    [Migration("20240208160055_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -19,27 +19,6 @@ namespace AsparagusN.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
-
-            modelBuilder.Entity("AsparagusN.Data.Additions.Drink", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Volume")
-                        .HasColumnType("REAL");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Drinks");
-                });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.Admin.AdminPlan", b =>
                 {
@@ -60,6 +39,44 @@ namespace AsparagusN.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AdminPlans");
+                });
+
+            modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.Admin.AdminSelectedDrink", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DrinkId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PlanType")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DrinkId");
+
+                    b.ToTable("AdminSelectedDrinks");
+                });
+
+            modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.Admin.AdminSelectedExtraOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ExtraOptionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PlanType")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExtraOptionId");
+
+                    b.ToTable("AdminSelectedExtraOptions");
                 });
 
             modelBuilder.Entity("AsparagusN.Entities.Address", b =>
@@ -165,6 +182,39 @@ namespace AsparagusN.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("AsparagusN.Entities.Drink", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("NameArabic")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NameEnglish")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Volume")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Drinks");
+                });
+
             modelBuilder.Entity("AsparagusN.Entities.Driver", b =>
                 {
                     b.Property<int>("Id")
@@ -206,6 +256,42 @@ namespace AsparagusN.Migrations
                     b.HasIndex("ZoneId");
 
                     b.ToTable("Drivers");
+                });
+
+            modelBuilder.Entity("AsparagusN.Entities.ExtraOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("NameArabic")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NameEnglish")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OptionType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Weight")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ExtraOptions");
                 });
 
             modelBuilder.Entity("AsparagusN.Entities.Identity.AppRole", b =>
@@ -525,21 +611,6 @@ namespace AsparagusN.Migrations
                     b.ToTable("AdminSelectedMeals");
                 });
 
-            modelBuilder.Entity("AsparagusN.Entities.MealPlan.DrinkItem", b =>
-                {
-                    b.Property<int>("AdminPlanId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DrinkId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("AdminPlanId", "DrinkId");
-
-                    b.HasIndex("DrinkId");
-
-                    b.ToTable("DrinkItem");
-                });
-
             modelBuilder.Entity("AsparagusN.Entities.MediaUrl", b =>
                 {
                     b.Property<int>("Id")
@@ -708,6 +779,28 @@ namespace AsparagusN.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.Admin.AdminSelectedDrink", b =>
+                {
+                    b.HasOne("AsparagusN.Entities.Drink", "Drink")
+                        .WithMany()
+                        .HasForeignKey("DrinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Drink");
+                });
+
+            modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.Admin.AdminSelectedExtraOption", b =>
+                {
+                    b.HasOne("AsparagusN.Entities.ExtraOption", "ExtraOption")
+                        .WithMany()
+                        .HasForeignKey("ExtraOptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExtraOption");
+                });
+
             modelBuilder.Entity("AsparagusN.Entities.Branch", b =>
                 {
                     b.HasOne("AsparagusN.Entities.Location", "Address")
@@ -767,7 +860,7 @@ namespace AsparagusN.Migrations
             modelBuilder.Entity("AsparagusN.Entities.Meal", b =>
                 {
                     b.HasOne("AsparagusN.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("Meals")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -830,25 +923,6 @@ namespace AsparagusN.Migrations
                     b.Navigation("AdminPlan");
 
                     b.Navigation("Meal");
-                });
-
-            modelBuilder.Entity("AsparagusN.Entities.MealPlan.DrinkItem", b =>
-                {
-                    b.HasOne("AsparagusN.Data.Entities.MealPlan.Admin.AdminPlan", "AdminPlan")
-                        .WithMany()
-                        .HasForeignKey("AdminPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AsparagusN.Data.Additions.Drink", "Drink")
-                        .WithMany()
-                        .HasForeignKey("DrinkId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AdminPlan");
-
-                    b.Navigation("Drink");
                 });
 
             modelBuilder.Entity("AsparagusN.Entities.OrderAggregate.Order", b =>
@@ -942,6 +1016,11 @@ namespace AsparagusN.Migrations
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.Admin.AdminPlan", b =>
+                {
+                    b.Navigation("Meals");
+                });
+
+            modelBuilder.Entity("AsparagusN.Entities.Category", b =>
                 {
                     b.Navigation("Meals");
                 });

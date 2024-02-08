@@ -95,13 +95,35 @@ namespace AsparagusN.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    NameArabic = table.Column<string>(type: "TEXT", nullable: false),
+                    NameEnglish = table.Column<string>(type: "TEXT", nullable: false),
                     Price = table.Column<double>(type: "REAL", nullable: false),
-                    Volume = table.Column<double>(type: "REAL", nullable: false)
+                    Volume = table.Column<string>(type: "TEXT", nullable: false),
+                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Drinks", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ExtraOptions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    NameArabic = table.Column<string>(type: "TEXT", nullable: false),
+                    NameEnglish = table.Column<string>(type: "TEXT", nullable: false),
+                    Price = table.Column<double>(type: "REAL", nullable: false),
+                    Weight = table.Column<double>(type: "REAL", nullable: false),
+                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    OptionType = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExtraOptions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -269,8 +291,8 @@ namespace AsparagusN.Migrations
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     IsMealPlan = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsMainMenu = table.Column<bool>(type: "INTEGER", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    CategoryId = table.Column<int>(type: "INTEGER", nullable: false)
+                    CategoryId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -284,25 +306,41 @@ namespace AsparagusN.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DrinkItem",
+                name: "AdminSelectedDrinks",
                 columns: table => new
                 {
-                    AdminPlanId = table.Column<int>(type: "INTEGER", nullable: false),
-                    DrinkId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DrinkId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PlanType = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DrinkItem", x => new { x.AdminPlanId, x.DrinkId });
+                    table.PrimaryKey("PK_AdminSelectedDrinks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DrinkItem_AdminPlans_AdminPlanId",
-                        column: x => x.AdminPlanId,
-                        principalTable: "AdminPlans",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DrinkItem_Drinks_DrinkId",
+                        name: "FK_AdminSelectedDrinks_Drinks_DrinkId",
                         column: x => x.DrinkId,
                         principalTable: "Drinks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AdminSelectedExtraOptions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ExtraOptionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PlanType = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdminSelectedExtraOptions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AdminSelectedExtraOptions_ExtraOptions_ExtraOptionId",
+                        column: x => x.ExtraOptionId,
+                        principalTable: "ExtraOptions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -535,6 +573,16 @@ namespace AsparagusN.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AdminSelectedDrinks_DrinkId",
+                table: "AdminSelectedDrinks",
+                column: "DrinkId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdminSelectedExtraOptions_ExtraOptionId",
+                table: "AdminSelectedExtraOptions",
+                column: "ExtraOptionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AdminSelectedMeals_MealId",
                 table: "AdminSelectedMeals",
                 column: "MealId");
@@ -593,11 +641,6 @@ namespace AsparagusN.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_DrinkItem_DrinkId",
-                table: "DrinkItem",
-                column: "DrinkId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Drivers_ZoneId",
                 table: "Drivers",
                 column: "ZoneId");
@@ -627,6 +670,12 @@ namespace AsparagusN.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AdminSelectedDrinks");
+
+            migrationBuilder.DropTable(
+                name: "AdminSelectedExtraOptions");
+
+            migrationBuilder.DropTable(
                 name: "AdminSelectedMeals");
 
             migrationBuilder.DropTable(
@@ -648,9 +697,6 @@ namespace AsparagusN.Migrations
                 name: "Branches");
 
             migrationBuilder.DropTable(
-                name: "DrinkItem");
-
-            migrationBuilder.DropTable(
                 name: "Drivers");
 
             migrationBuilder.DropTable(
@@ -666,6 +712,15 @@ namespace AsparagusN.Migrations
                 name: "OrderItems");
 
             migrationBuilder.DropTable(
+                name: "Drinks");
+
+            migrationBuilder.DropTable(
+                name: "ExtraOptions");
+
+            migrationBuilder.DropTable(
+                name: "AdminPlans");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -673,12 +728,6 @@ namespace AsparagusN.Migrations
 
             migrationBuilder.DropTable(
                 name: "Location");
-
-            migrationBuilder.DropTable(
-                name: "AdminPlans");
-
-            migrationBuilder.DropTable(
-                name: "Drinks");
 
             migrationBuilder.DropTable(
                 name: "Zones");

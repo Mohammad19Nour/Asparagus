@@ -23,7 +23,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         return await _context.Set<T>().FindAsync(id);
     }
-
+    
     public async Task<T?> GetEntityWithSpec(ISpecification<T> spec)
     {
         return await ApplySpecification(spec).FirstOrDefaultAsync();
@@ -38,6 +38,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         return await ApplySpecification(spec).CountAsync();
     }
+
 
     public IQueryable<T> GetQueryable()
     {
@@ -59,9 +60,40 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         _context.Set<T>().Remove(entity);
     }
+    public void SoftDelete(T entity)
+    {
+        var softDeleteInterface = typeof(ISoftDeletable);
+        if (softDeleteInterface.IsAssignableFrom(typeof(T)))
+        {
+            var softDeleteProperty = typeof(T).GetProperty("IsDeleted");
+            
+            if (softDeleteProperty == null || softDeleteProperty.PropertyType != typeof(bool))
+                throw new InvalidOperationException("The entity does not support soft delete.");
+         
+            softDeleteProperty.SetValue(entity, true);
+            _context.Entry(entity).State = EntityState.Modified;
+            return;
+        }
+
+        throw new InvalidOperationException("The entity does not support soft delete.");
+    }
 
     private IQueryable<T?> ApplySpecification(ISpecification<T> spec)
     {
         return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(),spec);
+    }
+    private bool IsSoftDeleted(T entity)
+    {
+        var softDeleteInterface = typeof(ISoftDeletable);
+        if (softDeleteInterface.IsAssignableFrom(typeof(T)))
+        {
+            var softDeleteProperty = typeof(T).GetProperty("IsDeleted");
+            if (softDeleteProperty != null && softDeleteProperty.PropertyType == typeof(bool))
+            {
+                var value = (bool)softDeleteProperty.GetValue(entity);
+                return value;
+            }
+        }
+        return false;
     }
 }

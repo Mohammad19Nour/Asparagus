@@ -1,10 +1,10 @@
-﻿using AsparagusN.Data.Additions;
-using AsparagusN.Data.Config;
+﻿using AsparagusN.Data.Config;
 using AsparagusN.Data.Entities.MealPlan.Admin;
 using AsparagusN.Entities;
 using AsparagusN.Entities.Identity;
 using AsparagusN.Entities.MealPlan;
 using AsparagusN.Entities.OrderAggregate;
+using AsparagusN.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -33,26 +33,27 @@ public class DataContext : IdentityDbContext<AppUser,AppRole,int,
     public DbSet<Category> Categories { get; set; }
     public DbSet<MediaUrl> MediaUrls { get; set; }
     public DbSet<Branch> Branches { get; set; }
-    public DbSet<Drink> Drinks { get; set; }
     public DbSet<AdminSelectedMeal> AdminSelectedMeals { get; set; }
     public DbSet<AdminPlan> AdminPlans { get; set; }
     public DbSet<Driver> Drivers { get; set; }
     public DbSet<Zone> Zones { get; set; }
+    public DbSet<ExtraOption> ExtraOptions { get; set; }
+    public DbSet<Drink>Drinks { get; set; }
+    public DbSet<AdminSelectedDrink> AdminSelectedDrinks { get; set; }
+    public DbSet<AdminSelectedExtraOption> AdminSelectedExtraOptions { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
        
         base.OnModelCreating(builder);
-       
-        
+        builder.Entity<Drink>().Property(x => x.Volume).HasConversion(x => x.ToString(),
+            o=>(CapacityLevel)Enum.Parse(typeof(CapacityLevel),o));
         builder.Entity<AppRole>().HasMany(ur => ur.UserRoles)
             .WithOne(u => u.Role)
             .HasForeignKey(ur => ur.RoleId)
             .IsRequired();
-        builder.Entity<DrinkItem>().HasKey(x => new { x.AdminPlanId, x.DrinkId });
-        builder.Entity<AdminSelectedMeal>().HasKey(x=>new {x.AdminPlanId,x.MealId});
-        
+    builder.Entity<AdminSelectedMeal>().HasKey(x=>new {x.AdminPlanId,x.MealId});
         
         builder.ApplyConfiguration(new DriverConfiguration());
         builder.ApplyConfiguration(new OrderConfiguration());
@@ -65,6 +66,7 @@ public class DataContext : IdentityDbContext<AppUser,AppRole,int,
         builder.ApplyConfiguration(new AppUserConfiguration());
         builder.ApplyConfiguration(new AddressConfiguration());
         builder.ApplyConfiguration(new AdminPlanConfiguration());
+        builder.ApplyConfiguration(new ExtraOptionsConfiguration());
         
         
         var sqlite = Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite";

@@ -17,5 +17,6 @@ public class Category
     public string NameEN { get; set; } = "";
     public string NameAR { get; set; } = "";
     public string Description { get; set; } = "";
+    public List<Meal> Meals { get; set; }
 
 }

@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using AsparagusN.Enums;
+using AsparagusN.Interfaces;
 
 namespace AsparagusN.Entities;
 
-public class Meal
+public class Meal : ISoftDeletable
 {
     public int Id { get; set; }
     public string NameEN { get; set; }
@@ -16,7 +17,6 @@ public class Meal
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public bool IsMealPlan { get; set; }
     public bool IsMainMenu { get; set; }
-    public bool IsDeleted { get; set; }
     public ICollection<MealIngredient> Ingredients { get; set; } = new List<MealIngredient>();
     public ICollection<MealAllergy> Allergies { get; set; } = new List<MealAllergy>();
 
@@ -56,4 +56,6 @@ public class Meal
         if (w != 0) return pri / w;
         return 0;
     }
+
+    public bool IsDeleted { get; set; }
 }

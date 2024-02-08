@@ -21,7 +21,7 @@ public class AccountController : BaseApiController
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEmailService _emailService;
 
-    public AccountController(ITokenService tokenService, UserManager<AppUser> userManager,IMapper mapper,
+    public AccountController(ITokenService tokenService, UserManager<AppUser> userManager, IMapper mapper,
         SignInManager<AppUser> signInManager, IUnitOfWork unitOfWork, IEmailService emailService)
     {
         _tokenService = tokenService;
@@ -42,10 +42,11 @@ public class AccountController : BaseApiController
             .FirstOrDefaultAsync(x => x.Email == loginDto.Email);
 
         if (user == null)
-            return Ok(new ApiResponse(400, messageEN:"Invalid Email", messageAR:"البريد الإلكتروني خاطئ"));
-        
+            return Ok(new ApiResponse(400, messageEN: "Invalid Email", messageAR: "البريد الإلكتروني خاطئ"));
+
         var res = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
-        if (!res.Succeeded) return Ok(new ApiResponse(400, messageEN:"Invalid password", messageAR:"كلمة السر خاطئة"));
+        if (!res.Succeeded)
+            return Ok(new ApiResponse(400, messageEN: "Invalid password", messageAR: "كلمة السر خاطئة"));
         var userDto = _mapper.Map<AppUser, AccountDto>(user);
         userDto.Token = _tokenService.CreateToken(user);
         return Ok(new ApiOkResponse<AccountDto>(userDto));
@@ -57,34 +58,31 @@ public class AccountController : BaseApiController
         try
         {
             registerDto.Email = registerDto.Email.ToLower();
-                
-                            var user = await _userManager.FindByEmailAsync(registerDto.Email);
-                            if (user != null)
-                            {
-                                if (user.EmailConfirmed)
-                                    return Ok(new ApiResponse(400, messageEN:"This email is already used", messageAR:"هذا الحساب مستخدم من قبل"));
-                                var response = await GenerateTokenAndSendEmailForUser(user);
+
+            var user = await _userManager.FindByEmailAsync(registerDto.Email);
+            if (user != null)
+            {
+                if (user.EmailConfirmed)
+                    return Ok(new ApiResponse(400, messageEN: "This email is already used",
+                        messageAR: "هذا الحساب مستخدم من قبل"));
+                var response = await GenerateTokenAndSendEmailForUser(user);
 
                 if (!response)
-                    return Ok(new ApiResponse(400, messageEN:"Failed to send email.",messageAR: "فشل ارسال الايميل"));
+                    return Ok(new ApiResponse(400, messageEN: "Failed to send email.", messageAR: "فشل ارسال الايميل"));
 
-                return Ok(new ApiResponse(200, messageEN:"You have already registered with this Email," +
-                                                         "The confirmation link will be resent to your email," +
-                                                         " please check your email and confirm your account.",messageAR:
+                return Ok(new ApiResponse(200, messageEN: "You have already registered with this Email," +
+                                                          "The confirmation link will be resent to your email," +
+                                                          " please check your email and confirm your account.",
+                    messageAR:
                     "انت مسجل مسبقا بهذا الحساب, سيتم إعادة إرسال رابط التأكيد إليك... الرجاء التأكد من صندوق الوارد لديك من اجل تاكيد حسابك"));
             }
 
             if (registerDto.Password != registerDto.ConfirmedPassword)
-                return Ok(new ApiResponse(400, messageEN:"passwords isn't identical"));
+                return Ok(new ApiResponse(400, messageEN: "passwords aren't identical"));
 
-            //    if (!SomeUsefulFunction.IsValidEmail(registerDto.Email))
-            //      return Ok(new ApiResponse(400,"Wrong email","بريد إالكتروني خاطئ"));
-
-            user = new AppUser
-            {
-                UserName = registerDto.Email,
-                Email = registerDto.Email,
-            };
+            user = new AppUser();
+            _mapper.Map(registerDto, user);
+            user.UserName = registerDto.Email;
             var res = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (res.Succeeded == false) return Ok(res.Errors);
@@ -92,12 +90,13 @@ public class AccountController : BaseApiController
             var respons = await GenerateTokenAndSendEmailForUser(user);
 
             if (!respons)
-                return BadRequest(new ApiResponse(400,messageEN: "Failed to send email.",
-                    messageAR:  "حدثت مشكلة اثناء إرسال رسالة التأكيد... يرجى المحاولة لاحقا"));
+                return BadRequest(new ApiResponse(400, messageEN: "Failed to send email.",
+                    messageAR: "حدثت مشكلة اثناء إرسال رسالة التأكيد... يرجى المحاولة لاحقا"));
 
-            return Ok(new ApiResponse(200, messageEN:"The confirmation link was send to your email successfully, " +
-                                                     "please check your email and confirm your account.",
-                messageAR:      "تم إرسال رابط التأكيد إلى البريد الإلكتروني الخاص بك, الرجاء التأمد من صندوق الوارد لديك وتأكيد حسابك."));
+            return Ok(new ApiResponse(200, messageEN: "The confirmation link was send to your email successfully, " +
+                                                      "please check your email and confirm your account.",
+                messageAR:
+                "تم إرسال رابط التأكيد إلى البريد الإلكتروني الخاص بك, الرجاء التأمد من صندوق الوارد لديك وتأكيد حسابك."));
         }
         catch (Exception e)
         {
@@ -105,18 +104,19 @@ public class AccountController : BaseApiController
             throw;
         }
     }
+
     [HttpPost("forget-password")]
-     public async Task<ActionResult> ForgetPassword(ForgetPasswordDto dto)
+    public async Task<ActionResult> ForgetPassword(ForgetPasswordDto dto)
     {
         try
         {
             var email = dto.Email?.ToLower();
-            if (email is null) return Ok(new ApiResponse(400,messageEN: "email must be provided"));
+            if (email is null) return Ok(new ApiResponse(400, messageEN: "email must be provided"));
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == email);
 
             if (user == null)
             {
-                return Ok(new ApiResponse(401, messageEN:"user was not found"));
+                return Ok(new ApiResponse(401, messageEN: "user was not found"));
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -131,9 +131,9 @@ public class AccountController : BaseApiController
             var res = await _emailService.SendEmailAsync(user.Email, "Reset Password", text);
 
             if (!res)
-                return Ok(new ApiResponse(400,messageEN: "Failed to send email."));
+                return Ok(new ApiResponse(400, messageEN: "Failed to send email."));
 
-            return Ok(new ApiResponse(200, messageEN:"The Code was sent to your email"));
+            return Ok(new ApiResponse(200, messageEN: "The Code was sent to your email"));
         }
         catch (Exception e)
         {
@@ -143,7 +143,6 @@ public class AccountController : BaseApiController
     }
 
     [HttpPost("reset-password")]
-    
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
     [AllowAnonymous]
     public async Task<ActionResult> ResetPassword(ResetDto restDto)
@@ -153,24 +152,25 @@ public class AccountController : BaseApiController
             var newPassword = restDto.NewPassword;
             var code = restDto.Code;
             if (newPassword == null || code == null)
-                return Ok(new ApiResponse(400, messageEN:"The password should not be empty"));
+                return Ok(new ApiResponse(400, messageEN: "The password should not be empty"));
             var val = ConfirmEmailService.GetUserIdAndToken(code);
 
             if (val is null)
-                return BadRequest(new ApiResponse(400, messageEN:"the code is incorrect",messageAR:"الكود خاطئ, يرجى التأكد من الكود والمحاولة لاحقا"));
-            
+                return BadRequest(new ApiResponse(400, messageEN: "the code is incorrect",
+                    messageAR: "الكود خاطئ, يرجى التأكد من الكود والمحاولة لاحقا"));
+
             var userId = val.Value.userId;
             var token = val.Value.token;
 
             var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null) return Ok(new ApiResponse(401,messageEN: "this user is not registered"));
+            if (user == null) return Ok(new ApiResponse(401, messageEN: "this user is not registered"));
 
             var res = await _userManager.ResetPasswordAsync(user, token, newPassword);
 
-            if (res.Succeeded == false) return Ok(new ApiResponse(400, messageEN:"Cannot reset password"));
+            if (res.Succeeded == false) return Ok(new ApiResponse(400, messageEN: "Cannot reset password"));
 
             ConfirmEmailService.RemoveUserCodes(userId);
-            return Ok(new ApiResponse(200, messageEN:"Password was reset successfully"));
+            return Ok(new ApiResponse(200, messageEN: "Password was reset successfully"));
         }
         catch (Exception e)
         {
@@ -204,16 +204,16 @@ public class AccountController : BaseApiController
 
         if (user == null)
         {
-            return BadRequest(new ApiResponse(400,messageEN: "invalid token user id"));
+            return BadRequest(new ApiResponse(400, messageEN: "invalid token user id"));
         }
 
         var res = await _userManager.ConfirmEmailAsync(user, token);
 
-        if (!res.Succeeded) return BadRequest(new ApiResponse(400,messageEN: "confirmation failed"));
+        if (!res.Succeeded) return BadRequest(new ApiResponse(400, messageEN: "confirmation failed"));
 
         return Ok("Your Email is Confirmed try to login in now");
     }
-    
+
     [HttpPut("change-password")]
     public async Task<ActionResult> UpdatePassword([FromBody] UpdatePasswordDto dto)
     {
@@ -231,9 +231,9 @@ public class AccountController : BaseApiController
                 await _userManager.ChangePasswordAsync(user, dto.OldPassword, dto.NewPassword);
 
             if (!res.Succeeded)
-                return BadRequest(new ApiResponse(400, messageEN:"Failed to update password"));
+                return BadRequest(new ApiResponse(400, messageEN: "Failed to update password"));
 
-            return Ok(new ApiResponse(200,messageEN: "updated successfully"));
+            return Ok(new ApiResponse(200, messageEN: "updated successfully"));
         }
         catch (Exception e)
         {

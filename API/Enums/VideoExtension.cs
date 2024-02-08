@@ -7,4 +7,5 @@ public enum VideoExtension
     MKV,
     MOV,
     WMV,
+    GIF,
 }

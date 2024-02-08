@@ -2,6 +2,7 @@
 using AsparagusN.Entities;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
+using AsparagusN.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,7 +41,8 @@ public class CategoryController : BaseApiController
     [HttpGet("{categoryId:int}")]
     public async Task<ActionResult<CategoryDto>> GetCategoryById(int categoryId)
     {
-        var category = await _unitOfWork.Repository<Category>().GetByIdAsync(categoryId);
+        var spec = new CategoryWithMealSpecification(categoryId);
+        var category = await _unitOfWork.Repository<Category>().GetEntityWithSpec(spec);
 
         return Ok(category == null ? new ApiResponse(404, messageEN:"category not found") : new ApiOkResponse<CategoryDto>(_mapper.Map<CategoryDto>(category)));
     }
