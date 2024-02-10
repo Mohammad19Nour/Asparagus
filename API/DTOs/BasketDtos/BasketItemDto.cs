@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AsparagusN.Data.Entities;
+namespace AsparagusN.DTOs.BasketDtos;
 
-public class BasketItem
+public class BasketItemDto
 {
-    [Required]
     public int MealId { get; set; }
     [Required]
     [Range(0.01,double.MaxValue,ErrorMessage = "Price must be greater than 0")]
@@ -14,4 +13,6 @@ public class BasketItem
     public int Quantity { get; set; }
     public int AddedCarb { get; set; }
     public int AddedProtein { get; set; }
+    public decimal PricePerProtein;
+    public decimal PricePerCarb;
 }

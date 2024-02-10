@@ -1,4 +1,5 @@
-﻿using AsparagusN.Entities;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.Entities;
 
 namespace AsparagusN.Interfaces;
 

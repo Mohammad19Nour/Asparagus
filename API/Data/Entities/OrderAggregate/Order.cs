@@ -1,4 +1,5 @@
-﻿using AsparagusN.Enums;
+﻿using AsparagusN.Data.Entities.OrderAggregate;
+using AsparagusN.Enums;
 
 namespace AsparagusN.Entities.OrderAggregate;
 
@@ -6,7 +7,7 @@ public class Order
 {
     public int Id { get; set; }
     public string BuyerEmail { get; set; }
-    public IReadOnlyList<OrderItem> Items { get; set; }
+    public ICollection<OrderItem> Items { get; set; }
     public DateTimeOffset OrderDate { get; set; } = DateTimeOffset.Now;
     public Address ShipToAddress { get; set; }
     public decimal Subtotal { get; set; }

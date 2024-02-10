@@ -1,4 +1,6 @@
-﻿using AsparagusN.DTOs;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.DTOs;
+using AsparagusN.DTOs.BasketDtos;
 using AsparagusN.Entities;
 using AsparagusN.Entities.Identity;
 using AsparagusN.Errors;
@@ -18,7 +20,7 @@ public class BasketController : BaseApiController
     private readonly UserManager<AppUser> _userManager;
     private readonly IUnitOfWork _unitOfWork;
 
-    public BasketController(IBasketRepository basketRepository,IMapper mapper,UserManager<AppUser>userManager)
+    public BasketController(IBasketRepository basketRepository, IMapper mapper, UserManager<AppUser> userManager)
     {
         _basketRepository = basketRepository;
         _mapper = mapper;
@@ -28,26 +30,43 @@ public class BasketController : BaseApiController
     [HttpGet]
     public async Task<ActionResult<CustomerBasket?>> GetBasketForUser()
     {
-        var email = HttpContext.User.GetEmail();
-        var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == email);
-
+        var user = await _getUser();
         if (user == null) return Ok(new ApiResponse(404, "User not found"));
-        
+
         var basket = await _basketRepository.GetBasketAsync(user.Id);
-        return Ok(basket);
+        return Ok(new ApiOkResponse<CustomerBasket?>(basket));
     }
 
     [HttpPost]
     public async Task<ActionResult<CustomerBasket>> UpdateBasket(CustomerBasketDto basket)
     {
+        var user = await _getUser();
+        if (user == null) return Ok(new ApiResponse(404, "User not found"));
+
+        basket.Id = user.Id;
+        var cnt = basket.Items.Select(x => x.MealId).Distinct();
+        if (cnt.Count() != basket.Items.Count)
+            return Ok(new ApiResponse(400, "Duplicate meal"));
+        
         var customerBasket = _mapper.Map<CustomerBasketDto, CustomerBasket>(basket);
         var updatedBasket = await _basketRepository.UpdateBasket(customerBasket);
-        return Ok(updatedBasket);
+        if (updatedBasket == null) return Ok(new ApiResponse(400, "Basket not updated"));
+        return Ok(new ApiOkResponse<CustomerBasket>(updatedBasket));
     }
 
     [HttpDelete]
-    public async Task DeleteBasket(int basketId)
+    public async Task<ActionResult> DeleteBasket()
     {
-        await _basketRepository.DeleteBasket(basketId);
+        var user = await _getUser();
+        if (user == null) return Ok(new ApiResponse(404, "User not found"));
+
+        await _basketRepository.DeleteBasket(user.Id);
+        return Ok(new ApiResponse(200));
+    }
+
+    private async Task<AppUser?> _getUser()
+    {
+        var email = HttpContext.User.GetEmail();
+        return await _userManager.Users.FirstOrDefaultAsync(x => x.Email == email);
     }
 }

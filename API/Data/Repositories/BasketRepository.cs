@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using AsparagusN.Data.Entities;
 using AsparagusN.Entities;
 using AsparagusN.Interfaces;
 using StackExchange.Redis;
@@ -18,7 +19,6 @@ public class BasketRepository : IBasketRepository
         var data = await _database.StringGetAsync(id.ToString());
         return data.IsNullOrEmpty ? null : JsonSerializer.Deserialize<CustomerBasket>(data!);
     }
-
     public async Task<CustomerBasket?> UpdateBasket(CustomerBasket basket)
     {
         var created = await _database.StringSetAsync(basket.Id.ToString(),

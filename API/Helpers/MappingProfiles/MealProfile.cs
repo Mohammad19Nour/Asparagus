@@ -1,4 +1,5 @@
-﻿using AsparagusN.DTOs.AdminPlanDtos;
+﻿using AsparagusN.Data.Entities.OrderAggregate;
+using AsparagusN.DTOs.AdminPlanDtos;
 using AsparagusN.DTOs.AllergyDtos;
 using AsparagusN.DTOs.IngredientDtos;
 using AsparagusN.DTOs.MealDtos;
@@ -20,6 +21,7 @@ public class MealProfile : Profile
         CreateMap<MealIngredient,MealIngredientDetailsDto>();
         CreateMap<Meal, MealWithIngredientsDto>();
         CreateMap<Meal, MealWithoutIngredientsDto>();
+        CreateMap<Meal, MealItemOrdered>();
         
         CreateMap<UpdateMealDto, Meal>()
             .ForMember(dest=>dest.Ingredients,opt=>

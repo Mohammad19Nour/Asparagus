@@ -1,5 +1,7 @@
-﻿namespace AsparagusN.Entities.OrderAggregate;
+﻿using Microsoft.EntityFrameworkCore;
 
+namespace AsparagusN.Data.Entities.OrderAggregate;
+[Owned]
 public class MealItemOrdered
 {
     public int OrderItemId { get; set; }
@@ -18,4 +20,5 @@ public class MealItemOrdered
     public decimal Protein;
     public int AddedCarb { get; set; }
     public int AddedProtein { get; set; }
+
 }

@@ -22,7 +22,7 @@ public static class ApplicationServiceExtensions
         {
             options.Limits.MaxRequestBodySize = null;
         });
-        services.AddAutoMapper(typeof(DrinkProfile),typeof(DriverProfile),typeof(AdminPlanProfile),typeof(ExtraOptionsProfile),typeof(AddressProfile),typeof(BranchProfile),typeof(CategoryProfile), typeof(SomeProfile), typeof(UserProfile), typeof(MealProfile),
+        services.AddAutoMapper(typeof(OrderProfile),typeof(DrinkProfile),typeof(DriverProfile),typeof(AdminPlanProfile),typeof(ExtraOptionsProfile),typeof(AddressProfile),typeof(BranchProfile),typeof(CategoryProfile), typeof(SomeProfile), typeof(UserProfile), typeof(MealProfile),
             typeof(IngredientProfile));
         services.AddSingleton<PresenceTracker>();
         services.AddScoped<IMediaService, MediaService>();

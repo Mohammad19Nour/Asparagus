@@ -1,8 +1,10 @@
-﻿using AsparagusN.Entities;
+﻿using AsparagusN.Data.Entities.OrderAggregate;
+using AsparagusN.Entities;
 using AsparagusN.Entities.OrderAggregate;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Services;
 
@@ -22,8 +24,8 @@ public class OrderService : IOrderService
     public async Task<Order?> GetOrderByIdAsync(int orderId, string buyerEmail)
     {
         buyerEmail = buyerEmail.ToLower();
-        var spec = new OrderWithItemsSpecification(buyerEmail,orderId);
-        var order = await  _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
+        var spec = new OrderWithItemsSpecification(buyerEmail, orderId);
+        var order = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
         return order;
     }
 
@@ -31,25 +33,31 @@ public class OrderService : IOrderService
     {
         buyerEmail = buyerEmail.ToLower();
         var spec = new OrderWithItemsSpecification(buyerEmail);
-      var orders = await  _unitOfWork.Repository<Order>().ListWithSpecAsync(spec);
-      return orders;
+        var orders = await _unitOfWork.Repository<Order>().ListWithSpecAsync(spec);
+
+        /* return await  _unitOfWork.Repository<Order>().GetQueryable().Include(x=>x.Items)
+             .ThenInclude(y=>y.OrderedMeal).ToListAsync();*/
+        return orders;
     }
 
     public async Task<Order?> CreateOrderAsync(string buyerEmail, int basketId, Address shippingAddress)
     {
         var basket = await _basketRepository.GetBasketAsync(basketId);
         if (basket == null) return null;
-        
+
         var items = new List<OrderItem>();
 
         foreach (var item in basket.Items)
         {
-            var spec = new MealWithIngredientsAdnAllergiesSpecification(item.Id);
-            var meal = await _unitOfWork.Repository<Meal>().GetEntityWithSpec(spec);
+            var meal = await _unitOfWork.Repository<Meal>().GetByIdAsync(item.MealId);
 
-            if (meal == null) return null;
+            if (meal == null || !meal.IsMainMenu) return null;
 
             var itemOrdered = _mapper.Map<MealItemOrdered>(meal);
+            itemOrdered.MealId = meal.Id;
+
+            itemOrdered.AddedProtein = item.AddedProtein;
+            itemOrdered.AddedCarb = item.AddedCarb;
             var price = meal.Price + itemOrdered.PricePerCarb * itemOrdered.AddedCarb
                                    + itemOrdered.PricePerProtein * itemOrdered.AddedProtein;
 

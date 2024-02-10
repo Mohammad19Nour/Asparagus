@@ -1,6 +1,8 @@
 ﻿using System.Security.Cryptography;
+using AsparagusN.Data.Entities;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.AllergyDtos;
+using AsparagusN.DTOs.BasketDtos;
 using AsparagusN.Entities;
 using AutoMapper;
 

@@ -2,6 +2,7 @@
 using AsparagusN.Data.Entities.MealPlan.Admin;
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
+using AsparagusN.Data.Entities.OrderAggregate;
 using AsparagusN.Entities;
 using AsparagusN.Entities.Identity;
 using AsparagusN.Entities.MealPlan;
@@ -50,13 +51,12 @@ public class DataContext : IdentityDbContext<AppUser,AppRole,int,
     public DbSet<UserSelectedExtraOption> UserSelectedExtraOptions { get; set; }
     public DbSet<PlanType> PlanTypes { get; set; }
 
-
     protected override void OnModelCreating(ModelBuilder builder)
     {
-       
         base.OnModelCreating(builder);
         builder.Entity<Drink>().Property(x => x.Volume).HasConversion(x => x.ToString(),
             o=>(CapacityLevel)Enum.Parse(typeof(CapacityLevel),o));
+   
         builder.Entity<PlanType>().Property(x => x.PlanTypeE).HasConversion(x => x.ToString(),
             o=>(PlanTypeEnum)Enum.Parse(typeof(PlanTypeEnum),o));
 
@@ -64,6 +64,7 @@ public class DataContext : IdentityDbContext<AppUser,AppRole,int,
             .WithOne(u => u.Role)
             .HasForeignKey(ur => ur.RoleId)
             .IsRequired();
+        
     builder.Entity<AdminSelectedMeal>().HasKey(x=>new {x.AdminPlanDayId,x.MealId});
         
         builder.ApplyConfiguration(new DriverConfiguration());
@@ -78,7 +79,6 @@ public class DataContext : IdentityDbContext<AppUser,AppRole,int,
         builder.ApplyConfiguration(new AddressConfiguration());
         builder.ApplyConfiguration(new AdminPlanConfiguration());
         builder.ApplyConfiguration(new ExtraOptionsConfiguration());
-        
         
         var sqlite = Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite";
         
