@@ -36,8 +36,7 @@ namespace AsparagusN.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     AvailableDate = table.Column<DateTime>(type: "date", nullable: false),
-                    PlanType = table.Column<string>(type: "TEXT", nullable: false),
-                    Points = table.Column<int>(type: "INTEGER", nullable: false)
+                    PlanType = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -181,19 +180,15 @@ namespace AsparagusN.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
+                name: "PlanTypes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false),
-                    BuyerEmail = table.Column<string>(type: "TEXT", nullable: false),
-                    OrderDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
-                    ShipToAddress_Id = table.Column<int>(type: "INTEGER", nullable: false),
-                    Subtotal = table.Column<double>(type: "REAL", nullable: false),
-                    Status = table.Column<string>(type: "TEXT", nullable: false)
+                    PlanTypeE = table.Column<string>(type: "TEXT", nullable: false),
+                    Points = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.PrimaryKey("PK_PlanTypes", x => x.PlanTypeE);
                 });
 
             migrationBuilder.CreateTable(
@@ -255,6 +250,29 @@ namespace AsparagusN.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BuyerEmail = table.Column<string>(type: "TEXT", nullable: false),
+                    OrderDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                    ShipToAddressId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Subtotal = table.Column<double>(type: "REAL", nullable: false),
+                    Status = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Orders_Address_ShipToAddressId",
+                        column: x => x.ShipToAddressId,
+                        principalTable: "Address",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -292,6 +310,12 @@ namespace AsparagusN.Migrations
                     IsMealPlan = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsMainMenu = table.Column<bool>(type: "INTEGER", nullable: false),
                     CategoryId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Protein = table.Column<double>(type: "REAL", nullable: false),
+                    Carbs = table.Column<double>(type: "REAL", nullable: false),
+                    Fats = table.Column<double>(type: "REAL", nullable: false),
+                    Fibers = table.Column<double>(type: "REAL", nullable: false),
+                    PricePerProtein = table.Column<double>(type: "REAL", nullable: false),
+                    PricePerCarb = table.Column<double>(type: "REAL", nullable: false),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -312,7 +336,7 @@ namespace AsparagusN.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     DrinkId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PlanType = table.Column<int>(type: "INTEGER", nullable: false)
+                    PlanTypeEnum = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -332,7 +356,7 @@ namespace AsparagusN.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     ExtraOptionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PlanType = table.Column<int>(type: "INTEGER", nullable: false)
+                    PlanTypeEnum = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -362,28 +386,6 @@ namespace AsparagusN.Migrations
                         name: "FK_Branches_Location_AddressId",
                         column: x => x.AddressId,
                         principalTable: "Location",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OrderItems",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false),
-                    OrderedMeal_MealName = table.Column<string>(type: "TEXT", nullable: false),
-                    OrderedMeal_PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    Price = table.Column<double>(type: "decimal(18,2)", nullable: false),
-                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    OrderId = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OrderItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OrderItems_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -500,18 +502,73 @@ namespace AsparagusN.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserPlans",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    AppUserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Price = table.Column<double>(type: "REAL", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Duration = table.Column<int>(type: "INTEGER", nullable: false),
+                    PlanTypeEnum = table.Column<int>(type: "INTEGER", nullable: false),
+                    NumberOfMealPerDay = table.Column<int>(type: "INTEGER", nullable: false),
+                    NumberOfSnacks = table.Column<int>(type: "INTEGER", nullable: false),
+                    NumberOfRemainingSnacks = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPlans", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserPlans_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderedMeal_MealId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderedMeal_NameEN = table.Column<string>(type: "TEXT", nullable: false),
+                    OrderedMeal_NameAR = table.Column<string>(type: "TEXT", nullable: false),
+                    OrderedMeal_DescriptionEN = table.Column<string>(type: "TEXT", nullable: false),
+                    OrderedMeal_DescriptionAR = table.Column<string>(type: "TEXT", nullable: false),
+                    OrderedMeal_PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    OrderedMeal_AddedCarb = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderedMeal_AddedProtein = table.Column<int>(type: "INTEGER", nullable: false),
+                    Price = table.Column<double>(type: "decimal(18,2)", nullable: false),
+                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderItems_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AdminSelectedMeals",
                 columns: table => new
                 {
                     MealId = table.Column<int>(type: "INTEGER", nullable: false),
-                    AdminPlanId = table.Column<int>(type: "INTEGER", nullable: false)
+                    AdminPlanDayId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AdminSelectedMeals", x => new { x.AdminPlanId, x.MealId });
+                    table.PrimaryKey("PK_AdminSelectedMeals", x => new { x.AdminPlanDayId, x.MealId });
                     table.ForeignKey(
-                        name: "FK_AdminSelectedMeals_AdminPlans_AdminPlanId",
-                        column: x => x.AdminPlanId,
+                        name: "FK_AdminSelectedMeals_AdminPlans_AdminPlanDayId",
+                        column: x => x.AdminPlanDayId,
                         principalTable: "AdminPlans",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -568,6 +625,100 @@ namespace AsparagusN.Migrations
                         name: "FK_MealIngredients_Meals_MealId",
                         column: x => x.MealId,
                         principalTable: "Meals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPlanDays",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserPlanId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Day = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPlanDays", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserPlanDays_UserPlans_UserPlanId",
+                        column: x => x.UserPlanId,
+                        principalTable: "UserPlans",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserSelectedDrinks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserPlanDayId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NameArabic = table.Column<string>(type: "TEXT", nullable: false),
+                    NameEnglish = table.Column<string>(type: "TEXT", nullable: false),
+                    Volume = table.Column<int>(type: "INTEGER", nullable: false),
+                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSelectedDrinks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserSelectedDrinks_UserPlanDays_UserPlanDayId",
+                        column: x => x.UserPlanDayId,
+                        principalTable: "UserPlanDays",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserSelectedExtraOptions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserPlanDayId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NameArabic = table.Column<string>(type: "TEXT", nullable: false),
+                    NameEnglish = table.Column<string>(type: "TEXT", nullable: false),
+                    Weight = table.Column<double>(type: "REAL", nullable: false),
+                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    OptionType = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSelectedExtraOptions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserSelectedExtraOptions_UserPlanDays_UserPlanDayId",
+                        column: x => x.UserPlanDayId,
+                        principalTable: "UserPlanDays",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserSelectedMeals",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserPlanDayId = table.Column<int>(type: "INTEGER", nullable: false),
+                    NameEN = table.Column<string>(type: "TEXT", nullable: false),
+                    NameAR = table.Column<string>(type: "TEXT", nullable: false),
+                    DescriptionEN = table.Column<string>(type: "TEXT", nullable: false),
+                    DescriptionAR = table.Column<string>(type: "TEXT", nullable: false),
+                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    AddedCarb = table.Column<int>(type: "INTEGER", nullable: false),
+                    AddedProtein = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSelectedMeals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserSelectedMeals_UserPlanDays_UserPlanDayId",
+                        column: x => x.UserPlanDayId,
+                        principalTable: "UserPlanDays",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -664,6 +815,36 @@ namespace AsparagusN.Migrations
                 name: "IX_OrderItems_OrderId",
                 table: "OrderItems",
                 column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_ShipToAddressId",
+                table: "Orders",
+                column: "ShipToAddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPlanDays_UserPlanId",
+                table: "UserPlanDays",
+                column: "UserPlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPlans_AppUserId",
+                table: "UserPlans",
+                column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSelectedDrinks_UserPlanDayId",
+                table: "UserSelectedDrinks",
+                column: "UserPlanDayId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSelectedExtraOptions_UserPlanDayId",
+                table: "UserSelectedExtraOptions",
+                column: "UserPlanDayId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSelectedMeals_UserPlanDayId",
+                table: "UserSelectedMeals",
+                column: "UserPlanDayId");
         }
 
         /// <inheritdoc />
@@ -712,6 +893,18 @@ namespace AsparagusN.Migrations
                 name: "OrderItems");
 
             migrationBuilder.DropTable(
+                name: "PlanTypes");
+
+            migrationBuilder.DropTable(
+                name: "UserSelectedDrinks");
+
+            migrationBuilder.DropTable(
+                name: "UserSelectedExtraOptions");
+
+            migrationBuilder.DropTable(
+                name: "UserSelectedMeals");
+
+            migrationBuilder.DropTable(
                 name: "Drinks");
 
             migrationBuilder.DropTable(
@@ -722,9 +915,6 @@ namespace AsparagusN.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Location");
@@ -745,10 +935,19 @@ namespace AsparagusN.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Address");
+                name: "UserPlanDays");
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "UserPlans");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Address");
         }
     }
 }

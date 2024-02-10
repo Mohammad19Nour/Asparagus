@@ -14,7 +14,7 @@ public class AdminPlanProfile : Profile
 {
     public AdminPlanProfile()
     {
-     CreateMap<AdminSelectedMeal, MealWithoutIngredientsDto>()
+        CreateMap<AdminSelectedMeal, MealWithoutIngredientsDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Meal.Id))
             .ForMember(dest => dest.NameEN, opt => opt.MapFrom(src => src.Meal.NameEN))
             .ForMember(dest => dest.NameAR, opt => opt.MapFrom(src => src.Meal.NameAR))
@@ -26,18 +26,18 @@ public class AdminPlanProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Meal.CreatedAt))
             .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Meal.CategoryId))
             .ForMember(dest => dest.Allergies, opt => opt.MapFrom(src => src.Meal.Allergies))
-            .ForMember(x => x.Protein, o => o.MapFrom(src => src.Meal.Protein()))
-            .ForMember(x => x.Carbs, o => o.MapFrom(src => src.Meal.Carbs()))
+            .ForMember(x => x.Protein, o => o.MapFrom(src => src.Meal.Protein))
+            .ForMember(x => x.Carbs, o => o.MapFrom(src => src.Meal.Carbs))
             .ForMember(x => x.Calories, o => o.MapFrom(src => src.Meal.Calories()))
-            .ForMember(x => x.Fats, o => o.MapFrom(src => src.Meal.Fats()))
-            .ForMember(x => x.Fibers, o => o.MapFrom(src => src.Meal.Fibers()))
-            ;      
-        CreateMap<UpdateAdminPlanDto, AdminPlan>();
-        CreateMap<NewAdminPlanDto, AdminPlan>();
-        CreateMap<AdminPlan, AdminPlanDto>()
+            .ForMember(x => x.Fats, o => o.MapFrom(src => src.Meal.Fats))
+            .ForMember(x => x.Fibers, o => o.MapFrom(src => src.Meal.Fibers));
+            
+        CreateMap<UpdateAdminPlanDto, AdminPlanDay>();
+        CreateMap<NewAdminPlanDto, AdminPlanDay>();
+        CreateMap<AdminPlanDay, AdminPlanDayDto>()
             .ForMember(dest => dest.Meals, opt => opt.MapFrom(src => src.Meals))
             .ForMember(dest => dest.PlanType, opt =>
-                opt.MapFrom(src => Enum.GetName(typeof(PlanType), src.PlanType)));
+                opt.MapFrom(src => Enum.GetName(typeof(PlanTypeEnum), src.PlanType)));
         
     }
 }

@@ -7,16 +7,16 @@ namespace AsparagusN.Specifications;
 public class MealWithIngredientsAdnAllergiesSpecification : BaseSpecification<Meal>
 {
     public MealWithIngredientsAdnAllergiesSpecification(int mealId) : 
-        base(x=> x.Id == mealId && !x.IsDeleted && x.IsMainMenu)
+        base(x=> x.Id == mealId && !x.IsDeleted)
     {
         AddInclude(x=>x.Include(y=>y.Ingredients).ThenInclude(y=>y.Ingredient));
-        AddInclude(x=>x.Include(y=>y.Allergies));
+        AddInclude(x=>x.Include(y=>y.Allergies).ThenInclude(h=>h.Allergy));
     }
     public MealWithIngredientsAdnAllergiesSpecification() : 
         base(x=> !x.IsDeleted && x.IsMainMenu)
     {
         AddInclude(x=>x.Include(y=>y.Ingredients).ThenInclude(y=>y.Ingredient));
-        AddInclude(x=>x.Include(y=>y.Allergies));
+        AddInclude(x=>x.Include(y=>y.Allergies).ThenInclude(h=>h.Allergy));
     }
     
     public MealWithIngredientsAdnAllergiesSpecification(bool mealPlansOnly,bool includeIngredients = false) 
@@ -25,7 +25,7 @@ public class MealWithIngredientsAdnAllergiesSpecification : BaseSpecification<Me
         if (includeIngredients)
         {
             AddInclude(x => x.Include(y => y.Ingredients).ThenInclude(d => d.Ingredient));
-            AddInclude(x => x.Include(y => y.Allergies));
+            AddInclude(x => x.Include(y => y.Allergies).ThenInclude(h=>h.Allergy));
         }
     }
 }

@@ -8,11 +8,11 @@ namespace AsparagusN.Specifications;
 
 public class AdminSelectedDrinksSpecification : BaseSpecification<AdminSelectedDrink>
 {
-    public AdminSelectedDrinksSpecification(PlanType planType) : base(x=>x.PlanType == planType)
+    public AdminSelectedDrinksSpecification(PlanTypeEnum planTypeEnum) : base(x=>x.PlanTypeEnum == planTypeEnum)
     {
         AddInclude(x=>x.Include(y=>y.Drink));
     }
-    public AdminSelectedDrinksSpecification(PlanType planType,int id) : base(x=>x.PlanType == planType && x.DrinkId == id)
+    public AdminSelectedDrinksSpecification(PlanTypeEnum planTypeEnum,int id) : base(x=>x.PlanTypeEnum == planTypeEnum && x.DrinkId == id)
     {
         AddInclude(x=>x.Include(y=>y.Drink));
 

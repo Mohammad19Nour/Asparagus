@@ -13,23 +13,23 @@ public class BasketRepository : IBasketRepository
         _database = redis.GetDatabase();
     }
 
-    public async Task<CustomerBasket> GetBasketAsync(string id)
+    public async Task<CustomerBasket?> GetBasketAsync(int id)
     {
-        var data = await _database.StringGetAsync(id);
-        return data.IsNullOrEmpty ? null : JsonSerializer.Deserialize<CustomerBasket>(data);
+        var data = await _database.StringGetAsync(id.ToString());
+        return data.IsNullOrEmpty ? null : JsonSerializer.Deserialize<CustomerBasket>(data!);
     }
 
-    public async Task<CustomerBasket> UpdateBasket(CustomerBasket basket)
+    public async Task<CustomerBasket?> UpdateBasket(CustomerBasket basket)
     {
-        var created = await _database.StringSetAsync(basket.Id,
+        var created = await _database.StringSetAsync(basket.Id.ToString(),
             JsonSerializer.Serialize(basket),TimeSpan.FromDays(30));
         if (!created) return null;
 
         return await GetBasketAsync(basket.Id);
     }
 
-    public async Task<bool> DeleteBasket(string basketId)
+    public async Task<bool> DeleteBasket(int basketId)
     {
-        return await _database.KeyDeleteAsync(basketId);
+        return await _database.KeyDeleteAsync(basketId.ToString());
     }
 }

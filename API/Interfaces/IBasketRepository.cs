@@ -4,7 +4,7 @@ namespace AsparagusN.Interfaces;
 
 public interface IBasketRepository
 {
-    Task<CustomerBasket> GetBasketAsync(string id);
-    Task<CustomerBasket> UpdateBasket(CustomerBasket basket);
-    Task<bool> DeleteBasket(string basketId);
+    Task<CustomerBasket?> GetBasketAsync(int id);
+    Task<CustomerBasket?> UpdateBasket(CustomerBasket basket);
+    Task<bool> DeleteBasket(int basketId);
 }

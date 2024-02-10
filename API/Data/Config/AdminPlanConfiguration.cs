@@ -8,19 +8,19 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AsparagusN.Data.Config;
 
-public class AdminPlanConfiguration : IEntityTypeConfiguration<AdminPlan>
+public class AdminPlanConfiguration : IEntityTypeConfiguration<AdminPlanDay>
 {
-    public void Configure(EntityTypeBuilder<AdminPlan> builder)
+    public void Configure(EntityTypeBuilder<AdminPlanDay> builder)
     {
         builder.Property(x => x.AvailableDate).HasColumnType("date");
         builder.Property(s => s.PlanType).HasConversion(o => o.ToString(),
-            o => (PlanType)Enum.Parse(typeof(PlanType), o));
+            o => (PlanTypeEnum)Enum.Parse(typeof(PlanTypeEnum), o));
         builder.HasMany(x=>x.Meals)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Meals)
-            .WithOne(x => x.AdminPlan)
+            .WithOne(x => x.AdminPlanDay)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

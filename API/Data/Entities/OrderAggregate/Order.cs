@@ -8,7 +8,7 @@ public class Order
     public string BuyerEmail { get; set; }
     public IReadOnlyList<OrderItem> Items { get; set; }
     public DateTimeOffset OrderDate { get; set; } = DateTimeOffset.Now;
-    public DeliveryAddress ShipToAddress { get; set; }
+    public Address ShipToAddress { get; set; }
     public decimal Subtotal { get; set; }
     public OrderStatus Status { get; set; } = OrderStatus.Pending;
 

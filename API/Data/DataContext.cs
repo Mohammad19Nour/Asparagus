@@ -1,5 +1,7 @@
 ﻿using AsparagusN.Data.Config;
 using AsparagusN.Data.Entities.MealPlan.Admin;
+using AsparagusN.Data.Entities.MealPlan.AdminPlans;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.Entities;
 using AsparagusN.Entities.Identity;
 using AsparagusN.Entities.MealPlan;
@@ -34,13 +36,19 @@ public class DataContext : IdentityDbContext<AppUser,AppRole,int,
     public DbSet<MediaUrl> MediaUrls { get; set; }
     public DbSet<Branch> Branches { get; set; }
     public DbSet<AdminSelectedMeal> AdminSelectedMeals { get; set; }
-    public DbSet<AdminPlan> AdminPlans { get; set; }
+    public DbSet<AdminPlanDay> AdminPlans { get; set; }
     public DbSet<Driver> Drivers { get; set; }
     public DbSet<Zone> Zones { get; set; }
     public DbSet<ExtraOption> ExtraOptions { get; set; }
     public DbSet<Drink>Drinks { get; set; }
     public DbSet<AdminSelectedDrink> AdminSelectedDrinks { get; set; }
     public DbSet<AdminSelectedExtraOption> AdminSelectedExtraOptions { get; set; }
+    public DbSet<UserPlan> UserPlans { get; set; }
+    public DbSet<UserPlanDay> UserPlanDays { get; set; }
+    public DbSet<UserSelectedMeal> UserSelectedMeals { get; set; }
+    public DbSet<UserSelectedDrink> UserSelectedDrinks { get; set; }
+    public DbSet<UserSelectedExtraOption> UserSelectedExtraOptions { get; set; }
+    public DbSet<PlanType> PlanTypes { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -49,11 +57,14 @@ public class DataContext : IdentityDbContext<AppUser,AppRole,int,
         base.OnModelCreating(builder);
         builder.Entity<Drink>().Property(x => x.Volume).HasConversion(x => x.ToString(),
             o=>(CapacityLevel)Enum.Parse(typeof(CapacityLevel),o));
+        builder.Entity<PlanType>().Property(x => x.PlanTypeE).HasConversion(x => x.ToString(),
+            o=>(PlanTypeEnum)Enum.Parse(typeof(PlanTypeEnum),o));
+
         builder.Entity<AppRole>().HasMany(ur => ur.UserRoles)
             .WithOne(u => u.Role)
             .HasForeignKey(ur => ur.RoleId)
             .IsRequired();
-    builder.Entity<AdminSelectedMeal>().HasKey(x=>new {x.AdminPlanId,x.MealId});
+    builder.Entity<AdminSelectedMeal>().HasKey(x=>new {x.AdminPlanDayId,x.MealId});
         
         builder.ApplyConfiguration(new DriverConfiguration());
         builder.ApplyConfiguration(new OrderConfiguration());

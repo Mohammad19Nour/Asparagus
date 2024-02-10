@@ -2,10 +2,11 @@
 
 public class Allergy
 {
-    public Allergy(string arabicName, string englishName)
+    public Allergy(string arabicName, string englishName,string pictureUrl)
     {
         ArabicName = arabicName;
         EnglishName = englishName;
+        PictureUrl = pictureUrl;
     }
 
     public Allergy()

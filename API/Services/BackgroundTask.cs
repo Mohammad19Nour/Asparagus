@@ -25,7 +25,7 @@ public class BackgroundTask : IHostedService, IDisposable
 
     private void _addPlanDays(object? state)
     {
-        Task.Run(async () =>
+        /*Task.Run(async () =>
         {
             try
             {
@@ -36,8 +36,8 @@ public class BackgroundTask : IHostedService, IDisposable
 
                 var scope = _scopeFactory.CreateScope();
                 var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-                var daysQuery = unitOfWork.Repository<AdminPlan>().GetQueryable();
-                PlanType[] types = (PlanType[])Enum.GetValues(typeof(PlanType));
+                var daysQuery = unitOfWork.Repository<AdminPlanDay>().GetQueryable();
+                PlanTypeEnum[] types = (PlanTypeEnum[])Enum.GetValues(typeof(PlanTypeEnum));
 
 
                 if (DateTime.Now.DayOfWeek == DayOfWeek.Thursday)
@@ -53,21 +53,21 @@ public class BackgroundTask : IHostedService, IDisposable
                         var res = await query.ToListAsync();
                         foreach (var r in res)
                         {
-                            unitOfWork.Repository<AdminPlan>().Delete(r);
+                            unitOfWork.Repository<AdminPlanDay>().Delete(r);
                         }
 
                         foreach (var planType in types)
                         {
-                            if (planType == PlanType.CustomMealPlan) continue;
+                            if (planType == PlanTypeEnum.CustomMealPlan) continue;
                             
                             for (var j = 2; j <= 8; j++)
                             {
-                                var newDay = new AdminPlan
+                                var newDay = new AdminPlanDay
                                 {
                                     AvailableDate = DateTime.Today.AddDays(j),
-                                    PlanType = planType
+                                    PlanTypeEnum = planType
                                 };
-                                unitOfWork.Repository<AdminPlan>().Add(newDay);
+                                unitOfWork.Repository<AdminPlanDay>().Add(newDay);
                             }
                         }
 
@@ -85,7 +85,7 @@ public class BackgroundTask : IHostedService, IDisposable
                 Console.WriteLine(e);
                 throw;
             }
-        });
+        });*/
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

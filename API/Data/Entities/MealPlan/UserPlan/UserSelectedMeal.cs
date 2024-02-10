@@ -1,9 +1,13 @@
-﻿namespace AsparagusN.Entities.OrderAggregate;
+﻿using AsparagusN.Entities.MealPlan;
 
-public class MealItemOrdered
+namespace AsparagusN.Data.Entities.MealPlan.UserPlan;
+
+public class UserSelectedMeal
 {
-    public int OrderItemId { get; set; }
-    public int MealId { get; set; }
+    public int Id { get; set; }
+    public int UserPlanDayId { get; set; }
+    public UserPlanDay UserPlanDay { get; set; }
+    
     public string NameEN { get; set; }
     public string NameAR { get; set; }
     public string DescriptionEN { get; set; }
@@ -18,4 +22,5 @@ public class MealItemOrdered
     public decimal Protein;
     public int AddedCarb { get; set; }
     public int AddedProtein { get; set; }
+    
 }

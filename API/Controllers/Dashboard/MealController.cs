@@ -20,13 +20,14 @@ public class MealController : BaseApiController
         _mapper = mapper;
         _mediaService = mediaService;
     }
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult<MealWithIngredientsDto>> GetMealById(int id)
     {
         var spec = new MealWithIngredientsAdnAllergiesSpecification(id);
         var d = await _unitOfWork.Repository<Meal>().GetEntityWithSpec(spec);
 
-        if (d == null) return Ok(new ApiResponse(404,"Meal not found"));
+        if (d == null) return Ok(new ApiResponse(404, "Meal not found"));
 
         return Ok(new ApiOkResponse<MealWithIngredientsDto>(_mapper.Map<MealWithIngredientsDto>(d)));
     }
@@ -37,7 +38,7 @@ public class MealController : BaseApiController
         var spec = new MealWithIngredientsAdnAllergiesSpecification();
         var d = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
 
-        return Ok(new  ApiOkResponse<List<MealWithIngredientsDto>>(_mapper.Map<List<MealWithIngredientsDto>>(d)));
+        return Ok(new ApiOkResponse<List<MealWithIngredientsDto>>(_mapper.Map<List<MealWithIngredientsDto>>(d)));
     }
 
     [HttpPut("update/{id:int}")]
@@ -95,6 +96,7 @@ public class MealController : BaseApiController
         {
             return Ok(new ApiResponse(400, "You should specify meal plan or menu item"));
         }
+
         var meal = _mapper.Map<Meal>(newMealDto);
 
 
@@ -142,15 +144,17 @@ public class MealController : BaseApiController
 
     private async Task<bool> _addIngredients(List<MealIngredientDto> ingredientIds, Meal meal)
     {
+        var mg = new List<MealIngredient>();
         foreach (var ingr in ingredientIds)
         {
             var item = await _unitOfWork.Repository<Ingredient>().GetByIdAsync(ingr.IngredientId);
 
             if (item == null)
                 return false;
-            meal.Ingredients.Add(new MealIngredient { Ingredient = item, Weight = ingr.Weight });
+            mg.Add(new MealIngredient { Ingredient = item, Weight = ingr.Weight });
         }
 
+        meal.Ingredients = mg;
         return true;
     }
 
@@ -161,7 +165,7 @@ public class MealController : BaseApiController
 
         var meal = await _unitOfWork.Repository<Meal>().GetEntityWithSpec(spec);
         if (meal == null)
-            return Ok(new ApiResponse(404,"meal not found"));
+            return Ok(new ApiResponse(404, "meal not found"));
         _unitOfWork.Repository<Meal>().Delete(meal);
 
         if (await _unitOfWork.SaveChanges())

@@ -18,15 +18,7 @@ public class MealProfile : Profile
             .ForMember(dest => dest.PictureUrl, opt => opt.MapFrom(x => x.Allergy.PictureUrl));
             
         CreateMap<MealIngredient,MealIngredientDetailsDto>();
-        CreateMap<Meal, MealWithIngredientsDto>()
-            .ForMember(dest => dest.PricePerProtein, opt => opt.MapFrom(src => Convert.ToDecimal(src.PricePerProtein())))
-            .ForMember(dest => dest.PricePerCarb, opt => opt.MapFrom(src => Convert.ToDecimal(src.PricePerCarb())))
-
-            .ForMember(dest => dest.Protein, opt => opt.MapFrom(src => Convert.ToDecimal(src.Protein())))
-            .ForMember(dest => dest.Carbs, opt => opt.MapFrom(src => Convert.ToDecimal(src.Carbs())))
-            .ForMember(dest => dest.Fats, opt => opt.MapFrom(src => Convert.ToDecimal(src.Fats())))
-            .ForMember(dest => dest.Calories, opt => opt.MapFrom(src => Convert.ToDecimal(src.Calories())))
-            .ForMember(dest => dest.Fibers, opt => opt.MapFrom(src => Convert.ToDecimal(src.Fibers())));
+        CreateMap<Meal, MealWithIngredientsDto>();
         CreateMap<Meal, MealWithoutIngredientsDto>();
         
         CreateMap<UpdateMealDto, Meal>()

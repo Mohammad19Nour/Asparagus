@@ -9,13 +9,13 @@ namespace AsparagusN.Specifications;
 
 public class AdminSelectedExtraOptionSpecification : BaseSpecification<AdminSelectedExtraOption>
 {
-    public AdminSelectedExtraOptionSpecification(PlanType planType) : base(x => x.PlanType == planType)
+    public AdminSelectedExtraOptionSpecification(PlanTypeEnum planTypeEnum) : base(x => x.PlanTypeEnum == planTypeEnum)
     {
         AddInclude(x=>x.Include(t=>t.ExtraOption));
     }
 
-    public AdminSelectedExtraOptionSpecification(PlanType planType, int id) : base(x =>
-        x.PlanType == planType && x.ExtraOptionId == id)
+    public AdminSelectedExtraOptionSpecification(PlanTypeEnum planTypeEnum, int id) : base(x =>
+        x.PlanTypeEnum == planTypeEnum && x.ExtraOptionId == id)
     {
         AddInclude(x=>x.Include(t=>t.ExtraOption));
 

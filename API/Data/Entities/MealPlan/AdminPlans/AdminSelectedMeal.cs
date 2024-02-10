@@ -6,6 +6,7 @@ public class AdminSelectedMeal
 {
     public Meal Meal { get; set; }
     public int MealId { get; set; }
-    public AdminPlan AdminPlan { get; set; }
-    public int AdminPlanId { get; set; }
+    public AdminPlanDay AdminPlanDay { get; set; }
+    public int AdminPlanDayId { get; set; }
+    
 }
