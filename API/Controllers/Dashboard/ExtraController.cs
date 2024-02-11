@@ -44,15 +44,13 @@ public class ExtraController : BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult<Dictionary<ExtraOptionType, IEnumerable<ExtraOptionDto>>>> GetAllExtraOptions()
+    public async Task<ActionResult<List<ExtraOptionDto>>> GetAllExtraOptions()
     {
         var table = _unitOfWork.Repository<ExtraOption>().GetQueryable();
-        var result = await table.Where(x => !x.IsDeleted)
-            .GroupBy(x => x.OptionType).ToDictionaryAsync(g => g.Key,
-                x => x.Select(y => _mapper.Map<ExtraOptionDto>(y)));
+        var result = await table.Where(x => !x.IsDeleted).ToListAsync();
 
-        return Ok(new ApiOkResponse<Dictionary<ExtraOptionType, IEnumerable<ExtraOptionDto>>?>(
-            _mapper.Map<Dictionary<ExtraOptionType, IEnumerable<ExtraOptionDto>>>(result)));
+        return Ok(new ApiOkResponse<List<ExtraOptionDto>>(
+            _mapper.Map<List<ExtraOptionDto>>(result)));
     }
 
     [HttpGet("{id:int}")]

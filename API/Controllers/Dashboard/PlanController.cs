@@ -135,17 +135,17 @@ public class PlanController : BaseApiController
     }
 
     [HttpPost("addDrink")]
-    public async Task<ActionResult> AddExtra([FromBody] List<int> ids, PlanTypeEnum planTypeEnum)
+    public async Task<ActionResult> AddExtra(DrinkIdsDto ids, PlanTypeEnum planTypeEnum)
     {
         if (planTypeEnum == PlanTypeEnum.CustomMealPlan) return Ok(new ApiResponse(404, "Plan type not found"));
 
-        var ok = await _check(ids, true);
+        var ok = await _check(ids.DrinkIds, true);
         if (!ok)
         {
             return Ok(new ApiResponse(404, "Drink option not found"));
         }
 
-        await _addDrinks(ids, planTypeEnum);
+        await _addDrinks(ids.DrinkIds, planTypeEnum);
         if (await _unitOfWork.SaveChanges())
             return Ok(new ApiResponse(200));
         return Ok(new ApiResponse(400, "Failed to add drink"));
@@ -173,17 +173,17 @@ public class PlanController : BaseApiController
     }
 
     [HttpPost("addExtra")]
-    public async Task<ActionResult> AddDrink([FromBody] List<int> ids, PlanTypeEnum planTypeEnum)
+    public async Task<ActionResult> AddDrink(ExtraIdsDto ids, PlanTypeEnum planTypeEnum)
     {
         if (planTypeEnum == PlanTypeEnum.CustomMealPlan) return Ok(new ApiResponse(404, "Plan type not found"));
 
-        var ok = await _check(ids, false);
+        var ok = await _check(ids.ExtraIds, false);
         if (!ok)
         {
             return Ok(new ApiResponse(404, "Extra not found"));
         }
 
-        await _addExtraOption(ids, planTypeEnum);
+        await _addExtraOption(ids.ExtraIds, planTypeEnum);
         if (await _unitOfWork.SaveChanges())
             return Ok(new ApiResponse(200));
         return Ok(new ApiResponse(400, "Failed to add extras"));

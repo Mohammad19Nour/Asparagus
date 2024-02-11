@@ -12,7 +12,7 @@ public class UserPlan
     public DateTime CreatedDate { get; set; } = DateTime.Now;
     public DateTime StartDate { get; set; } = DateTime.Now.AddDays(2);
     public int Duration { get; set; }
-    public PlanTypeEnum PlanTypeEnum { get; set; }
+    public PlanTypeEnum PlanType { get; set; }
     public int NumberOfMealPerDay { get; set; }
     public int NumberOfSnacks { get; set; }
     public int NumberOfRemainingSnacks { get; set; }

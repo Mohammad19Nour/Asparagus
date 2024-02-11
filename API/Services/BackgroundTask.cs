@@ -96,6 +96,6 @@ public class BackgroundTask : IHostedService, IDisposable
 
     public void Dispose()
     {
-        _timer.Dispose();
+     //   _timer.Dispose();
     }
 }
