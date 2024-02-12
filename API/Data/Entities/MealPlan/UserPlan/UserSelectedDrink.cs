@@ -11,4 +11,5 @@ public class UserSelectedDrink
     public string NameEnglish { get; set; }
     public CapacityLevel Volume { get; set; }
     public string PictureUrl { get; set; }
+    public decimal Price { get; set; }
 }

@@ -25,6 +25,7 @@ public static class ApplicationServiceExtensions
         services.AddAutoMapper(typeof(UserPlanProfile),typeof(OrderProfile),typeof(DrinkProfile),typeof(DriverProfile),typeof(AdminPlanProfile),typeof(ExtraOptionsProfile),typeof(AddressProfile),typeof(BranchProfile),typeof(CategoryProfile), typeof(SomeProfile), typeof(UserProfile), typeof(MealProfile),
             typeof(IngredientProfile));
         services.AddSingleton<PresenceTracker>();
+        services.AddScoped<ISubscriptionService, SubscriptionService>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IMediaService, MediaService>();
         services.AddScoped<ITokenService, TokenService>();

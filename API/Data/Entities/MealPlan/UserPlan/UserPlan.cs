@@ -17,7 +17,7 @@ public class UserPlan
     public int NumberOfMealPerDay { get; set; }
     public int NumberOfSnacks { get; set; }
     public int NumberOfRemainingSnacks { get; set; }
-    public ICollection<UserPlanDay> Days { get; set; }
+    public List<UserPlanDay> Days { get; set; } = new List<UserPlanDay>();
 
     public DateTime EndDate()
     {

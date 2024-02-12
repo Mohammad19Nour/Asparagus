@@ -38,7 +38,7 @@ public class PlanController : BaseApiController
         var result = new PlanDetailsDto();
 
         result.Points = plan.Points;
-        result.PlanType =Enum.GetName(typeof(PlanTypeEnum), planType);
+        result.PlanType = Enum.GetName(typeof(PlanTypeEnum), planType);
 
         var specDays = new AdminPlanSpecification(planType);
 
@@ -146,9 +146,14 @@ public class PlanController : BaseApiController
         }
 
         await _addDrinks(ids.DrinkIds, planTypeEnum);
-        if (await _unitOfWork.SaveChanges())
-            return Ok(new ApiResponse(200));
-        return Ok(new ApiResponse(400, "Failed to add drink"));
+        if (_unitOfWork.HasChanges())
+        {
+            if (await _unitOfWork.SaveChanges())
+                return Ok(new ApiResponse(200));
+            return Ok(new ApiResponse(400, "Failed to add drink"));
+        }
+
+        return Ok(new ApiResponse(200, "already exist"));
     }
 
     [HttpGet("drinks")]
@@ -184,9 +189,14 @@ public class PlanController : BaseApiController
         }
 
         await _addExtraOption(ids.ExtraIds, planTypeEnum);
-        if (await _unitOfWork.SaveChanges())
-            return Ok(new ApiResponse(200));
-        return Ok(new ApiResponse(400, "Failed to add extras"));
+        if (_unitOfWork.HasChanges())
+        {
+            if (await _unitOfWork.SaveChanges())
+                return Ok(new ApiResponse(200));
+            return Ok(new ApiResponse(400, "Failed to add extras"));
+        }
+
+        return Ok(new ApiResponse(200, "already exist"));
     }
 
     [HttpGet("extra")]

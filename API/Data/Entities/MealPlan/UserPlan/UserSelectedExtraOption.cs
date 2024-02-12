@@ -13,4 +13,5 @@ public class UserSelectedExtraOption
     public decimal Weight { get; set; }
     public string PictureUrl { get; set; }
     public ExtraOptionType OptionType { get; set; }
+    public decimal Price { get; set; }
 }
