@@ -1,7 +1,8 @@
 ﻿using AsparagusN.Entities.Identity;
+using AsparagusN.Entities.MealPlan;
 using AsparagusN.Enums;
 
-namespace AsparagusN.Entities.MealPlan;
+namespace AsparagusN.Data.Entities.MealPlan.UserPlan;
 
 public class UserPlan
 {
@@ -21,5 +22,9 @@ public class UserPlan
     public DateTime EndDate()
     {
         return StartDate.AddDays(Duration);
+    }
+    public UserPlan()
+    {
+        NumberOfRemainingSnacks = NumberOfSnacks;
     }
 }
