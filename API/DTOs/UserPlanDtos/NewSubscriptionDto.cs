@@ -7,7 +7,7 @@ public class NewSubscriptionDto
 {
     public PlanTypeEnum PlanType { get; set; }
     public DateTime StartDate { get; set; }
-   [Range(1,int.MaxValue)]
+   [Range(1,35)]
     public int Duration { get; set; }
     [Range(1,int.MaxValue)]
     public int NumberOfMealPerDay { get; set; }

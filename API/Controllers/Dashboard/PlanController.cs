@@ -135,14 +135,14 @@ public class PlanController : BaseApiController
     }
 
     [HttpPost("addDrink")]
-    public async Task<ActionResult> AddExtra(DrinkIdsDto ids, PlanTypeEnum planTypeEnum)
+    public async Task<ActionResult> AddDrink(DrinkIdsDto ids, PlanTypeEnum planTypeEnum)
     {
         if (planTypeEnum == PlanTypeEnum.CustomMealPlan) return Ok(new ApiResponse(404, "Plan type not found"));
 
-        var ok = await _check(ids.DrinkIds, true);
+        var (ok, message) = await _check(ids.DrinkIds, true);
         if (!ok)
         {
-            return Ok(new ApiResponse(404, "Drink option not found"));
+            return Ok(new ApiResponse(404, message));
         }
 
         await _addDrinks(ids.DrinkIds, planTypeEnum);
@@ -153,7 +153,7 @@ public class PlanController : BaseApiController
             return Ok(new ApiResponse(400, "Failed to add drink"));
         }
 
-        return Ok(new ApiResponse(200, "already exist"));
+        return Ok(new ApiResponse(400, "already exist"));
     }
 
     [HttpGet("drinks")]
@@ -178,14 +178,14 @@ public class PlanController : BaseApiController
     }
 
     [HttpPost("addExtra")]
-    public async Task<ActionResult> AddDrink(ExtraIdsDto ids, PlanTypeEnum planTypeEnum)
+    public async Task<ActionResult> AddExtra(ExtraIdsDto ids, PlanTypeEnum planTypeEnum)
     {
         if (planTypeEnum == PlanTypeEnum.CustomMealPlan) return Ok(new ApiResponse(404, "Plan type not found"));
 
-        var ok = await _check(ids.ExtraIds, false);
+        var (ok, message) = await _check(ids.ExtraIds, false);
         if (!ok)
         {
-            return Ok(new ApiResponse(404, "Extra not found"));
+            return Ok(new ApiResponse(404, message));
         }
 
         await _addExtraOption(ids.ExtraIds, planTypeEnum);
@@ -196,7 +196,7 @@ public class PlanController : BaseApiController
             return Ok(new ApiResponse(400, "Failed to add extras"));
         }
 
-        return Ok(new ApiResponse(200, "already exist"));
+        return Ok(new ApiResponse(400, "already exist"));
     }
 
     [HttpGet("extra")]
@@ -219,6 +219,64 @@ public class PlanController : BaseApiController
         if (await _unitOfWork.SaveChanges())
             return Ok(new ApiResponse(200));
         return Ok(new ApiResponse(400, "Failed to delete extra"));
+    }
+
+    [HttpPost("addSnack")]
+    public async Task<ActionResult> AddSnack(SnackIdsDto ids, PlanTypeEnum planTypeEnum)
+    {
+        if (planTypeEnum == PlanTypeEnum.CustomMealPlan)
+            return Ok(new ApiResponse(400, "Can't add to this plan type"));
+
+        var selectedSnackIds =
+            (await _unitOfWork.Repository<AdminSelectedSnack>().ListAllAsync()).Select(x => x.SnackId);
+        ids.SnackIds = ids.SnackIds.Where(x => !selectedSnackIds.Contains(x)).ToList();
+
+        var spec = new SnackMealsSpecification();
+        var snacks = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
+        var snackIds = snacks.Select(x => x.Id).ToList();
+        var notExistSnackIds = ids.SnackIds.Where(x => !snackIds.Contains(x)).ToList();
+
+        if (notExistSnackIds.Count > 0)
+            return Ok(new ApiResponse(404, $"snacks with ids: {notExistSnackIds.ToList()} not exist"));
+
+        if (ids.SnackIds.Count == 0) return Ok(new ApiResponse(400, "0 snacks added. maybe it already exist"));
+
+        var res = new List<AdminSelectedSnack>();
+        foreach (var toAdd in ids.SnackIds)
+        {
+            var snk = snacks.First(x => x.Id == toAdd);
+            var a = new AdminSelectedSnack { SnackId = toAdd, PlanTypeEnum = planTypeEnum, Snack = snk };
+            _unitOfWork.Repository<AdminSelectedSnack>().Add(a);
+
+            res.Add(a);
+        }
+
+        await _unitOfWork.SaveChanges();
+
+        return Ok(new ApiOkResponse<List<SnackDto>>(_mapper.Map<List<SnackDto>>(res)));
+    }
+
+    [HttpGet("snacks")]
+    public async Task<ActionResult<List<SnackDto>>> GetSnacks(PlanTypeEnum planTypeEnum)
+    {
+        var snacks = (await _unitOfWork.Repository<AdminSelectedSnack>().GetQueryable()
+            .Where(x => x.PlanTypeEnum == planTypeEnum).Include(x => x.Snack)
+            .ToListAsync());
+
+        return Ok(new ApiOkResponse<List<SnackDto>>(_mapper.Map<List<SnackDto>>(snacks)));
+    }
+
+    [HttpDelete("deleteSnack/{id:int}")]
+    public async Task<ActionResult> DeleteSnack(int id)
+    {
+        var snack = await _unitOfWork.Repository<AdminSelectedSnack>().GetByIdAsync(id);
+        if (snack == null) return Ok(new ApiResponse(404, "Snack not found"));
+
+        _unitOfWork.Repository<AdminSelectedSnack>().Delete(snack);
+
+        if (await _unitOfWork.SaveChanges()) return Ok(new ApiResponse(200, "deleted"));
+
+        return Ok(new ApiResponse(400, "Failed to delete snack"));
     }
 
 
@@ -277,23 +335,23 @@ public class PlanController : BaseApiController
         return true;
     }
 
-    private async Task<bool> _check(List<int> ids, bool isDrink)
+    private async Task<(bool ok, string message)> _check(List<int> ids, bool isDrink)
     {
         foreach (var id in ids)
         {
             if (isDrink)
             {
                 var drink = await _unitOfWork.Repository<Drink>().GetByIdAsync(id);
-                if (drink == null) return false;
+                if (drink == null) return (false, $"drink with id = {id} not exist");
             }
             else
             {
                 var extra = await _unitOfWork.Repository<ExtraOption>().GetByIdAsync(id);
-                if (extra == null) return false;
+                if (extra == null) return (false, $"extra with id = {id} not exist");
             }
         }
 
-        return true;
+        return (true, "ok");
     }
 
     private async Task<List<ExtraOptionDto>> _getExtraOptions(PlanTypeEnum planTypeEnum)

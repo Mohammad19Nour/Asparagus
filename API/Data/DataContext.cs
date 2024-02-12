@@ -27,6 +27,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     {
     }
 
+    public DbSet<AdminSelectedSnack> AdminSelectedSnacks { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Meal> Meals { get; set; }

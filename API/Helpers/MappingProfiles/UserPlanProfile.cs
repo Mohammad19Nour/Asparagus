@@ -10,7 +10,8 @@ public class UserPlanProfile : Profile
 {
     public UserPlanProfile()
     {
-        CreateMap<Drink, UserSelectedDrink>();
+        CreateMap<Drink, UserSelectedDrink>()
+            .ForMember(x => x.Id, opt => opt.Ignore());
         CreateMap<ExtraOption, UserSelectedExtraOption>()
             .ForMember(dest => dest.Weight, opt => opt.MapFrom(src => src.Weight));
         CreateMap<NewSubscriptionDto, UserPlan>();

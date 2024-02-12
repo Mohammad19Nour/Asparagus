@@ -159,7 +159,7 @@ public class SubscriptionService : ISubscriptionService
             var extrasToAdd = new List<UserSelectedExtraOption>();
             foreach (var extra in userSelectedExtras)
             {
-                var dr = adminExtras.First(x => x.ExtraOptionId == extra.Id);
+                var dr = adminExtras.First(x => x.Id == extra.Id);
 
                 var toAdd = _mapper.Map<UserSelectedExtraOption>(dr.ExtraOption);
                 toAdd.Weight = extra.Quantity;

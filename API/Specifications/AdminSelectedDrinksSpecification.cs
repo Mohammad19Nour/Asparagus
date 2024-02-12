@@ -17,4 +17,9 @@ public class AdminSelectedDrinksSpecification : BaseSpecification<AdminSelectedD
         AddInclude(x=>x.Include(y=>y.Drink));
 
     }
+    public AdminSelectedDrinksSpecification(int id,PlanTypeEnum planTypeEnum) : base(x=>x.PlanTypeEnum == planTypeEnum && x.Id == id)
+    {
+        AddInclude(x=>x.Include(y=>y.Drink));
+
+    }
 }
