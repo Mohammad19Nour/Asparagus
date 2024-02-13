@@ -87,6 +87,8 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
         builder.ApplyConfiguration(new AddressConfiguration());
         builder.ApplyConfiguration(new AdminPlanConfiguration());
         builder.ApplyConfiguration(new ExtraOptionsConfiguration());
+        builder.ApplyConfiguration(new UserPlanConfiguration());
+        builder.ApplyConfiguration(new UserPlanDayConfiguration());
 
         var sqlite = Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite";
 

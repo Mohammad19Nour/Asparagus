@@ -54,6 +54,10 @@ public static class ApplicationServiceExtensions
                     .SelectMany(x => x.Value.Errors)
                     .Select(x => x.ErrorMessage).ToArray();
 
+                foreach (var e in errors)
+                {
+                    Console.WriteLine(e);
+                }
                 var errorResponse = new ApiValidationErrorResponse
                 {
                     Errors = errors

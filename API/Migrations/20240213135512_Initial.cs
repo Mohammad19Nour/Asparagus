@@ -89,6 +89,18 @@ namespace AsparagusN.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CustomerBaskets",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CustomerBaskets", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Drinks",
                 columns: table => new
                 {
@@ -250,29 +262,6 @@ namespace AsparagusN.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    BuyerEmail = table.Column<string>(type: "TEXT", nullable: false),
-                    OrderDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
-                    ShipToAddressId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Subtotal = table.Column<double>(type: "REAL", nullable: false),
-                    Status = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Orders_Address_ShipToAddressId",
-                        column: x => x.ShipToAddressId,
-                        principalTable: "Address",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -325,6 +314,30 @@ namespace AsparagusN.Migrations
                         name: "FK_Meals_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BasketItems",
+                columns: table => new
+                {
+                    CustomerBasketId = table.Column<int>(type: "INTEGER", nullable: false),
+                    MealId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Price = table.Column<double>(type: "REAL", nullable: false),
+                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
+                    AddedCarb = table.Column<int>(type: "INTEGER", nullable: false),
+                    AddedProtein = table.Column<int>(type: "INTEGER", nullable: false),
+                    PricePerProtein = table.Column<double>(type: "REAL", nullable: false),
+                    PricePerCarb = table.Column<double>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BasketItems", x => new { x.CustomerBasketId, x.MealId });
+                    table.ForeignKey(
+                        name: "FK_BasketItems_CustomerBaskets_CustomerBasketId",
+                        column: x => x.CustomerBasketId,
+                        principalTable: "CustomerBaskets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -512,7 +525,7 @@ namespace AsparagusN.Migrations
                     CreatedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Duration = table.Column<int>(type: "INTEGER", nullable: false),
-                    PlanTypeEnum = table.Column<int>(type: "INTEGER", nullable: false),
+                    PlanType = table.Column<int>(type: "INTEGER", nullable: false),
                     NumberOfMealPerDay = table.Column<int>(type: "INTEGER", nullable: false),
                     NumberOfSnacks = table.Column<int>(type: "INTEGER", nullable: false),
                     NumberOfRemainingSnacks = table.Column<int>(type: "INTEGER", nullable: false)
@@ -524,26 +537,6 @@ namespace AsparagusN.Migrations
                         name: "FK_UserPlans_AspNetUsers_AppUserId",
                         column: x => x.AppUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OrderItems",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false),
-                    Price = table.Column<double>(type: "decimal(18,2)", nullable: false),
-                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    OrderId = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OrderItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OrderItems_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -567,6 +560,26 @@ namespace AsparagusN.Migrations
                     table.ForeignKey(
                         name: "FK_AdminSelectedMeals_Meals_MealId",
                         column: x => x.MealId,
+                        principalTable: "Meals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AdminSelectedSnacks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    SnackId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PlanTypeEnum = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdminSelectedSnacks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AdminSelectedSnacks_Meals_SnackId",
+                        column: x => x.SnackId,
                         principalTable: "Meals",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -622,6 +635,36 @@ namespace AsparagusN.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BuyerEmail = table.Column<string>(type: "TEXT", nullable: false),
+                    OrderDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                    ShipToAddressId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Subtotal = table.Column<double>(type: "REAL", nullable: false),
+                    Status = table.Column<string>(type: "TEXT", nullable: false),
+                    BranchId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Orders_Address_ShipToAddressId",
+                        column: x => x.ShipToAddressId,
+                        principalTable: "Address",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Orders_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserPlanDays",
                 columns: table => new
                 {
@@ -629,7 +672,7 @@ namespace AsparagusN.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     UserPlanId = table.Column<int>(type: "INTEGER", nullable: false),
                     Day = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Status = table.Column<int>(type: "INTEGER", nullable: false)
+                    DayOrderStatus = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -638,6 +681,34 @@ namespace AsparagusN.Migrations
                         name: "FK_UserPlanDays_UserPlans_UserPlanId",
                         column: x => x.UserPlanId,
                         principalTable: "UserPlans",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderedMeal_MealId = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderedMeal_NameEN = table.Column<string>(type: "TEXT", nullable: false),
+                    OrderedMeal_NameAR = table.Column<string>(type: "TEXT", nullable: false),
+                    OrderedMeal_DescriptionEN = table.Column<string>(type: "TEXT", nullable: false),
+                    OrderedMeal_DescriptionAR = table.Column<string>(type: "TEXT", nullable: false),
+                    OrderedMeal_PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    OrderedMeal_AddedCarb = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderedMeal_AddedProtein = table.Column<int>(type: "INTEGER", nullable: false),
+                    Price = table.Column<double>(type: "decimal(18,2)", nullable: false),
+                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderItems_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -652,7 +723,8 @@ namespace AsparagusN.Migrations
                     NameArabic = table.Column<string>(type: "TEXT", nullable: false),
                     NameEnglish = table.Column<string>(type: "TEXT", nullable: false),
                     Volume = table.Column<int>(type: "INTEGER", nullable: false),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false)
+                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    Price = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -676,7 +748,8 @@ namespace AsparagusN.Migrations
                     NameEnglish = table.Column<string>(type: "TEXT", nullable: false),
                     Weight = table.Column<double>(type: "REAL", nullable: false),
                     PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    OptionType = table.Column<int>(type: "INTEGER", nullable: false)
+                    OptionType = table.Column<int>(type: "INTEGER", nullable: false),
+                    Price = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -701,6 +774,13 @@ namespace AsparagusN.Migrations
                     DescriptionEN = table.Column<string>(type: "TEXT", nullable: false),
                     DescriptionAR = table.Column<string>(type: "TEXT", nullable: false),
                     PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    PricePerProtein = table.Column<double>(type: "REAL", nullable: false),
+                    PricePerCarb = table.Column<double>(type: "REAL", nullable: false),
+                    Calories = table.Column<double>(type: "REAL", nullable: false),
+                    Fibers = table.Column<double>(type: "REAL", nullable: false),
+                    Fats = table.Column<double>(type: "REAL", nullable: false),
+                    Carbs = table.Column<double>(type: "REAL", nullable: false),
+                    Protein = table.Column<double>(type: "REAL", nullable: false),
                     AddedCarb = table.Column<int>(type: "INTEGER", nullable: false),
                     AddedProtein = table.Column<int>(type: "INTEGER", nullable: false)
                 },
@@ -729,6 +809,11 @@ namespace AsparagusN.Migrations
                 name: "IX_AdminSelectedMeals_MealId",
                 table: "AdminSelectedMeals",
                 column: "MealId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdminSelectedSnacks_SnackId",
+                table: "AdminSelectedSnacks",
+                column: "SnackId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -809,6 +894,11 @@ namespace AsparagusN.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Orders_BranchId",
+                table: "Orders",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_ShipToAddressId",
                 table: "Orders",
                 column: "ShipToAddressId");
@@ -852,6 +942,9 @@ namespace AsparagusN.Migrations
                 name: "AdminSelectedMeals");
 
             migrationBuilder.DropTable(
+                name: "AdminSelectedSnacks");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -867,7 +960,7 @@ namespace AsparagusN.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Branches");
+                name: "BasketItems");
 
             migrationBuilder.DropTable(
                 name: "Drivers");
@@ -909,7 +1002,7 @@ namespace AsparagusN.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Location");
+                name: "CustomerBaskets");
 
             migrationBuilder.DropTable(
                 name: "Zones");
@@ -933,7 +1026,13 @@ namespace AsparagusN.Migrations
                 name: "Categories");
 
             migrationBuilder.DropTable(
+                name: "Branches");
+
+            migrationBuilder.DropTable(
                 name: "UserPlans");
+
+            migrationBuilder.DropTable(
+                name: "Location");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

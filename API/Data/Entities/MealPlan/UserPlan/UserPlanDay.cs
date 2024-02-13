@@ -18,5 +18,5 @@ public class UserPlanDay
     public ICollection<UserSelectedExtraOption> SelectedExtraOptions { get; set; } =
         new List<UserSelectedExtraOption>();
     public ICollection<UserSelectedMeal> SelectedMeals { get; set; } = new List<UserSelectedMeal>();
-    public PlanOrderStatus Status { get; set; }
+    public PlanOrderStatus DayOrderStatus { get; set; }
 }

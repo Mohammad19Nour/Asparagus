@@ -10,6 +10,12 @@ public class UserPlanProfile : Profile
 {
     public UserPlanProfile()
     {
+        CreateMap<UserSelectedMeal, UserSelectedMealDto>();
+        CreateMap<UserSelectedExtraOption, UserSelectedExtraOptionDto>();
+        CreateMap<UserSelectedDrink, UserSelectedDrinkDto>();
+        CreateMap<UserPlanDay, UserPlanDayDto>();
+        CreateMap<UserPlan, UserPlanDto>();
+        CreateMap<Meal, UserSelectedMeal>();
         CreateMap<Drink, UserSelectedDrink>()
             .ForMember(x => x.Id, opt => opt.Ignore());
         CreateMap<ExtraOption, UserSelectedExtraOption>()

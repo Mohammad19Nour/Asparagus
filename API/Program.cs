@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddNewtonsoftJson(opt =>
 {
-    opt.SerializerSettings.Converters.Add(new RoundedNumberConverter(3));
+    opt.SerializerSettings.Converters.Add(new RoundedNumberConverter(2));
     //   opt.JsonSerializerOptions.Converters.Add();
 });
 builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>

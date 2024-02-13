@@ -12,6 +12,8 @@ public class Order
     public Address ShipToAddress { get; set; }
     public decimal Subtotal { get; set; }
     public OrderStatus Status { get; set; } = OrderStatus.Pending;
+    public Branch Branch { get; set; }
+    public int BranchId { get; set; }
 
     public decimal GetTotal()
     {

@@ -301,7 +301,56 @@ public static class Seed
             {
                 new MealAllergy { AllergyId = 5 } // Fish
             }
-        }
+        },new Meal
+        {
+            NameEN = "Chicken Caesar Salad",
+            NameAR = "سلطة الدجاج القيصرية",
+            DescriptionEN = "Classic Caesar salad with grilled chicken breast, romaine lettuce, croutons, and Caesar dressing.",
+            DescriptionAR = "سلطة السيزار الكلاسيكية مع صدر دجاج مشوي وخس رومين وكروتون وصلصة السيزار.",
+            Price = 12.99m,
+            Points = 5,
+            PictureUrl = "chicken_caesar_salad.jpg",
+            IsMealPlan = true,
+            IsMainMenu = false,
+            CategoryId = 2,
+            Ingredients = new List<MealIngredient>
+            {
+                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
+                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 3), Weight = 100 },
+                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 4), Weight = 80 },
+                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 5), Weight = 20 }
+
+            },
+            Allergies = new List<MealAllergy>
+            {
+                new MealAllergy { AllergyId = 1 } // Gluten
+            }
+        },
+        new Meal
+        {
+            NameEN = "Vegetable Stir-Fry",
+            NameAR = "ستر-فراي الخضار",
+            DescriptionEN = "Assorted vegetables stir-fried in a savory sauce, served with rice or noodles.",
+            DescriptionAR = "خضروات متنوعة مقلية بصلصة لذيذة، مقدمة مع أرز أو معكرونة.",
+            Price = 10.49m,
+            Points = 4,
+            PictureUrl = "vegetable_stir_fry.jpg",
+            IsMealPlan = false,
+            IsMainMenu = true,
+            CategoryId = 2,
+            Ingredients = new List<MealIngredient>
+            {
+                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
+                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 3), Weight = 100 },
+                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 4), Weight = 80 },
+                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 5), Weight = 20 }
+
+            },
+            Allergies = new List<MealAllergy>
+            {
+                new MealAllergy { AllergyId = 6 } // Soy
+            }
+        },
     };
 
     await context.Meals.AddRangeAsync(meals);

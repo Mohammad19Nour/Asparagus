@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240211091736_asasa")]
-    partial class asasa
+    [Migration("20240213135512_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,6 +37,12 @@ namespace AsparagusN.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("REAL");
 
+                    b.Property<double>("PricePerCarb")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("PricePerProtein")
+                        .HasColumnType("REAL");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
 
@@ -50,9 +56,6 @@ namespace AsparagusN.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
-
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
@@ -115,6 +118,25 @@ namespace AsparagusN.Migrations
                     b.ToTable("AdminSelectedExtraOptions");
                 });
 
+            modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.AdminPlans.AdminSelectedSnack", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PlanTypeEnum")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SnackId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SnackId");
+
+                    b.ToTable("AdminSelectedSnacks");
+                });
+
             modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.AdminPlans.PlanType", b =>
                 {
                     b.Property<string>("PlanTypeE")
@@ -168,6 +190,28 @@ namespace AsparagusN.Migrations
                     b.ToTable("UserPlans");
                 });
 
+            modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlanDay", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Day")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DayOrderStatus")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserPlanId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserPlanId");
+
+                    b.ToTable("UserPlanDays");
+                });
+
             modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.UserPlan.UserSelectedMeal", b =>
                 {
                     b.Property<int>("Id")
@@ -180,6 +224,12 @@ namespace AsparagusN.Migrations
                     b.Property<int>("AddedProtein")
                         .HasColumnType("INTEGER");
 
+                    b.Property<double>("Calories")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Carbs")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("DescriptionAR")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -187,6 +237,12 @@ namespace AsparagusN.Migrations
                     b.Property<string>("DescriptionEN")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("Fats")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Fibers")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -199,6 +255,15 @@ namespace AsparagusN.Migrations
                     b.Property<string>("PictureUrl")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("PricePerCarb")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("PricePerProtein")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Protein")
+                        .HasColumnType("REAL");
 
                     b.Property<int>("UserPlanDayId")
                         .HasColumnType("INTEGER");
@@ -782,28 +847,6 @@ namespace AsparagusN.Migrations
                     b.ToTable("AdminSelectedMeals");
                 });
 
-            modelBuilder.Entity("AsparagusN.Entities.MealPlan.UserPlanDay", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("Day")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("UserPlanId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserPlanId");
-
-                    b.ToTable("UserPlanDays");
-                });
-
             modelBuilder.Entity("AsparagusN.Entities.MealPlan.UserSelectedDrink", b =>
                 {
                     b.Property<int>("Id")
@@ -821,6 +864,9 @@ namespace AsparagusN.Migrations
                     b.Property<string>("PictureUrl")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
 
                     b.Property<int>("UserPlanDayId")
                         .HasColumnType("INTEGER");
@@ -855,6 +901,9 @@ namespace AsparagusN.Migrations
                     b.Property<string>("PictureUrl")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
 
                     b.Property<int>("UserPlanDayId")
                         .HasColumnType("INTEGER");
@@ -893,6 +942,9 @@ namespace AsparagusN.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("BranchId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("BuyerEmail")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -911,6 +963,8 @@ namespace AsparagusN.Migrations
                         .HasColumnType("REAL");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("ShipToAddressId");
 
@@ -1053,6 +1107,17 @@ namespace AsparagusN.Migrations
                     b.Navigation("ExtraOption");
                 });
 
+            modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.AdminPlans.AdminSelectedSnack", b =>
+                {
+                    b.HasOne("AsparagusN.Entities.Meal", "Snack")
+                        .WithMany()
+                        .HasForeignKey("SnackId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Snack");
+                });
+
             modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlan", b =>
                 {
                     b.HasOne("AsparagusN.Entities.Identity.AppUser", "User")
@@ -1064,9 +1129,20 @@ namespace AsparagusN.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlanDay", b =>
+                {
+                    b.HasOne("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlan", "UserPlan")
+                        .WithMany("Days")
+                        .HasForeignKey("UserPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserPlan");
+                });
+
             modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.UserPlan.UserSelectedMeal", b =>
                 {
-                    b.HasOne("AsparagusN.Entities.MealPlan.UserPlanDay", "UserPlanDay")
+                    b.HasOne("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlanDay", "UserPlanDay")
                         .WithMany("SelectedMeals")
                         .HasForeignKey("UserPlanDayId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1252,20 +1328,9 @@ namespace AsparagusN.Migrations
                     b.Navigation("Meal");
                 });
 
-            modelBuilder.Entity("AsparagusN.Entities.MealPlan.UserPlanDay", b =>
-                {
-                    b.HasOne("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlan", "UserPlan")
-                        .WithMany("Days")
-                        .HasForeignKey("UserPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserPlan");
-                });
-
             modelBuilder.Entity("AsparagusN.Entities.MealPlan.UserSelectedDrink", b =>
                 {
-                    b.HasOne("AsparagusN.Entities.MealPlan.UserPlanDay", "UserPlanDay")
+                    b.HasOne("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlanDay", "UserPlanDay")
                         .WithMany("SelectedDrinks")
                         .HasForeignKey("UserPlanDayId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1276,7 +1341,7 @@ namespace AsparagusN.Migrations
 
             modelBuilder.Entity("AsparagusN.Entities.MealPlan.UserSelectedExtraOption", b =>
                 {
-                    b.HasOne("AsparagusN.Entities.MealPlan.UserPlanDay", "UserPlanDay")
+                    b.HasOne("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlanDay", "UserPlanDay")
                         .WithMany("SelectedExtraOptions")
                         .HasForeignKey("UserPlanDayId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1287,11 +1352,19 @@ namespace AsparagusN.Migrations
 
             modelBuilder.Entity("AsparagusN.Entities.OrderAggregate.Order", b =>
                 {
+                    b.HasOne("AsparagusN.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("AsparagusN.Entities.Address", "ShipToAddress")
                         .WithMany()
                         .HasForeignKey("ShipToAddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Branch");
 
                     b.Navigation("ShipToAddress");
                 });
@@ -1347,6 +1420,15 @@ namespace AsparagusN.Migrations
                     b.Navigation("Days");
                 });
 
+            modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlanDay", b =>
+                {
+                    b.Navigation("SelectedDrinks");
+
+                    b.Navigation("SelectedExtraOptions");
+
+                    b.Navigation("SelectedMeals");
+                });
+
             modelBuilder.Entity("AsparagusN.Entities.Category", b =>
                 {
                     b.Navigation("Meals");
@@ -1367,15 +1449,6 @@ namespace AsparagusN.Migrations
                     b.Navigation("Allergies");
 
                     b.Navigation("Ingredients");
-                });
-
-            modelBuilder.Entity("AsparagusN.Entities.MealPlan.UserPlanDay", b =>
-                {
-                    b.Navigation("SelectedDrinks");
-
-                    b.Navigation("SelectedExtraOptions");
-
-                    b.Navigation("SelectedMeals");
                 });
 
             modelBuilder.Entity("AsparagusN.Entities.OrderAggregate.Order", b =>

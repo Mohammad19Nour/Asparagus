@@ -196,7 +196,7 @@ namespace AsparagusN.Migrations
                     b.Property<DateTime>("Day")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("DayOrderStatus")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("UserPlanId")
@@ -221,6 +221,12 @@ namespace AsparagusN.Migrations
                     b.Property<int>("AddedProtein")
                         .HasColumnType("INTEGER");
 
+                    b.Property<double>("Calories")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Carbs")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("DescriptionAR")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -228,6 +234,12 @@ namespace AsparagusN.Migrations
                     b.Property<string>("DescriptionEN")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("Fats")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Fibers")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -240,6 +252,15 @@ namespace AsparagusN.Migrations
                     b.Property<string>("PictureUrl")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("PricePerCarb")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("PricePerProtein")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Protein")
+                        .HasColumnType("REAL");
 
                     b.Property<int>("UserPlanDayId")
                         .HasColumnType("INTEGER");
@@ -918,6 +939,9 @@ namespace AsparagusN.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("BranchId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("BuyerEmail")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -936,6 +960,8 @@ namespace AsparagusN.Migrations
                         .HasColumnType("REAL");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("ShipToAddressId");
 
@@ -1323,11 +1349,19 @@ namespace AsparagusN.Migrations
 
             modelBuilder.Entity("AsparagusN.Entities.OrderAggregate.Order", b =>
                 {
+                    b.HasOne("AsparagusN.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("AsparagusN.Entities.Address", "ShipToAddress")
                         .WithMany()
                         .HasForeignKey("ShipToAddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Branch");
 
                     b.Navigation("ShipToAddress");
                 });

@@ -20,7 +20,7 @@ public class RoundedNumberConverter : JsonConverter<decimal>
     public override decimal ReadJson(JsonReader reader, Type objectType, decimal existingValue, bool hasExistingValue,
         JsonSerializer serializer)
     {
-        if (reader.TokenType == JsonToken.Float)
+        if (reader.TokenType == JsonToken.Float || reader.TokenType == JsonToken.Integer)
         {
             var originalValue = reader.Value;
             decimal roundedValue = Math.Round(Convert.ToDecimal(originalValue), _decimalPlaces);

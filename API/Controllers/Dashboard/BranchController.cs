@@ -1,10 +1,13 @@
 ﻿using AsparagusN.DTOs.BranchDtos;
 using AsparagusN.Entities;
+using AsparagusN.Entities.Identity;
 using AsparagusN.Errors;
+using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.Dashboard;
 
@@ -12,11 +15,13 @@ public class BranchController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private IDistanceCalculationService _distanceService;
 
-    public BranchController(IUnitOfWork unitOfWork, IMapper mapper)
+    public BranchController(IUnitOfWork unitOfWork, IMapper mapper, IDistanceCalculationService distanceService)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _distanceService = distanceService;
     }
 
     [HttpGet]
@@ -71,7 +76,6 @@ public class BranchController : BaseApiController
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteBranch(int id)
     {
-        
         var branch = await _unitOfWork.Repository<Branch>().GetByIdAsync(id);
 
         if (branch == null) return Ok(new ApiResponse(404, "Branch not found"));
@@ -79,5 +83,26 @@ public class BranchController : BaseApiController
         _unitOfWork.Repository<Branch>().Delete(branch);
         if (await _unitOfWork.SaveChanges()) return Ok(new ApiResponse(200, "deleted"));
         return Ok(new ApiResponse(400, "Failed to delete branch"));
+    }
+
+    [HttpGet("closest")]
+    public async Task<ActionResult<List<BranchDto>>> GetSuggestedBranch(decimal latitude, decimal longitude)
+    {
+        var user = await _getUser();
+        if (user == null) return Ok(new ApiResponse(404, "User not found"));
+
+        var spec = new BranchWithAddressSpecification();
+        var branches = await _unitOfWork.Repository<Branch>().ListWithSpecAsync(spec);
+        branches = branches.OrderBy(branch =>
+            _distanceService.GetDrivingDistanceAsync(branch.Address.Latitude, branch.Address.Longitude, latitude,
+                longitude)).ToList();
+
+        return Ok(new ApiOkResponse<List<BranchDto>>(_mapper.Map<List<BranchDto>>(branches)));
+    }
+
+    private async Task<AppUser?> _getUser()
+    {
+        var email = HttpContext.User.GetEmail();
+        return await _unitOfWork.Repository<AppUser>().GetQueryable().FirstOrDefaultAsync(x => x.Email == email);
     }
 }
