@@ -1,40 +1,38 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace AsparagusN.Helpers;
 
 public class RoundedNumberConverter : JsonConverter<decimal>
 {
-     private readonly int decimalPlaces;
+    private readonly int _decimalPlaces;
 
     public RoundedNumberConverter(int decimalPlaces)
-    { 
-        this.decimalPlaces = decimalPlaces;
+    {
+        _decimalPlaces = decimalPlaces;
         Console.WriteLine(decimalPlaces);
     }
 
-    public override bool CanConvert(Type objectType)
+    public override void WriteJson(JsonWriter writer, decimal value, JsonSerializer serializer)
     {
-        return objectType == typeof(decimal) || objectType == typeof(double) || objectType == typeof(float) ||objectType == typeof(int) ;
+        writer.WriteValue(Math.Round(value, _decimalPlaces));
     }
 
-    public override decimal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override decimal ReadJson(JsonReader reader, Type objectType, decimal existingValue, bool hasExistingValue,
+        JsonSerializer serializer)
     {
-        if (reader.TokenType == JsonTokenType.Number)
+        if (reader.TokenType == JsonToken.Float)
         {
-            var originalValue = reader.GetDecimal();
-            decimal roundedValue = Math.Round(originalValue, decimalPlaces);
+            var originalValue = reader.Value;
+            decimal roundedValue = Math.Round(Convert.ToDecimal(originalValue), _decimalPlaces);
             return roundedValue;
         }
+
         throw new JsonException($"Unable to convert JSON token type '{reader.TokenType}' to double.");
     }
 
-    public override void Write(Utf8JsonWriter writer, decimal value, JsonSerializerOptions options)
+    /*public bool CanConvert(Type objectType)
     {
-
-        writer.WriteNumberValue(Math.Round(value,decimalPlaces));
-    }
-
-   
+        return objectType == typeof(decimal) || objectType == typeof(double) || objectType == typeof(float) ||
+               objectType == typeof(int);
+    }*/
 }

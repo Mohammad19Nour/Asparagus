@@ -12,17 +12,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-    builder.Services.AddControllers().AddJsonOptions(opt =>
-        {
-            opt.JsonSerializerOptions.Converters.Add(new RoundedNumberConverter(3));
-        });
+builder.Services.AddControllers().AddNewtonsoftJson(opt =>
+{
+    opt.SerializerSettings.Converters.Add(new RoundedNumberConverter(3));
+    //   opt.JsonSerializerOptions.Converters.Add();
+});
 builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
 {
     builder
         .AllowAnyOrigin()
         .AllowAnyHeader()
         .AllowAnyMethod()
-       
         .SetIsOriginAllowed((_) => true);
 }));
 builder.Services.AddEndpointsApiExplorer();
@@ -30,7 +30,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityService(builder.Configuration);
 builder.Services.AddSwaggerAuthorization();
-builder.Services.AddSignalR();      
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -48,7 +48,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseStaticFiles();
 
-app.UseAuthorization(); 
+app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");
@@ -58,8 +58,8 @@ try
 {
     var context = services.GetRequiredService<DataContext>();
     var roleContext = services.GetRequiredService<RoleManager<AppRole>>();
-   await context.Database.MigrateAsync();
-    await Seed.SeedData(context,roleContext);
+    await context.Database.MigrateAsync();
+    await Seed.SeedData(context, roleContext);
 }
 catch (Exception e)
 {

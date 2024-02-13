@@ -1,4 +1,5 @@
-﻿using AsparagusN.Data;
+﻿using System.Text.Json.Serialization;
+using AsparagusN.Data;
 using AsparagusN.Errors;
 using AsparagusN.Helpers;
 using AsparagusN.Helpers.MappingProfiles;
@@ -17,6 +18,7 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
+       // services.AddSingleton<JsonConverter<decimal>, RoundedNumberConverter>();
         services.AddHostedService<BackgroundTask>();
         services.Configure<KestrelServerOptions>(options => { options.Limits.MaxRequestBodySize = null; });
         services.AddAutoMapper(typeof(BasketProfile),typeof(SnackProfile), typeof(UserPlanProfile), typeof(OrderProfile),
