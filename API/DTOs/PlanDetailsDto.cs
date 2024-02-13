@@ -14,4 +14,5 @@ public class PlanDetailsDto
     public List<AdminPlanDayDto> Days { get; set; }
     public List<DrinkDto> Drinks { get; set; }
     public List<ExtraOptionDto> ExtraOptionDtos { get; set; }
+    public List<SnackDto> Snacks { get; set; }
 }

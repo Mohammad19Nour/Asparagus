@@ -1,4 +1,5 @@
 ﻿using AsparagusN.Data.Entities.MealPlan.Admin;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs.UserDtos;
 using AsparagusN.Entities;
 using AsparagusN.Entities.Identity;

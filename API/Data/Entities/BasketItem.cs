@@ -18,4 +18,6 @@ public class BasketItem
 
     public int AddedCarb { get; set; }
     public int AddedProtein { get; set; }
+    public decimal PricePerProtein { get; set; }
+    public decimal PricePerCarb{ get; set; }
 }

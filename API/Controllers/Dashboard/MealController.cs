@@ -1,4 +1,5 @@
-﻿using AsparagusN.DTOs.MealDtos;
+﻿using AsparagusN.DTOs;
+using AsparagusN.DTOs.MealDtos;
 using AsparagusN.Entities;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
@@ -39,6 +40,18 @@ public class MealController : BaseApiController
         var d = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
 
         return Ok(new ApiOkResponse<List<MealWithIngredientsDto>>(_mapper.Map<List<MealWithIngredientsDto>>(d)));
+    }
+
+    [HttpGet("snacks")]
+    public async Task<ActionResult<IReadOnlyList<SnackDto>>> GetSnacks()
+    {
+        var spec = new SnackMealsSpecification();
+        var meals = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
+
+        // Map each Meal entity to a SnackDto object
+        var snackDtos = meals.Select(meal => _mapper.Map<SnackDto>(meal)).ToList();
+
+        return Ok(new ApiOkResponse<IReadOnlyList<SnackDto>>(snackDtos));
     }
 
     [HttpPut("update/{id:int}")]

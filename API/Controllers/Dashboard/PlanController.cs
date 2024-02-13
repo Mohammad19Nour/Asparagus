@@ -45,6 +45,7 @@ public class PlanController : BaseApiController
         var days = await _unitOfWork.Repository<AdminPlanDay>().ListWithSpecAsync(specDays);
         result.Drinks = await _getDrinks(planType);
         result.ExtraOptionDtos = await _getExtraOptions(planType);
+        result.Snacks = await _getSnacks(planType);
         result.Days = _mapper.Map<List<AdminPlanDayDto>>(days);
 
 
@@ -370,5 +371,14 @@ public class PlanController : BaseApiController
 
         var drinksDto = _mapper.Map<List<DrinkDto>>(drinks);
         return drinksDto;
+    }
+    private async Task<List<SnackDto>> _getSnacks(PlanTypeEnum planTypeEnum)
+    {
+        var spec = new AdminSelectedSnacksSpecification(planTypeEnum);
+        var drinks = await _unitOfWork.Repository<AdminSelectedSnack>()
+            .ListWithSpecAsync(spec);
+
+        var snacksDto = _mapper.Map<List<SnackDto>>(drinks);
+        return snacksDto;
     }
 }

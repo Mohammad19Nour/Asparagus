@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.Entities.MealPlan;
 using Microsoft.EntityFrameworkCore;
 

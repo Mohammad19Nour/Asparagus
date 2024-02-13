@@ -48,6 +48,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     public void Add(T entity)
     {
         _context.Set<T>().Add(entity);
+        _context.Entry(entity).State = EntityState.Added;
     }
 
     public void Update(T entity)

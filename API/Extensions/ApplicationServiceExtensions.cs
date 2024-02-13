@@ -18,11 +18,11 @@ public static class ApplicationServiceExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
         services.AddHostedService<BackgroundTask>();
-        services.Configure<KestrelServerOptions>(options =>
-        {
-            options.Limits.MaxRequestBodySize = null;
-        });
-        services.AddAutoMapper(typeof(SnackProfile),typeof(UserPlanProfile),typeof(OrderProfile),typeof(DrinkProfile),typeof(DriverProfile),typeof(AdminPlanProfile),typeof(ExtraOptionsProfile),typeof(AddressProfile),typeof(BranchProfile),typeof(CategoryProfile), typeof(SomeProfile), typeof(UserProfile), typeof(MealProfile),
+        services.Configure<KestrelServerOptions>(options => { options.Limits.MaxRequestBodySize = null; });
+        services.AddAutoMapper(typeof(BasketProfile),typeof(SnackProfile), typeof(UserPlanProfile), typeof(OrderProfile),
+            typeof(DrinkProfile), typeof(DriverProfile), typeof(AdminPlanProfile), typeof(ExtraOptionsProfile),
+            typeof(AddressProfile), typeof(BranchProfile), typeof(CategoryProfile), typeof(SomeProfile),
+            typeof(UserProfile), typeof(MealProfile),
             typeof(IngredientProfile));
         services.AddSingleton<PresenceTracker>();
         services.AddScoped<ISubscriptionService, SubscriptionService>();
@@ -32,7 +32,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IOrderService, OrderService>();
-        services.AddScoped<IBasketRepository, BasketRepository>();
+        //services.AddScoped<IBasketRepository, BasketRepository>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddDbContext<DataContext>(opt => { opt.UseSqlite(config.GetConnectionString("DefaultConnection")); });
         services.AddSingleton<IConnectionMultiplexer>(c =>

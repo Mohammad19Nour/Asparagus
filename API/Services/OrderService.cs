@@ -1,4 +1,5 @@
-﻿using AsparagusN.Data.Entities.OrderAggregate;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.OrderAggregate;
 using AsparagusN.Entities;
 using AsparagusN.Entities.OrderAggregate;
 using AsparagusN.Interfaces;
@@ -12,13 +13,11 @@ public class OrderService : IOrderService
 {
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IBasketRepository _basketRepository;
 
-    public OrderService(IMapper mapper, IUnitOfWork unitOfWork, IBasketRepository basketRepository)
+    public OrderService(IMapper mapper, IUnitOfWork unitOfWork)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
-        _basketRepository = basketRepository;
     }
 
     public async Task<Order?> GetOrderByIdAsync(int orderId, string buyerEmail)
@@ -42,7 +41,8 @@ public class OrderService : IOrderService
 
     public async Task<Order?> CreateOrderAsync(string buyerEmail, int basketId, Address shippingAddress)
     {
-        var basket = await _basketRepository.GetBasketAsync(basketId);
+        var spec = new BasketSpecification(basketId);
+        var basket = await _unitOfWork.Repository<CustomerBasket>().GetEntityWithSpec(spec);
         if (basket == null) return null;
 
         var items = new List<OrderItem>();
@@ -84,7 +84,7 @@ public class OrderService : IOrderService
 
         if (!await _unitOfWork.SaveChanges())
             return null;
-        await _basketRepository.DeleteBasket(basketId);
+      
         return order;
     }
 }
