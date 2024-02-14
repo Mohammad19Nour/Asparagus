@@ -1,8 +1,7 @@
-﻿namespace AsparagusN.Data.Entities.MealPlan.UserPlan;
+﻿namespace AsparagusN.DTOs.CarbDtos;
 
-public class UserMealCarb
+public class UserMealCarbDto
 {
-    public int Id { get; set; }
     public string NameEN { get; set; } 
     public string NameAR { get; set; } 
     public string ExtraInfo { get; set; }

@@ -16,14 +16,16 @@ public partial class PlanController : BaseApiController
         if (ids.Count == 0)
             return Ok(new ApiResponse(400, "Ids must contains at least one element"));
 
-        var carbs = await _unitOfWork.Repository<Meal>().ListAllAsync();
+        var carbs = await _unitOfWork.Repository<Ingredient>().ListAllAsync();
+        carbs = carbs.Where(x => x.TypeOfIngredient == IngredientType.Carb).ToList();
 
         foreach (var id in from id in ids let carb = carbs.FirstOrDefault(x => x.Id == id) where carb == null select id)
         {
             return Ok(new ApiResponse(404, $"carb with id: {id} not found"));
         }
 
-        var existingCarb = await _unitOfWork.Repository<AdminSelectedCarb>().ListAllAsync();
+        var spec = new AdminSelectedCarbSpecification(planType);
+        var existingCarb = await _unitOfWork.Repository<AdminSelectedCarb>().ListWithSpecAsync(spec);
 
         ids = ids.Except(existingCarb.Select(x => x.CarbId).ToList()).ToList();
         var toAdd = carbs.Where(x => ids.Contains(x.Id)).ToList();

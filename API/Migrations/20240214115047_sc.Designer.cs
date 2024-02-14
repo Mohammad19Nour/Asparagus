@@ -3,6 +3,7 @@ using System;
 using AsparagusN.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240214115047_sc")]
+    partial class sc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
@@ -193,18 +196,13 @@ namespace AsparagusN.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Carb")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("ExtraInfo")
+                    b.Property<string>("DescriptionAR")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Fat")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Fiber")
-                        .HasColumnType("REAL");
+                    b.Property<string>("DescriptionEN")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -214,14 +212,9 @@ namespace AsparagusN.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Protein")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Weight")
-                        .HasColumnType("REAL");
+                    b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

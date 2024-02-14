@@ -20,5 +20,5 @@ public class UserSelectedMealDto
     public decimal Protein{ get; set; }
     public int AddedCarb { get; set; }
     public int AddedProtein { get; set; }
-    public CarbDto? ChangedCarb { get; set; }
+    public UserMealCarbDto? ChangedCarb { get; set; }
 }

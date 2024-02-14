@@ -27,6 +27,7 @@ public static class ApplicationServiceExtensions
             typeof(UserProfile), typeof(MealProfile),
             typeof(IngredientProfile));
         services.AddSingleton<PresenceTracker>();
+        services.AddScoped<IDistanceCalculationService, DistanceCalculationService>();
         services.AddScoped<ISubscriptionService, SubscriptionService>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IMediaService, MediaService>();

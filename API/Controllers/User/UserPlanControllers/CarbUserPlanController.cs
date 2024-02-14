@@ -14,14 +14,16 @@ public partial class UserPlanController
     {
         try
         {
-            var meal = await _unitOfWork.Repository<UserSelectedMeal>().GetByIdAsync(mealId);
+            var meal = await _unitOfWork.Repository<UserSelectedMeal>().GetQueryable()
+                .Where(x => x.Id == mealId).Include(x => x.ChangedCarb).FirstOrDefaultAsync();
 
             if (meal == null)
                 return Ok(new ApiResponse(404, "Meal not found"));
             if (meal.ChangedCarbId == 0)
                 return Ok(new ApiResponse(404, "you didn't change the carb of this meal"));
 
-            return Ok(new ApiOkResponse<CarbDto>(_mapper.Map<CarbDto>(meal.ChangedCarb)));
+            Console.WriteLine(meal.ChangedCarb.NameEN);
+            return Ok(new ApiOkResponse<UserMealCarbDto>(_mapper.Map<UserMealCarbDto>(meal.ChangedCarb)));
         }
         catch (Exception e)
         {
@@ -41,14 +43,16 @@ public partial class UserPlanController
             if (meal == null)
                 return Ok(new ApiResponse(404, "Meal not found"));
 
-            var carb = await _unitOfWork.Repository<AdminSelectedCarb>().GetByIdAsync(adminCarbId);
+            var carb = await _unitOfWork.Repository<AdminSelectedCarb>().GetQueryable().Where(x => x.Id == adminCarbId)
+                .Include(x => x.Carb).FirstOrDefaultAsync();
 
             if (carb == null) return Ok(new ApiResponse(404, "Carb not found"));
 
-            meal.ChangedCarbId = carb.Id;
+            meal.ChangedCarb = _mapper.Map<UserMealCarb>(carb.Carb);
+            meal.ChangedCarb.Id = 0;
             _unitOfWork.Repository<UserSelectedMeal>().Update(meal);
             if (await _unitOfWork.SaveChanges())
-                return Ok(new ApiOkResponse<CarbDto>(_mapper.Map<CarbDto>(carb)));
+                return Ok(new ApiOkResponse<UserMealCarbDto>(_mapper.Map<UserMealCarbDto>(carb)));
             return Ok(new ApiResponse(400, "Failed to update carb"));
         }
         catch (Exception e)

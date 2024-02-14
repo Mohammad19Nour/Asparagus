@@ -19,15 +19,14 @@ public class AdminPlanProfile : Profile
         CreateMap<AdminSelectedCarb, CarbDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.NameEN, opt => opt.MapFrom(src => src.Carb.NameEN))
+            .ForMember(dest => dest.ExtraInfo, opt => opt.MapFrom(src => src.Carb.ExtraInfo))
+            .ForMember(dest => dest.Weight, opt => opt.MapFrom(src => src.Carb.Weight))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Carb.Price))
             .ForMember(dest => dest.NameAR, opt => opt.MapFrom(src => src.Carb.NameAR))
-            .ForMember(dest => dest.DescriptionEN, opt => opt.MapFrom(src => src.Carb.DescriptionEN))
-            .ForMember(dest => dest.DescriptionAR, opt => opt.MapFrom(src => src.Carb.DescriptionAR))
-            .ForMember(dest => dest.PictureUrl, opt => opt.MapFrom(src => src.Carb.PictureUrl))
             .ForMember(x => x.Protein, o => o.MapFrom(src => src.Carb.Protein))
-            .ForMember(x => x.Carbs, o => o.MapFrom(src => src.Carb.Carbs))
-            .ForMember(x => x.Calories, o => o.MapFrom(src => src.Carb.Calories()))
-            .ForMember(x => x.Fats, o => o.MapFrom(src => src.Carb.Fats))
-            .ForMember(x => x.Fibers, o => o.MapFrom(src => src.Carb.Fibers));
+            .ForMember(x => x.Carb, o => o.MapFrom(src => src.Carb.Carb))
+            .ForMember(x => x.Fat, o => o.MapFrom(src => src.Carb.Fat))
+            .ForMember(x => x.Fiber, o => o.MapFrom(src => src.Carb.Fiber));
 
         CreateMap<AdminSelectedMeal, MealWithoutIngredientsDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

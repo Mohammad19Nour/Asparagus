@@ -8,5 +8,5 @@ public class AdminSelectedCarb
     public int Id { get; set; }
     public int CarbId { get; set; }
     public PlanTypeEnum PlanTypeEnum { get; set; }
-    public Meal Carb { get; set; }
+    public Ingredient Carb { get; set; }
 }
