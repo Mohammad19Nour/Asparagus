@@ -32,10 +32,12 @@ public class SubscriptionService : ISubscriptionService
         if (await CheckExistingSubscriptionPlanForUserAsync(user.Id, subscriptionDto.PlanType))
             return (null, "You have a subscription with this plan type");
 
+        subscriptionDto.StartDate = subscriptionDto.StartDate.Date;
         var plan = _mapper.Map<UserPlan>(subscriptionDto);
+        
         plan.User = user;
 
-        var days = GetPlanDaysToPlan(subscriptionDto.StartDate, subscriptionDto.Duration);
+        var days = GetPlanDays(subscriptionDto.StartDate, subscriptionDto.Duration);
 
         bool ok = days != null;
         if (ok) plan.Days = days;
@@ -60,6 +62,7 @@ public class SubscriptionService : ISubscriptionService
             else return (null, "One or more extra options not exist");
         }
 
+        user.IsMealPlanMember = true;
         _unitOfWork.Repository<UserPlan>().Add(plan);
 
         if (await _unitOfWork.SaveChanges()) return (plan, "Success");
@@ -81,7 +84,7 @@ public class SubscriptionService : ISubscriptionService
 
         duration = duration - plan.Duration;
 
-        var days = GetPlanDaysToPlan(plan.EndDate(), duration);
+        var days = GetPlanDays(plan.EndDate(), duration);
 
         if (days == null)
         {
@@ -182,7 +185,7 @@ public class SubscriptionService : ISubscriptionService
     }
 
 
-    private List<UserPlanDay>? GetPlanDaysToPlan(DateTime startDate, int duration)
+    private List<UserPlanDay>? GetPlanDays(DateTime startDate, int duration)
     {
         try
         {
@@ -192,6 +195,9 @@ public class SubscriptionService : ISubscriptionService
             {
                 duration--;
                 var day = startDate.AddDays(1);
+                Console.WriteLine(day);
+                Console.WriteLine(day.Date);
+                Console.WriteLine("\n");
 
                 days.Add(new UserPlanDay
                 {

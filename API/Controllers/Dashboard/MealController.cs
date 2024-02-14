@@ -185,4 +185,10 @@ public class MealController : BaseApiController
             return Ok(new ApiResponse(200));
         return Ok(new ApiResponse(400, "Failed to delete meal"));
     }
+
+    [HttpGet("carb")]
+    public async Task<ActionResult> GetCarb()
+    {
+        return Ok();
+    }
 }

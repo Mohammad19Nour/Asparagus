@@ -1,4 +1,5 @@
 ﻿using AsparagusN.Data.Entities.MealPlan.Admin;
+using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.DTOs.AdditionDtos;
 using AsparagusN.DTOs.AdminPlanDtos;
 using AsparagusN.DTOs.DrinksDtos;
@@ -15,7 +16,7 @@ public class AdminPlanProfile : Profile
     public AdminPlanProfile()
     {
         CreateMap<AdminSelectedMeal, MealWithoutIngredientsDto>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Meal.Id))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.NameEN, opt => opt.MapFrom(src => src.Meal.NameEN))
             .ForMember(dest => dest.NameAR, opt => opt.MapFrom(src => src.Meal.NameAR))
             .ForMember(dest => dest.DescriptionEN, opt => opt.MapFrom(src => src.Meal.DescriptionEN))

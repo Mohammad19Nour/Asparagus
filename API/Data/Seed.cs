@@ -25,29 +25,30 @@ public static class Seed
         await SeedExtraOptions(context);
         await SeedPlanTypes(context);
     }
+
     private static async Task SeedPlanTypes(DataContext context)
     {
         if (await context.PlanTypes.AnyAsync()) return;
 
         var plans = new List<PlanType>
         {
-           new PlanType
-           {
-               Points = 50,
-               PlanTypeE = PlanTypeEnum.LossWeight
-           },
-           
-           new PlanType
-           {
-               Points = 30,
-               PlanTypeE = PlanTypeEnum.MaintainWeight
-           },
-           
-           new PlanType
-           {
-               Points = 40,
-               PlanTypeE = PlanTypeEnum.FutureLeader
-           }
+            new PlanType
+            {
+                Points = 50,
+                PlanTypeE = PlanTypeEnum.LossWeight
+            },
+
+            new PlanType
+            {
+                Points = 30,
+                PlanTypeE = PlanTypeEnum.MaintainWeight
+            },
+
+            new PlanType
+            {
+                Points = 40,
+                PlanTypeE = PlanTypeEnum.FutureLeader
+            }
         };
 
         await context.PlanTypes.AddRangeAsync(plans);
@@ -142,7 +143,7 @@ public static class Seed
         await context.SaveChangesAsync();
     }
 
-    public static async Task SeedRoles(RoleManager<AppRole> roleManager)
+    private static async Task SeedRoles(RoleManager<AppRole> roleManager)
     {
         if (await roleManager.Roles.AnyAsync()) return;
 
@@ -159,7 +160,7 @@ public static class Seed
         }
     }
 
-    public static async Task SeedAdminPlans(DataContext context)
+    private static async Task SeedAdminPlans(DataContext context)
     {
         if (await context.AdminPlans.AnyAsync()) return;
 
@@ -246,116 +247,116 @@ public static class Seed
     }
 
     private static async Task SeedMeals(DataContext context)
-{
-    if (await context.Meals.AnyAsync()) return;
-
-    // Fetch ingredients from the database
-    var ingredients = await context.Ingredients.ToListAsync();
-
-    var meals = new List<Meal>
     {
-        new Meal
-        {
-            NameEN = "Chicken Curry",
-            NameAR = "كاري الدجاج",
-            DescriptionEN = "A delicious Indian-style chicken curry served with basmati rice.",
-            DescriptionAR = "كاري دجاج هندي شهي مقدم مع أرز بسمتي.",
-            Price = 25,
-            Points = 8,
-            PictureUrl = "chicken_curry.jpg",
-            IsMealPlan = false,
-            IsMainMenu = true,
-            CategoryId = 1,
-            Ingredients = new List<MealIngredient>
-            {
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 2), Weight = 150 },
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 6), Weight = 100 },
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 1), Weight = 200 }
-            },
-            Allergies = new List<MealAllergy>
-            {
-                new MealAllergy { AllergyId = 3 }, // Egg
-                new MealAllergy { AllergyId = 4 } // Nuts
-            }
-        },
-        new Meal
-        {
-            NameEN = "Salmon Salad",
-            NameAR = "سلطة السلمون",
-            DescriptionEN = "Fresh salad with grilled salmon, spinach, tomatoes, and olive oil dressing.",
-            DescriptionAR = "سلطة طازجة مع سلمون مشوي وسبانخ وطماطم وصلصة زيتون.",
-            Price = 18,
-            Points = 6,
-            PictureUrl = "salmon_salad.jpg",
-            IsMealPlan = true,
-            IsMainMenu = false,
-            CategoryId = 2,
-            Ingredients = new List<MealIngredient>
-            {
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 3), Weight = 100 },
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 4), Weight = 80 },
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 5), Weight = 20 }
-            },
-            Allergies = new List<MealAllergy>
-            {
-                new MealAllergy { AllergyId = 5 } // Fish
-            }
-        },new Meal
-        {
-            NameEN = "Chicken Caesar Salad",
-            NameAR = "سلطة الدجاج القيصرية",
-            DescriptionEN = "Classic Caesar salad with grilled chicken breast, romaine lettuce, croutons, and Caesar dressing.",
-            DescriptionAR = "سلطة السيزار الكلاسيكية مع صدر دجاج مشوي وخس رومين وكروتون وصلصة السيزار.",
-            Price = 12.99m,
-            Points = 5,
-            PictureUrl = "chicken_caesar_salad.jpg",
-            IsMealPlan = true,
-            IsMainMenu = false,
-            CategoryId = 2,
-            Ingredients = new List<MealIngredient>
-            {
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 3), Weight = 100 },
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 4), Weight = 80 },
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 5), Weight = 20 }
+        if (await context.Meals.AnyAsync()) return;
 
-            },
-            Allergies = new List<MealAllergy>
-            {
-                new MealAllergy { AllergyId = 1 } // Gluten
-            }
-        },
-        new Meal
+        // Fetch ingredients from the database
+        var ingredients = await context.Ingredients.ToListAsync();
+
+        var meals = new List<Meal>
         {
-            NameEN = "Vegetable Stir-Fry",
-            NameAR = "ستر-فراي الخضار",
-            DescriptionEN = "Assorted vegetables stir-fried in a savory sauce, served with rice or noodles.",
-            DescriptionAR = "خضروات متنوعة مقلية بصلصة لذيذة، مقدمة مع أرز أو معكرونة.",
-            Price = 10.49m,
-            Points = 4,
-            PictureUrl = "vegetable_stir_fry.jpg",
-            IsMealPlan = false,
-            IsMainMenu = true,
-            CategoryId = 2,
-            Ingredients = new List<MealIngredient>
+            new Meal
             {
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 3), Weight = 100 },
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 4), Weight = 80 },
-                new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 5), Weight = 20 }
-
+                NameEN = "Chicken Curry",
+                NameAR = "كاري الدجاج",
+                DescriptionEN = "A delicious Indian-style chicken curry served with basmati rice.",
+                DescriptionAR = "كاري دجاج هندي شهي مقدم مع أرز بسمتي.",
+                Price = 25,
+                Points = 8,
+                PictureUrl = "chicken_curry.jpg",
+                IsMealPlan = false,
+                IsMainMenu = true,
+                CategoryId = 1,
+                Ingredients = new List<MealIngredient>
+                {
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 2), Weight = 150 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 6), Weight = 100 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 1), Weight = 200 }
+                },
+                Allergies = new List<MealAllergy>
+                {
+                    new MealAllergy { AllergyId = 3 }, // Egg
+                    new MealAllergy { AllergyId = 4 } // Nuts
+                }
             },
-            Allergies = new List<MealAllergy>
+            new Meal
             {
-                new MealAllergy { AllergyId = 6 } // Soy
-            }
-        },
-    };
+                NameEN = "Salmon Salad",
+                NameAR = "سلطة السلمون",
+                DescriptionEN = "Fresh salad with grilled salmon, spinach, tomatoes, and olive oil dressing.",
+                DescriptionAR = "سلطة طازجة مع سلمون مشوي وسبانخ وطماطم وصلصة زيتون.",
+                Price = 18,
+                Points = 6,
+                PictureUrl = "salmon_salad.jpg",
+                IsMealPlan = true,
+                IsMainMenu = false,
+                CategoryId = 2,
+                Ingredients = new List<MealIngredient>
+                {
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 3), Weight = 100 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 4), Weight = 80 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 5), Weight = 20 }
+                },
+                Allergies = new List<MealAllergy>
+                {
+                    new MealAllergy { AllergyId = 5 } // Fish
+                }
+            },
+            new Meal
+            {
+                NameEN = "Chicken Caesar Salad",
+                NameAR = "سلطة الدجاج القيصرية",
+                DescriptionEN =
+                    "Classic Caesar salad with grilled chicken breast, romaine lettuce, croutons, and Caesar dressing.",
+                DescriptionAR = "سلطة السيزار الكلاسيكية مع صدر دجاج مشوي وخس رومين وكروتون وصلصة السيزار.",
+                Price = 12.99m,
+                Points = 5,
+                PictureUrl = "chicken_caesar_salad.jpg",
+                IsMealPlan = true,
+                IsMainMenu = false,
+                CategoryId = 2,
+                Ingredients = new List<MealIngredient>
+                {
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 3), Weight = 100 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 4), Weight = 80 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 5), Weight = 20 }
+                },
+                Allergies = new List<MealAllergy>
+                {
+                    new MealAllergy { AllergyId = 1 } // Gluten
+                }
+            },
+            new Meal
+            {
+                NameEN = "Vegetable Stir-Fry",
+                NameAR = "ستر-فراي الخضار",
+                DescriptionEN = "Assorted vegetables stir-fried in a savory sauce, served with rice or noodles.",
+                DescriptionAR = "خضروات متنوعة مقلية بصلصة لذيذة، مقدمة مع أرز أو معكرونة.",
+                Price = 10.49m,
+                Points = 4,
+                PictureUrl = "vegetable_stir_fry.jpg",
+                IsMealPlan = false,
+                IsMainMenu = true,
+                CategoryId = 2,
+                Ingredients = new List<MealIngredient>
+                {
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 3), Weight = 100 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 4), Weight = 80 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 5), Weight = 20 }
+                },
+                Allergies = new List<MealAllergy>
+                {
+                    new MealAllergy { AllergyId = 6 } // Soy
+                }
+            },
+        };
 
-    await context.Meals.AddRangeAsync(meals);
-    await context.SaveChangesAsync();
-}
+        await context.Meals.AddRangeAsync(meals);
+        await context.SaveChangesAsync();
+    }
 
     private static async Task SeedIngredients(DataContext context)
     {
@@ -367,7 +368,8 @@ public static class Seed
             new Ingredient("Chicken", "دجاج", "Boneless chicken breast", 150, 15, 30, 0, 3, 0, IngredientType.Protein),
             new Ingredient("Spinach", "سبانخ", "Fresh spinach leaves", 100, 3, 2, 5, 0, 2, IngredientType.Carb),
             new Ingredient("Tomato", "طماطم", "Ripe tomatoes", 80, 2, 1, 4, 0, 1, IngredientType.Protein),
-            new Ingredient("Olive Oil", "زيت زيتون", "Extra virgin olive oil", 20, 10, 0, 0, 10, 0, IngredientType.Soup),
+            new Ingredient("Olive Oil", "زيت زيتون", "Extra virgin olive oil", 20, 10, 0, 0, 10, 0,
+                IngredientType.Soup),
             new Ingredient("Lentils", "عدس", "Dried lentils", 120, 3, 9, 20, 0, 8, IngredientType.Soup),
             new Ingredient("Salmon", "سلمون", "Fresh salmon fillet", 180, 20, 25, 0, 12, 0, IngredientType.Protein)
         };

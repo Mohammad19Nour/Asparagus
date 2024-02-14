@@ -1,4 +1,6 @@
-﻿namespace AsparagusN.DTOs.UserPlanDtos;
+﻿using AsparagusN.DTOs.CarbDtos;
+
+namespace AsparagusN.DTOs.UserPlanDtos;
 
 public class UserSelectedMealDto
 {
@@ -18,4 +20,5 @@ public class UserSelectedMealDto
     public decimal Protein{ get; set; }
     public int AddedCarb { get; set; }
     public int AddedProtein { get; set; }
+    public CarbDto? ChangedCarb { get; set; }
 }

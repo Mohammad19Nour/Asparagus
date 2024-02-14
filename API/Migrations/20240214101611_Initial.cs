@@ -204,6 +204,23 @@ namespace AsparagusN.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserChangedCarbs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    NameEN = table.Column<string>(type: "TEXT", nullable: false),
+                    NameAR = table.Column<string>(type: "TEXT", nullable: false),
+                    DescriptionEN = table.Column<string>(type: "TEXT", nullable: false),
+                    DescriptionAR = table.Column<string>(type: "TEXT", nullable: false),
+                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserChangedCarbs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Zones",
                 columns: table => new
                 {
@@ -542,15 +559,37 @@ namespace AsparagusN.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AdminSelectedCarbs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CarbId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PlanTypeEnum = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdminSelectedCarbs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AdminSelectedCarbs_Meals_CarbId",
+                        column: x => x.CarbId,
+                        principalTable: "Meals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AdminSelectedMeals",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     MealId = table.Column<int>(type: "INTEGER", nullable: false),
                     AdminPlanDayId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AdminSelectedMeals", x => new { x.AdminPlanDayId, x.MealId });
+                    table.PrimaryKey("PK_AdminSelectedMeals", x => x.Id);
                     table.ForeignKey(
                         name: "FK_AdminSelectedMeals_AdminPlans_AdminPlanDayId",
                         column: x => x.AdminPlanDayId,
@@ -782,11 +821,17 @@ namespace AsparagusN.Migrations
                     Carbs = table.Column<double>(type: "REAL", nullable: false),
                     Protein = table.Column<double>(type: "REAL", nullable: false),
                     AddedCarb = table.Column<int>(type: "INTEGER", nullable: false),
-                    AddedProtein = table.Column<int>(type: "INTEGER", nullable: false)
+                    AddedProtein = table.Column<int>(type: "INTEGER", nullable: false),
+                    ChangedCarbId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserSelectedMeals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserSelectedMeals_UserChangedCarbs_ChangedCarbId",
+                        column: x => x.ChangedCarbId,
+                        principalTable: "UserChangedCarbs",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UserSelectedMeals_UserPlanDays_UserPlanDayId",
                         column: x => x.UserPlanDayId,
@@ -794,6 +839,40 @@ namespace AsparagusN.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "UserSelectedSnacks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    NameEN = table.Column<string>(type: "TEXT", nullable: false),
+                    NameAR = table.Column<string>(type: "TEXT", nullable: false),
+                    DescriptionEN = table.Column<string>(type: "TEXT", nullable: false),
+                    DescriptionAR = table.Column<string>(type: "TEXT", nullable: false),
+                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    Protein = table.Column<double>(type: "REAL", nullable: false),
+                    Carbs = table.Column<double>(type: "REAL", nullable: false),
+                    Fats = table.Column<double>(type: "REAL", nullable: false),
+                    Fibers = table.Column<double>(type: "REAL", nullable: false),
+                    Calories = table.Column<double>(type: "REAL", nullable: false),
+                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserPlanDayId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSelectedSnacks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserSelectedSnacks_UserPlanDays_UserPlanDayId",
+                        column: x => x.UserPlanDayId,
+                        principalTable: "UserPlanDays",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdminSelectedCarbs_CarbId",
+                table: "AdminSelectedCarbs",
+                column: "CarbId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AdminSelectedDrinks_DrinkId",
@@ -804,6 +883,11 @@ namespace AsparagusN.Migrations
                 name: "IX_AdminSelectedExtraOptions_ExtraOptionId",
                 table: "AdminSelectedExtraOptions",
                 column: "ExtraOptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdminSelectedMeals_AdminPlanDayId",
+                table: "AdminSelectedMeals",
+                column: "AdminPlanDayId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AdminSelectedMeals_MealId",
@@ -924,14 +1008,27 @@ namespace AsparagusN.Migrations
                 column: "UserPlanDayId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserSelectedMeals_ChangedCarbId",
+                table: "UserSelectedMeals",
+                column: "ChangedCarbId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserSelectedMeals_UserPlanDayId",
                 table: "UserSelectedMeals",
+                column: "UserPlanDayId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSelectedSnacks_UserPlanDayId",
+                table: "UserSelectedSnacks",
                 column: "UserPlanDayId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AdminSelectedCarbs");
+
             migrationBuilder.DropTable(
                 name: "AdminSelectedDrinks");
 
@@ -990,6 +1087,9 @@ namespace AsparagusN.Migrations
                 name: "UserSelectedMeals");
 
             migrationBuilder.DropTable(
+                name: "UserSelectedSnacks");
+
+            migrationBuilder.DropTable(
                 name: "Drinks");
 
             migrationBuilder.DropTable(
@@ -1018,6 +1118,9 @@ namespace AsparagusN.Migrations
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "UserChangedCarbs");
 
             migrationBuilder.DropTable(
                 name: "UserPlanDays");

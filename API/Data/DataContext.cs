@@ -27,6 +27,8 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     {
     }
 
+    public DbSet<UserMealCarb> UserChangedCarbs { get; set; }
+    public DbSet<AdminSelectedCarb> AdminSelectedCarbs { get; set; }
     public DbSet<AdminSelectedSnack> AdminSelectedSnacks { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Order> Orders { get; set; }
@@ -53,6 +55,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<UserSelectedExtraOption> UserSelectedExtraOptions { get; set; }
     public DbSet<CustomerBasket> CustomerBaskets { get; set; }
     public DbSet<BasketItem> BasketItems { get; set; }
+    public DbSet<UserSelectedSnack> UserSelectedSnacks { get; set; }
     public DbSet<PlanType> PlanTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -69,9 +72,8 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
             .HasForeignKey(ur => ur.RoleId)
             .IsRequired();
 
-        
+
         builder.Entity<BasketItem>().HasKey(x => new { x.CustomerBasketId, x.MealId });
-        builder.Entity<AdminSelectedMeal>().HasKey(x => new { x.AdminPlanDayId, x.MealId });
         builder.Entity<CustomerBasket>().HasMany(x => x.Items).WithOne(c => c.CustomerBasket)
             .HasForeignKey(g => g.CustomerBasketId).OnDelete(DeleteBehavior.Cascade);
 
