@@ -29,7 +29,7 @@ public class SubscriptionController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateSubscription(NewSubscriptionDto subscriptionDto)
+    public async Task<ActionResult<UserPlanDto>> CreateSubscription(NewSubscriptionDto subscriptionDto)
     {
         var user = await _getUser();
         if (user == null) return Ok(new ApiResponse(404, "user not found"));
@@ -38,11 +38,11 @@ public class SubscriptionController : BaseApiController
 
         if (plan == null)
             return Ok(new ApiResponse(400, message));
-        return Ok(new ApiOkResponse<UserPlan>(plan));
+        return Ok(new ApiOkResponse<UserPlanDto>(_mapper.Map<UserPlanDto>(plan)));
     }
 
     [HttpPut("updateDuration")]
-    public async Task<ActionResult> UpdateDuration(int newDuration, PlanTypeEnum planType)
+    public async Task<ActionResult<UserPlanDto>> UpdateDuration(int newDuration, PlanTypeEnum planType)
     {
         var user = await _getUser();
         if (user == null) return Ok(new ApiResponse(404, "user not found"));
@@ -50,7 +50,7 @@ public class SubscriptionController : BaseApiController
         var (plan, message) = await _subscriptionService.UpdateDuration(user.Id, planType, newDuration);
 
         if (plan == null) return Ok(new ApiResponse(400, message));
-        return Ok(new ApiOkResponse<UserPlan>(plan));
+        return Ok(new ApiOkResponse<UserPlanDto>(_mapper.Map<UserPlanDto>(plan)));
     }
 
     private async Task<AppUser?> _getUser()

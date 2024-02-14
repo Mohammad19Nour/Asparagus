@@ -11,7 +11,8 @@ public class UserPlanDayWithDrinksAndMealsAndExtra : BaseSpecification<UserPlanD
         : base(x => x.Id == dayId && x.UserPlan.AppUserId == userId)
     {
         AddInclude(x => x.Include(
-            d => d.SelectedMeals));
+            d => d.SelectedMeals)
+            .ThenInclude(c=>c.ChangedCarb));
         AddInclude(x => x.Include(
             d => d.SelectedDrinks));
         AddInclude(x => x.Include(

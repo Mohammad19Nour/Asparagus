@@ -10,6 +10,7 @@ public class UserPlanProfile : Profile
 {
     public UserPlanProfile()
     {
+        CreateMap<UserSelectedSnack, UserSnackDto>();
         CreateMap<UserSelectedMeal, UserSelectedMealDto>();
         CreateMap<UserSelectedExtraOption, UserSelectedExtraOptionDto>();
         CreateMap<UserSelectedDrink, UserSelectedDrinkDto>();

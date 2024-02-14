@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Specifications.UserSpecifications;
 
-public class UserPlanDayWithMealsOnlySpecification : BaseSpecification<UserPlanDay>
+public class UserPlanDayWithSnacksOnlySpecification : BaseSpecification<UserPlanDay>
 {
-    public UserPlanDayWithMealsOnlySpecification(int userId, int dayId) 
+    public UserPlanDayWithSnacksOnlySpecification(int userId, int dayId) 
         : base(x=>x.UserPlan.AppUserId == userId && x.Id == dayId)
     {
+        
         AddInclude(x=>x.Include(y=>y.UserPlan));
-        AddInclude(x=>x.Include(y=>y.SelectedMeals)
-            .ThenInclude(c=>c.ChangedCarb));
+        AddInclude(x=>x.Include(y=>y.SelectedSnacks));
     }
 }

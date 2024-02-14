@@ -1,4 +1,5 @@
 ﻿using AsparagusN.Data.Entities.MealPlan.AdminPlans;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs;
 using AsparagusN.Entities;
 using AutoMapper;
@@ -10,7 +11,9 @@ public class SnackProfile : Profile
     public SnackProfile()
     {
         CreateMap<Meal, SnackDto>();
-        CreateMap<AdminSelectedSnack,SnackDto>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Snack.Id))
+        CreateMap<Meal, UserSelectedSnack>();
+        CreateMap<AdminSelectedSnack,SnackDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.NameEN, opt => opt.MapFrom(src => src.Snack.NameEN))
             .ForMember(dest => dest.NameAR, opt => opt.MapFrom(src => src.Snack.NameAR))
             .ForMember(dest => dest.DescriptionEN, opt => opt.MapFrom(src => src.Snack.DescriptionEN))

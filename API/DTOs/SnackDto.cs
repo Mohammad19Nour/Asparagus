@@ -14,6 +14,4 @@ public class SnackDto
     public decimal Fats;
     public decimal Fibers;
     public decimal Calories;
-    public decimal PricePerCarb;
-    public decimal PricePerProtein;
 }
