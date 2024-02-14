@@ -114,4 +114,28 @@ public partial class UserPlanController
 
         return Ok(new ApiResponse(400, "Failed to add snack"));
     }
+
+    [HttpDelete("snacks/{dayId:int}")]
+    public async Task<ActionResult> DeleteSnack(int dayId, int snackId)
+    {
+        var user = await _getUser();
+
+        if (user == null) return Ok(new ApiResponse(401));
+
+        var spec = new UserPlanDayWithSnacksOnlySpecification(user.Id, dayId);
+        var planDay = await _unitOfWork.Repository<UserPlanDay>().GetEntityWithSpec(spec);
+
+        if (planDay == null) return Ok(new ApiResponse(404, "day not found"));
+
+        var snack = planDay.SelectedSnacks.FirstOrDefault(x => x.Id == snackId);
+
+        if (snack == null) return Ok(new ApiResponse(404, "Snack not found"));
+
+        planDay.UserPlan.NumberOfRemainingSnacks += snack.Quantity;
+        planDay.SelectedSnacks.Remove(snack);
+        _unitOfWork.Repository<UserPlanDay>().Update(planDay);
+        if (await _unitOfWork.SaveChanges())
+            return Ok(new ApiResponse(200));
+        return Ok(new ApiResponse(400, "Failed to delete snack"));  
+    }
 }

@@ -12,6 +12,29 @@ namespace AsparagusN.Controllers.User.UserPlanControllers;
 
 public partial class UserPlanController : BaseApiController
 {
+    [HttpGet("meals/{dayId:int}")]
+    public async Task<ActionResult<List<UserSelectedMealDto>>> GetMeals(int dayId)
+    {
+        try
+        {
+            var user = await _getUser();
+            if (user == null) return (Ok(new ApiResponse(401)));
+
+            var spec = new UserPlanDayWithMealsOnlySpecification(user.Id, dayId);
+            var planDay = await _unitOfWork.Repository<UserPlanDay>().GetEntityWithSpec(spec);
+
+            if (planDay == null) return Ok(new ApiResponse(404, "Plan day not found"));
+
+            return Ok(new ApiOkResponse<List<UserSelectedMealDto>>(
+                _mapper.Map<List<UserSelectedMealDto>>(planDay.SelectedMeals)));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     [HttpPost("meals/{dayId:int}")]
     public async Task<ActionResult> AddMeal(int dayId, int adminMealId)
     {
@@ -42,7 +65,7 @@ public partial class UserPlanController : BaseApiController
             Console.WriteLine(adminDay.Id);
             if (planDay.Day != adminDay.AvailableDate)
                 return Ok(new ApiResponse(400, "Meal not found in this day"));
-            
+
             if (planDay.UserPlan.PlanType != adminDay.PlanType)
                 return Ok(new ApiResponse(400, "user plan type not as same as admin plan type"));
 
@@ -90,7 +113,7 @@ public partial class UserPlanController : BaseApiController
             if (oldMeal == null) return Ok(new ApiResponse(404, "Meal not found in user selections"));
 
             var adminMealSpec =
-                new AdminPlanDaysWithMealsSpecification(dayDate: planDay.Day,planDay.UserPlan.PlanType);
+                new AdminPlanDaysWithMealsSpecification(dayDate: planDay.Day, planDay.UserPlan.PlanType);
 
             var adminDay = await _unitOfWork.Repository<AdminPlanDay>().GetEntityWithSpec(adminMealSpec);
 

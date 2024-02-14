@@ -2,6 +2,7 @@
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.DTOs.AdditionDtos;
 using AsparagusN.DTOs.AdminPlanDtos;
+using AsparagusN.DTOs.CarbDtos;
 using AsparagusN.DTOs.DrinksDtos;
 using AsparagusN.DTOs.MealDtos;
 using AsparagusN.Entities;
@@ -15,6 +16,19 @@ public class AdminPlanProfile : Profile
 {
     public AdminPlanProfile()
     {
+        CreateMap<AdminSelectedCarb, CarbDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.NameEN, opt => opt.MapFrom(src => src.Carb.NameEN))
+            .ForMember(dest => dest.NameAR, opt => opt.MapFrom(src => src.Carb.NameAR))
+            .ForMember(dest => dest.DescriptionEN, opt => opt.MapFrom(src => src.Carb.DescriptionEN))
+            .ForMember(dest => dest.DescriptionAR, opt => opt.MapFrom(src => src.Carb.DescriptionAR))
+            .ForMember(dest => dest.PictureUrl, opt => opt.MapFrom(src => src.Carb.PictureUrl))
+            .ForMember(x => x.Protein, o => o.MapFrom(src => src.Carb.Protein))
+            .ForMember(x => x.Carbs, o => o.MapFrom(src => src.Carb.Carbs))
+            .ForMember(x => x.Calories, o => o.MapFrom(src => src.Carb.Calories()))
+            .ForMember(x => x.Fats, o => o.MapFrom(src => src.Carb.Fats))
+            .ForMember(x => x.Fibers, o => o.MapFrom(src => src.Carb.Fibers));
+
         CreateMap<AdminSelectedMeal, MealWithoutIngredientsDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.NameEN, opt => opt.MapFrom(src => src.Meal.NameEN))

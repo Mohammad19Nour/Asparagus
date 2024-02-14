@@ -24,6 +24,14 @@ public class BranchController : BaseApiController
         _distanceService = distanceService;
     }
 
+    [HttpGet("branches")]
+    public async Task<ActionResult<IReadOnlyList<BranchCasherDto>>> GetBranchesName()
+    {
+        var spec = new BranchWithAddressSpecification();
+        var results = await _unitOfWork.Repository<Branch>().ListWithSpecAsync(spec);
+        var branches = _mapper.Map<IReadOnlyList<BranchCasherDto>>(results);
+        return Ok(new ApiOkResponse<IReadOnlyList<BranchCasherDto>>(branches));
+    }
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<BranchDto>>> GetAllBranches()
     {

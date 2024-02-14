@@ -27,15 +27,20 @@ public partial class PlanController : BaseApiController
 
         ids = ids.Except(existingCarb.Select(x => x.CarbId).ToList()).ToList();
         var toAdd = carbs.Where(x => ids.Contains(x.Id)).ToList();
-
-        toAdd.ForEach(x => _unitOfWork.Repository<AdminSelectedCarb>().Add(new AdminSelectedCarb
+        var toRet = new List<AdminSelectedCarb>();
+        toAdd.ForEach(x =>
         {
-            PlanTypeEnum = planType,
-            CarbId = x.CategoryId
-        }));
+            var tmp = new AdminSelectedCarb
+            {
+                PlanTypeEnum = planType,
+                CarbId = x.Id
+            };
+            _unitOfWork.Repository<AdminSelectedCarb>().Add(tmp);
+            toRet.Add(tmp);
+        });
 
         if (await _unitOfWork.SaveChanges() || toAdd.Count == 0)
-            return Ok(new ApiOkResponse<List<CarbDto>>(_mapper.Map<List<CarbDto>>(toAdd)));
+            return Ok(new ApiOkResponse<List<CarbDto>>(_mapper.Map<List<CarbDto>>(toRet)));
         return Ok(new ApiResponse(400, "Failed to add carb"));
     }
 

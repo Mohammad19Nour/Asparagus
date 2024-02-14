@@ -9,6 +9,7 @@ public class BranchProfile : Profile
     public BranchProfile()
     {
         CreateMap<Branch, BranchDto>();
+        CreateMap<Branch, BranchCasherDto>();
         CreateMap<NewBranchDto, Branch>();
         CreateMap<UpdateBranchDto,Branch>()
             .ForMember(dest=>dest.Address,opt=>
