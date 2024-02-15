@@ -27,4 +27,5 @@ public class RegisterDto
 
     public AddressDto HomeAddress { get; set; }
     public AddressDto WorkAddress { get; set; }
+    public IFormFile Image { get; set; }
 }

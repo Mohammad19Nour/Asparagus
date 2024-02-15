@@ -14,6 +14,7 @@ namespace AsparagusN.Controllers.User;
 
 public class AccountController : BaseApiController
 {
+    private readonly IMediaService _mediaService;
     private readonly ITokenService _tokenService;
     private readonly UserManager<AppUser> _userManager;
     private readonly IMapper _mapper;
@@ -21,9 +22,11 @@ public class AccountController : BaseApiController
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEmailService _emailService;
 
-    public AccountController(ITokenService tokenService, UserManager<AppUser> userManager, IMapper mapper,
+    public AccountController(IMediaService mediaService, ITokenService tokenService, UserManager<AppUser> userManager,
+        IMapper mapper,
         SignInManager<AppUser> signInManager, IUnitOfWork unitOfWork, IEmailService emailService)
     {
+        _mediaService = mediaService;
         _tokenService = tokenService;
         _userManager = userManager;
         _mapper = mapper;
@@ -53,7 +56,7 @@ public class AccountController : BaseApiController
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult> Register(RegisterDto registerDto)
+    public async Task<ActionResult> Register([FromForm] RegisterDto registerDto)
     {
         try
         {
@@ -80,7 +83,13 @@ public class AccountController : BaseApiController
             if (registerDto.Password != registerDto.ConfirmedPassword)
                 return Ok(new ApiResponse(400, messageEN: "passwords aren't identical"));
 
+            var photoRes = await _mediaService.AddPhotoAsync(registerDto.Image);
+
+            if (!photoRes.Success)
+                return Ok(new ApiResponse(400, photoRes.Message));
+
             user = new AppUser();
+            user.PictureUrl = photoRes.Url;
             _mapper.Map(registerDto, user);
             user.UserName = registerDto.Email;
             var res = await _userManager.CreateAsync(user, registerDto.Password);
