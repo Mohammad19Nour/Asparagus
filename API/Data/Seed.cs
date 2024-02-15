@@ -162,19 +162,25 @@ public static class Seed
 
     private static async Task SeedAdminPlans(DataContext context)
     {
-        if (await context.AdminPlans.AnyAsync()) return;
-
         var todayDay = DateTime.Now.DayOfWeek;
-        var startDay = DateTime.Now;
-        if (todayDay != DayOfWeek.Thursday)
+
+        if (await context.AdminPlans.AnyAsync())
         {
-            while (startDay.DayOfWeek != DayOfWeek.Thursday)
+            if (todayDay != DayOfWeek.Friday && todayDay != DayOfWeek.Thursday)
+                return;
+        }
+
+        var startDay = DateTime.Now;
+        if (todayDay != DayOfWeek.Saturday)
+        {
+            while (startDay.DayOfWeek != DayOfWeek.Saturday)
             {
-                startDay = startDay.AddDays(-1);
+                startDay = startDay.AddDays(1);
             }
         }
 
-        for (var j = 0; j <= 8; j++)
+        context.AdminPlans.RemoveRange(context.AdminPlans);
+        for (var j = 0; j <= 6; j++)
         {
             var date = startDay.AddDays(j).Date;
             context.AdminPlans.Add(new AdminPlanDay

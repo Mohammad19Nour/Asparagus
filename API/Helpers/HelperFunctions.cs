@@ -20,6 +20,8 @@ public static class HelperFunctions
 
     public static DateTime WeekEndDay()
     {
+        Console.WriteLine(WeekStartDay());
+        Console.WriteLine(WeekStartDay().AddDays(6));
         return WeekStartDay().AddDays(6);
     }
 
