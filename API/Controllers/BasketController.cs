@@ -1,4 +1,5 @@
-﻿using AsparagusN.Data.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using AsparagusN.Data.Entities;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.BasketDtos;
 using AsparagusN.Entities;
@@ -92,6 +93,31 @@ public class BasketController : BaseApiController
         if (await _unitOfWork.SaveChanges())
             return Ok(new ApiOkResponse<CustomerBasketDto>(_mapper.Map<CustomerBasketDto>(dbBasket)));
         return Ok(new ApiResponse(400, "Failed to update basket"));
+    }
+
+    [HttpPost("quantity")]
+    public async Task<ActionResult<CustomerBasketDto>> UpdateQuantity(int mealId,
+        [Range(1, int.MaxValue, ErrorMessage = "Quantity must be positive value")]
+        int newQuantity)
+    {
+        var user = await _getUser();
+        if (user == null) return Ok(new ApiResponse(404, "User not found"));
+
+        var spec = new BasketSpecification(user.Id);
+
+        var dbBasket = await _unitOfWork.Repository<CustomerBasket>().GetEntityWithSpec(spec);
+
+
+        if (dbBasket == null) return Ok(new ApiResponse(400, "meal not found in your basket"));
+
+        var meal = dbBasket.Items.FirstOrDefault(x => x.MealId == mealId);
+
+        if (meal == null) return Ok(new ApiException(404, "Meal not found"));
+        meal.Quantity = newQuantity;
+        _unitOfWork.Repository<CustomerBasket>().Update(dbBasket);
+        if (await _unitOfWork.SaveChanges())
+            return Ok(new ApiOkResponse<CustomerBasketDto>(_mapper.Map<CustomerBasketDto>(dbBasket)));
+        return Ok(new ApiResponse(400, "Failed to update item"));
     }
 
     [HttpDelete]

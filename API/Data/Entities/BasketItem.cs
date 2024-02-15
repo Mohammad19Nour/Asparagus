@@ -23,4 +23,7 @@ public class BasketItem
     public decimal PricePerProtein { get; set; }
     public decimal PricePerCarb{ get; set; }
     public string PictureUrl { get; set; }
+
+    public string Note { get; set; }
+    public bool RemoveSauce { get; set; }
 }

@@ -12,4 +12,6 @@ public class AddBasketItemDto
 
     public int AddedCarb { get; set; }
     public int AddedProtein { get; set; }
+    public string Note { get; set; }
+    public bool RemoveSauce { get; set; }
 }
