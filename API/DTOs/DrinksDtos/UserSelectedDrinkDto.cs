@@ -1,6 +1,4 @@
-﻿using AsparagusN.Enums;
-
-namespace AsparagusN.DTOs.UserPlanDtos;
+﻿namespace AsparagusN.DTOs.DrinksDtos;
 
 public class UserSelectedDrinkDto
 {

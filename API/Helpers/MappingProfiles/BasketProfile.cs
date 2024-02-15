@@ -10,7 +10,8 @@ public class BasketProfile : Profile
 {
     public BasketProfile()
     {
-        CreateMap<BasketItem, BasketItemDto>();
+        CreateMap<BasketItem, BasketItemDto>().ForMember(dest=>dest.Price,opt=>
+            opt.MapFrom(src=>(src.Price + src.PricePerCarb * src.AddedCarb + src.PricePerProtein * src.AddedProtein) * src.Quantity));
         CreateMap<AddBasketItemDto, BasketItem>();
         CreateMap<Meal, BasketItem>();
         CreateMap<CustomerBasket, CustomerBasketDto>();

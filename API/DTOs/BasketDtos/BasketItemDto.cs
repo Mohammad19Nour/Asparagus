@@ -5,6 +5,8 @@ namespace AsparagusN.DTOs.BasketDtos;
 public class BasketItemDto
 {
     public int MealId { get; set; }
+    public string NameEN { get; set; }
+    public string NameAR { get; set; }
     [Required]
     [Range(0.01,double.MaxValue,ErrorMessage = "Price must be greater than 0")]
     public decimal Price { get; set; }
@@ -13,6 +15,5 @@ public class BasketItemDto
     public int Quantity { get; set; }
     public int AddedCarb { get; set; }
     public int AddedProtein { get; set; }
-    public decimal PricePerProtein;
-    public decimal PricePerCarb;
+    public string PictureUrl { get; set; }
 }

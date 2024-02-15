@@ -7,6 +7,8 @@ public class BasketItem
     public int CustomerBasketId { get; set; }
     public CustomerBasket CustomerBasket { get; set; }
     [Required] public int MealId { get; set; }
+    public string NameEN { get; set; }
+    public string NameAR { get; set; }
 
     [Required]
     [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
@@ -20,4 +22,5 @@ public class BasketItem
     public int AddedProtein { get; set; }
     public decimal PricePerProtein { get; set; }
     public decimal PricePerCarb{ get; set; }
+    public string PictureUrl { get; set; }
 }

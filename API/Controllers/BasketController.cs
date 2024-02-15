@@ -54,14 +54,15 @@ public class BasketController : BaseApiController
         if (user == null) return Ok(new ApiResponse(404, "User not found"));
 
         var spec = new BasketSpecification(user.Id);
+
         var dbBasket = await _unitOfWork.Repository<CustomerBasket>().GetEntityWithSpec(spec);
+
+        var basketCreated = false;
 
         if (dbBasket == null)
         {
-            var b = new CustomerBasket(user.Id);
-            _unitOfWork.Repository<CustomerBasket>().Add(b);
-            await _unitOfWork.SaveChanges();
-            return Ok(new ApiResponse(400, "You don't have a this item"));
+            dbBasket = new CustomerBasket(user.Id);
+            basketCreated = true;
         }
 
         var mealSpec = new MenuMealsSpecification(basketItem.MealId);
@@ -81,7 +82,10 @@ public class BasketController : BaseApiController
         }
 
         _mapper.Map(basketItem, oldItem);
-        _unitOfWork.Repository<CustomerBasket>().Update(dbBasket);
+        if (!basketCreated)
+            _unitOfWork.Repository<CustomerBasket>().Update(dbBasket);
+        else
+            _unitOfWork.Repository<CustomerBasket>().Add(dbBasket);
         if (!created)
             _unitOfWork.Repository<BasketItem>().Update(oldItem);
 
@@ -107,6 +111,7 @@ public class BasketController : BaseApiController
         }
 
         dbBasket.Items.Remove(item);
+
         _unitOfWork.Repository<CustomerBasket>().Update(dbBasket);
 
         if (await _unitOfWork.SaveChanges())

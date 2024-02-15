@@ -1,6 +1,8 @@
 ﻿using AsparagusN.Data.Entities.MealPlan.Admin;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
+using AsparagusN.DTOs.DrinksDtos;
 using AsparagusN.DTOs.UserDtos;
+using AsparagusN.Entities.MealPlan;
 using AsparagusN.Errors;
 using AsparagusN.Specifications;
 using AsparagusN.Specifications.UserSpecifications;
@@ -10,35 +12,17 @@ namespace AsparagusN.Controllers.User.UserPlanControllers;
 
 public partial class UserPlanController
 {
-    [HttpPut("drink")]
-    public async Task<ActionResult> UpdateDrink(UserPlanUpdateDrinkDto updateDrinkDto)
+    [HttpGet("drinks/{dayId:int}")]
+    public async Task<ActionResult<List<UserSelectedDrinkDto>>> GetDrinks(int dayId)
     {
         var user = await _getUser();
 
-        if (user == null) return Ok(new ApiResponse(404, "user not found"));
+        if (user == null)
+            return Ok(new ApiResponse(401));
 
-        var spec = new UserPlanDayWithDrinksAndMealsAndExtra(updateDrinkDto.DayId, user.Id);
-        var planDay = await _unitOfWork.Repository<UserPlanDay>().GetEntityWithSpec(spec);
+        var spec = new UserPlanDayWithDrinksOnlySpecification(user.Id,dayId:dayId);
+        var planDay = (await _unitOfWork.Repository<UserPlanDay>().ListWithSpecAsync(spec)).ToList();
 
-        if (planDay == null) return Ok(new ApiResponse(404, "day not found not found"));
-
-        var oldDrink = planDay.SelectedDrinks.FirstOrDefault(x => x.Id == updateDrinkDto.UserOldDrinkId);
-        if (oldDrink == null)
-            return Ok(new ApiResponse(400, $"You don't have drink with id={updateDrinkDto.UserOldDrinkId}"));
-
-        if (planDay.SelectedDrinks.All(x => x.Id != updateDrinkDto.UserOldDrinkId))
-            return Ok(new ApiResponse(400, $"You don't have drink with id={updateDrinkDto.UserOldDrinkId}"));
-
-        var specx = new AdminSelectedDrinksSpecification(updateDrinkDto.AdminNewDrinkId, planDay.UserPlan.PlanType);
-        var newDrink = await _unitOfWork.Repository<AdminSelectedDrink>().GetEntityWithSpec(specx);
-
-        if (newDrink == null)
-            return Ok(new ApiResponse(400, $"Drink with id = {updateDrinkDto.AdminNewDrinkId} not exist"));
-
-        _mapper.Map(newDrink.Drink, oldDrink);
-
-        _unitOfWork.Repository<UserPlanDay>().Update(planDay);
-        await _unitOfWork.SaveChanges();
-        return Ok();
+        return Ok(new ApiOkResponse<List<UserSelectedDrinkDto>>(_mapper.Map<List<UserSelectedDrinkDto>>(planDay)));
     }
 }
