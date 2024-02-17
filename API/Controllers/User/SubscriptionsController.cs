@@ -74,7 +74,7 @@ public class SubscriptionsController : BaseApiController
 
         var res = await _subscriptionService.GetPriceForUpdate(dto, user);
 
-        return Ok(res);
+        return Ok(res.Price == null ? new ApiResponse(400, res.Message) : new ApiOkResponse<decimal>(res.Price.Value));
     }
 
     [HttpPost("price/add")]
@@ -84,7 +84,7 @@ public class SubscriptionsController : BaseApiController
         if (user == null) return Ok(new ApiResponse(404, "user not found"));
         var res = await _subscriptionService.GetPriceForCreate(dto, user);
 
-        return Ok(res);
+        return Ok(res.Price == null ? new ApiResponse(400, res.Message) : new ApiOkResponse<decimal>(res.Price.Value));
     }
 
     private async Task<AppUser?> _getUser()

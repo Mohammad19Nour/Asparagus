@@ -32,7 +32,7 @@ public class UserPlanProfile : Profile
             .ForMember(x => x.Id, opt => opt.Ignore());
         CreateMap<ExtraOption, UserSelectedExtraOption>()
             .ForMember(x => x.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.Weight, opt => opt.MapFrom(src => src.Weight));
+            .ForMember(dest => dest.PricePerUnit, opt => opt.MapFrom(src => src.Price/src.Weight));
         CreateMap<NewSubscriptionDto, UserPlan>().ForMember(dest => dest.Allergies, opt =>
             opt.Ignore());
         CreateMap<UpdateSubscriptionDto, UserPlan>()
