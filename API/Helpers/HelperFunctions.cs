@@ -89,4 +89,25 @@ public static class HelperFunctions
         carbSelected.Carb *= percent;
         carbSelected.Fiber *= percent;
     }
+
+    public static decimal Calculate(string type,ICollection<UserSelectedMeal>meals,ICollection<UserSelectedSnack>snacks)
+    {
+        type = type.ToLower();
+        var result = 0m;
+
+        foreach (var meal in meals)
+        {
+            if (type == "protein") result += meal.Protein;
+            if (type == "fat") result += meal.Fats;
+            if (type == "carb") result += meal.Carbs;
+        }
+        foreach (var snack in snacks)
+        {
+            if (type == "protein") result += snack.Protein * snack.Quantity;
+            if (type == "fat") result += snack.Fat * snack.Quantity;
+            if (type == "carb") result += snack.Carb * snack.Quantity;
+        }
+
+        return result;
+    }
 }

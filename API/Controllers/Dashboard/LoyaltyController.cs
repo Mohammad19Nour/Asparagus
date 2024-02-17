@@ -24,8 +24,21 @@ public class LoyaltyController : BaseApiController
     [HttpGet("meals")]
     public async Task<ActionResult<List<MealLoyaltyPointDto>>> GetMeals()
     {
-        var spec = new BaseSpecification<Meal>(x => x.LoyaltyPoints == null);
+        var spec = new BaseSpecification<Meal>(x => x.LoyaltyPoints == null && x.IsMainMenu && !x.Category.NameEN.ToLower().StartsWith("snack"));
         spec.AddInclude(x => x.Include(y => y.Allergies));
+        spec.AddInclude(x => x.Include(y => y.Category));
+
+        var meals = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
+
+        var result = _mapper.Map<List<MealLoyaltyPointDto>>(meals);
+        return Ok(new ApiOkResponse<List<MealLoyaltyPointDto>>(result));
+    }
+    [HttpGet("snack")]
+    public async Task<ActionResult<List<MealLoyaltyPointDto>>> GetSnacks()
+    {
+        var spec = new BaseSpecification<Meal>(x => x.LoyaltyPoints == null && x.IsMainMenu && x.Category.NameEN.ToLower().StartsWith("snack"));
+        spec.AddInclude(x => x.Include(y => y.Allergies));
+        spec.AddInclude(x => x.Include(y => y.Category));
 
         var meals = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
 

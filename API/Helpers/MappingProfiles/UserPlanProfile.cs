@@ -15,6 +15,7 @@ public class UserPlanProfile : Profile
 {
     public UserPlanProfile()
     {
+        
         CreateMap<UserMealCarb, UserMealCarbDto>();
         CreateMap<Allergy, UserPlanAllergy>().ForMember(dest => dest.Id, opt => opt.Ignore());
         CreateMap<UserSelectedSnack, UserSnackDto>();
@@ -24,6 +25,12 @@ public class UserPlanProfile : Profile
         CreateMap<UserSelectedExtraOption, UserSelectedExtraOptionDto>();
         CreateMap<UserSelectedDrink, UserSelectedDrinkDto>();
         CreateMap<UserPlanDay, UserPlanDayDto>()
+            .ForMember(dest => dest.Carb,
+                src => src.MapFrom(x => HelperFunctions.Calculate("carb", x.SelectedMeals, x.SelectedSnacks)))
+            .ForMember(dest => dest.Protein,
+                src => src.MapFrom(x => HelperFunctions.Calculate("protein", x.SelectedMeals, x.SelectedSnacks)))
+            .ForMember(dest => dest.Fat,
+                src => src.MapFrom(x => HelperFunctions.Calculate("fat", x.SelectedMeals, x.SelectedSnacks)))
             .ForMember(dest => dest.SelectedExtraOptions,
                 opt => opt.MapFrom(
                     x => x.SelectedExtraOptions.Where(y => y.OptionType == ExtraOptionType.Nuts).ToList()))

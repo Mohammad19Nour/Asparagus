@@ -22,12 +22,15 @@ public class UserController : BaseApiController
     private readonly IUnitOfWork _unitOfWork;
     private readonly UserManager<AppUser> _userManager;
     private readonly IMapper _mapper;
+    private readonly IMediaService _mediaService;
 
-    public UserController(IUnitOfWork unitOfWork, UserManager<AppUser> userManager, IMapper mapper)
+    public UserController(IUnitOfWork unitOfWork, UserManager<AppUser> userManager, IMapper mapper,
+        IMediaService mediaService)
     {
         _unitOfWork = unitOfWork;
         _userManager = userManager;
         _mapper = mapper;
+        _mediaService = mediaService;
     }
 
     [HttpGet("user-info")]
@@ -36,11 +39,8 @@ public class UserController : BaseApiController
         try
         {
             var user = await GetUser();
-            Console.WriteLine(user == null);
 
-            return Ok(user == null
-                ? new ApiResponse(404, messageEN: "user not found")
-                : new ApiOkResponse<UserInfoDto>(_mapper.Map<UserInfoDto>(user)));
+            return Ok(new ApiOkResponse<UserInfoDto>(_mapper.Map<UserInfoDto>(user)));
         }
         catch (Exception e)
         {
@@ -82,17 +82,26 @@ public class UserController : BaseApiController
         return Ok(new ApiResponse(400, "Failed to update phone number"));
     }
 
-    [HttpPost("name")]
-    public async Task<ActionResult> UpdateUser([MinLength(1)]string fullName)
+    [HttpPut("info")]
+    public async Task<ActionResult> UpdateUser(UpdateUserInfoDto dto)
     {
         try
         {
             var user = await GetUser();
-            user.FullName = fullName;
+
+            if (dto.Image != null)
+            {
+                var photoResult = await _mediaService.AddPhotoAsync(dto.Image);
+                if (!photoResult.Success) return Ok(new ApiResponse(400, photoResult.Message));
+                user.PictureUrl = photoResult.Url;
+            }
+
+            if (dto.FullName != null) user.FullName = dto.FullName;
+            if (dto.Gender != null) user.Gender = dto.Gender.Value;
             _unitOfWork.Repository<AppUser>().Update(user);
 
             return Ok(await _unitOfWork.SaveChanges()
-                ? new ApiResponse(200, messageEN: "Updated")
+                ? new ApiOkResponse<UserInfoDto>(_mapper.Map<UserInfoDto>(user))
                 : new ApiResponse(400, messageEN: "Failed to update"));
         }
         catch (Exception e)

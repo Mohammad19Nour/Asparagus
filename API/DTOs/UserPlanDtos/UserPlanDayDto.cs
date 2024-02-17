@@ -15,7 +15,15 @@ public class UserPlanDayDto
     public ICollection<UserSelectedMealDto> SelectedMeals { get; set; } = new List<UserSelectedMealDto>();
     public string DayOrderStatus { get; set; }
     public int AdminDayId { get; set; }
-    
+
     public AddressDto DeliveryLocation { get; set; }
     public string DeliveryPeriod { get; set; }
+    public decimal Fat { get; set; }
+    public decimal Carb { get; set; }
+    public decimal Protein { get; set; }
+
+    public decimal Calories
+    {
+        get => Protein * 4 + Carb * 4 + Fat * 9;
+    }
 }

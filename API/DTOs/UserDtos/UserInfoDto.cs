@@ -10,4 +10,6 @@ public class UserInfoDto
     public DateTime Birthday { get; set; }
     public AddressDto HomeAddress { get; set; }
     public AddressDto WorkAddress { get; set; }
+    public string PictureUrl { get; set; }
+    public string Gender { get; set; }
 }
