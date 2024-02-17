@@ -1,4 +1,4 @@
-﻿using AsparagusN.Entities.Identity;
+﻿using AsparagusN.Data.Entities.Identity;
 
 namespace AsparagusN.Interfaces;
 

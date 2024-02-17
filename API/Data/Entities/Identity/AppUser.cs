@@ -2,7 +2,7 @@
 using AsparagusN.Extensions;
 using Microsoft.AspNetCore.Identity;
 
-namespace AsparagusN.Entities.Identity;
+namespace AsparagusN.Data.Entities.Identity;
 
 public class AppUser : IdentityUser<int>
 {
@@ -14,13 +14,15 @@ public class AppUser : IdentityUser<int>
     public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
     public Gender Gender { get; set; } = Gender.Male;
     public bool IsMealPlanMember { get; set; } = false;
-    public Address? HomeAddress { get; set; }
-    public Address? WorkAddress { get; set; }
+    public int LoyaltyPoints { get; set; }
+    public Address HomeAddress { get; set; } = new Address();
+    public Address WorkAddress { get; set; } = new Address();
+    public int HomeAddressId { get; set; }
+    public int WorkAddressId { get; set; }
     public ICollection<AppUserRole> UserRoles { get; set; }
 
     public int GetAge()
     {
         return Birthday.NumberOfYears();
     }
-    
 }

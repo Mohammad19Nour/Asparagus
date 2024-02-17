@@ -1,6 +1,4 @@
-﻿using AsparagusN.DTOs.AdditionDtos;
-using AsparagusN.DTOs.MealDtos;
-using AsparagusN.Entities.MealPlan;
+﻿using AsparagusN.DTOs.MealDtos;
 using AsparagusN.Enums;
 
 namespace AsparagusN.DTOs.AdminPlanDtos;

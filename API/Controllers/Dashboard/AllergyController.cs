@@ -1,5 +1,5 @@
-﻿using AsparagusN.DTOs.AllergyDtos;
-using AsparagusN.Entities;
+﻿using AsparagusN.Data.Entities.Meal;
+using AsparagusN.DTOs.AllergyDtos;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AutoMapper;

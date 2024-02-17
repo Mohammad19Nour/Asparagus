@@ -1,9 +1,8 @@
-﻿using AsparagusN.Data.Entities.MealPlan.Admin;
+﻿using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.UserPlanDtos;
-using AsparagusN.Entities;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Helpers;

@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using AsparagusN.Entities;
+using AsparagusN.Data.Entities.Meal;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Specifications;

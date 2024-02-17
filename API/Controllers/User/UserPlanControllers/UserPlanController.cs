@@ -1,8 +1,9 @@
-﻿using AsparagusN.Data.Entities.MealPlan.AdminPlans;
+﻿using System.ComponentModel.DataAnnotations;
+using AsparagusN.Data.Entities.Identity;
+using AsparagusN.Data.Entities.Meal;
+using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs.UserPlanDtos;
-using AsparagusN.Entities;
-using AsparagusN.Entities.Identity;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
@@ -50,6 +51,7 @@ public partial class UserPlanController : BaseApiController
         {
             await AddAdminDayId(planType, day);
         }
+
         return Ok(new ApiOkResponse<UserPlanDto>(result));
     }
 
@@ -71,9 +73,9 @@ public partial class UserPlanController : BaseApiController
         var spec = new UserPlanDayWithMealsAndDrinksAndAllSpecification(user.Id, dayId);
         var res = await _unitOfWork.Repository<UserPlanDay>().GetEntityWithSpec(spec);
 
-        if (res == null) return Ok(new ApiResponse(404,"Day not found"));
+        if (res == null) return Ok(new ApiResponse(404, "Day not found"));
         var day = _mapper.Map<UserPlanDayDto>(res);
-       
+
         await AddAdminDayId(res.UserPlan.PlanType, day);
         return Ok(new ApiOkResponse<UserPlanDayDto>(day));
     }
@@ -98,9 +100,43 @@ public partial class UserPlanController : BaseApiController
         {
             await AddAdminDayId(updatePlanDto.PlanType, day);
         }
-        
+
         if (await _unitOfWork.SaveChanges()) return Ok(new ApiOkResponse<UserPlanDto>(result));
         return Ok(new ApiResponse(400, "Failed to update plan"));
+    }
+
+    [HttpPost("period")]
+    public async Task<ActionResult> UpdatePeriod(int dayId, Period period)
+    {
+        var planDay = await _unitOfWork.Repository<UserPlanDay>().GetByIdAsync(dayId);
+
+        if (planDay == null)
+            return Ok(new ApiResponse(404, "Day not found"));
+
+        planDay.DeliveryPeriod = period;
+        _unitOfWork.Repository<UserPlanDay>().Update(planDay);
+        if (await _unitOfWork.SaveChanges())
+            return Ok(new ApiResponse(200, "Done"));
+
+        return Ok(new ApiResponse(400, "Failed to update period"));
+    }
+    [HttpPost("delivery")]
+    public async Task<ActionResult> UpdateDeliveryAddress(int dayId,[Range(1,2)] int addressType)
+    {
+        var user = await _getUser();
+        
+        var planDay = await _unitOfWork.Repository<UserPlanDay>().GetByIdAsync(dayId);
+
+        if (planDay == null)
+            return Ok(new ApiResponse(404, "Day not found"));
+
+        planDay.DeliveryLocationId = addressType == 1 ? user!.HomeAddressId : user!.WorkAddressId;
+
+        _unitOfWork.Repository<UserPlanDay>().Update(planDay);
+        if (await _unitOfWork.SaveChanges())
+            return Ok(new ApiResponse(200, "Done"));
+
+        return Ok(new ApiResponse(400, "Failed to update period"));
     }
 
     private async Task<AppUser?> _getUser()

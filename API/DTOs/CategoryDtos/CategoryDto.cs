@@ -1,6 +1,6 @@
 ﻿using AsparagusN.DTOs.MealDtos;
 
-namespace AsparagusN.DTOs;
+namespace AsparagusN.DTOs.CategoryDtos;
 
 public class CategoryDto : NewCategoryDto
 {

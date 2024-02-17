@@ -13,7 +13,10 @@ public class UserPlanWithMealsDrinksAndExtrasSpecification : BaseSpecification<U
         AddInclude(x => x.Include(y => y.Allergies));
         AddInclude(x => x.Include(y => y.Days).ThenInclude(
             d => d.SelectedDrinks));
-
+        AddInclude(x => x.Include(y => y.Days).ThenInclude(
+            d => d.DeliveryLocation));
+        AddInclude(x => x.Include(y => y.Days).ThenInclude(
+            d => d.SelectedSnacks));
         AddInclude(x => x.Include(y => y.Days).ThenInclude(
             d => d.SelectedMeals));
         AddInclude(x => x.Include(y => y.Days).ThenInclude(

@@ -1,8 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using AsparagusN.Enums;
+﻿using AsparagusN.Enums;
 using AsparagusN.Interfaces;
 
-namespace AsparagusN.Entities;
+namespace AsparagusN.Data.Entities.Meal;
 
 public class Meal : ISoftDeletable
 {
@@ -18,6 +17,7 @@ public class Meal : ISoftDeletable
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public bool IsMealPlan { get; set; }
     public bool IsMainMenu { get; set; }
+    public int? LoyaltyPoints { get; set; }
 
     public ICollection<MealIngredient> Ingredients
     {

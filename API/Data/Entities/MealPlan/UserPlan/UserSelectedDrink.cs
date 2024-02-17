@@ -1,7 +1,6 @@
-﻿using AsparagusN.Data.Entities.MealPlan.UserPlan;
-using AsparagusN.Enums;
+﻿using AsparagusN.Enums;
 
-namespace AsparagusN.Entities.MealPlan;
+namespace AsparagusN.Data.Entities.MealPlan.UserPlan;
 
 public class UserSelectedDrink
 {

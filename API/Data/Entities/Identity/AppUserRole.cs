@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace AsparagusN.Entities.Identity;
+namespace AsparagusN.Data.Entities.Identity;
 
 public class AppUserRole : IdentityUserRole<int>
 {

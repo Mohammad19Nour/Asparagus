@@ -1,8 +1,7 @@
-﻿using AsparagusN.Data.Entities.MealPlan.Admin;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.Identity;
+using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
-using AsparagusN.Entities;
-using AsparagusN.Entities.Identity;
-using AsparagusN.Entities.MealPlan;
 using AsparagusN.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

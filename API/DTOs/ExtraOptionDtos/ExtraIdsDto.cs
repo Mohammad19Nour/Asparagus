@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AsparagusN.DTOs.AdditionDtos;
+namespace AsparagusN.DTOs.ExtraOptionDtos;
 
 public class ExtraIdsDto
 {

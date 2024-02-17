@@ -1,9 +1,9 @@
-﻿using AsparagusN.Data.Entities.MealPlan.Admin;
-using AsparagusN.Data.Entities.MealPlan.AdminPlans;
+﻿using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Enums;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
+using AsparagusN.Specifications.AdminPlanSpecifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Services;

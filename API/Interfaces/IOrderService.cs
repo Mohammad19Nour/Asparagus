@@ -1,6 +1,6 @@
-﻿using AsparagusN.DTOs;
-using AsparagusN.Entities;
-using AsparagusN.Entities.OrderAggregate;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.OrderAggregate;
+using AsparagusN.DTOs;
 
 namespace AsparagusN.Interfaces;
 

@@ -1,5 +1,5 @@
-﻿using AsparagusN.DTOs.IngredientDtos;
-using AsparagusN.Entities;
+﻿using AsparagusN.Data.Entities.Meal;
+using AsparagusN.DTOs.IngredientDtos;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;

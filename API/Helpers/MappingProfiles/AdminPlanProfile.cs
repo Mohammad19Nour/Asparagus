@@ -1,12 +1,8 @@
-﻿using AsparagusN.Data.Entities.MealPlan.Admin;
-using AsparagusN.Data.Entities.MealPlan.AdminPlans;
-using AsparagusN.DTOs.AdditionDtos;
+﻿using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.DTOs.AdminPlanDtos;
 using AsparagusN.DTOs.CarbDtos;
 using AsparagusN.DTOs.DrinksDtos;
 using AsparagusN.DTOs.MealDtos;
-using AsparagusN.Entities;
-using AsparagusN.Entities.MealPlan;
 using AsparagusN.Enums;
 using AutoMapper;
 

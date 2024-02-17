@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using AsparagusN.Entities.OrderAggregate;
+using AsparagusN.Data.Entities.OrderAggregate;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Specifications;

@@ -1,5 +1,4 @@
 ﻿using AsparagusN.Data;
-using AsparagusN.Data.Entities.MealPlan.Admin;
 using AsparagusN.Enums;
 using AsparagusN.Interfaces;
 using Microsoft.EntityFrameworkCore;

@@ -1,8 +1,9 @@
-﻿using AsparagusN.DTOs;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.Identity;
+using AsparagusN.DTOs;
+using AsparagusN.DTOs.AddressDtos;
 using AsparagusN.DTOs.BranchDtos;
 using AsparagusN.DTOs.OrderDtos;
-using AsparagusN.Entities;
-using AsparagusN.Entities.Identity;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;

@@ -1,4 +1,4 @@
-﻿namespace AsparagusN.Entities;
+﻿namespace AsparagusN.Data.Entities;
 
 public class Category
 {
@@ -17,6 +17,6 @@ public class Category
     public string NameEN { get; set; } = "";
     public string NameAR { get; set; } = "";
     public string Description { get; set; } = "";
-    public List<Meal> Meals { get; set; }
+    public List<Meal.Meal> Meals { get; set; }
 
 }

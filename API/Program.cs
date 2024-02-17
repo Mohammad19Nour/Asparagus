@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 using AsparagusN.Data;
-using AsparagusN.Entities.Identity;
+using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Extensions;
 using AsparagusN.Helpers;
 using AsparagusN.Middleware;

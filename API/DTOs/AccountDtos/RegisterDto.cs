@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using AsparagusN.DTOs.AddressDtos;
 using AsparagusN.Enums;
 
-namespace AsparagusN.DTOs;
+namespace AsparagusN.DTOs.AccountDtos;
 
 public class RegisterDto
 {
@@ -18,14 +19,8 @@ public class RegisterDto
 
     [Required(ErrorMessage = "Full name required")]
     public string FullName { get; set; }
-
-    [Required(ErrorMessage = "number required")]
-    public string PhoneNumber { get; set; }
-
+    
     [Required(ErrorMessage = "birthday required")]
     public DateTime Birthday { get; set; }
-
-    public AddressDto HomeAddress { get; set; }
-    public AddressDto WorkAddress { get; set; }
     public IFormFile Image { get; set; }
 }

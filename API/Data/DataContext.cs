@@ -1,13 +1,10 @@
 ﻿using AsparagusN.Data.Config;
 using AsparagusN.Data.Entities;
-using AsparagusN.Data.Entities.MealPlan.Admin;
+using AsparagusN.Data.Entities.Identity;
+using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.Data.Entities.OrderAggregate;
-using AsparagusN.Entities;
-using AsparagusN.Entities.Identity;
-using AsparagusN.Entities.MealPlan;
-using AsparagusN.Entities.OrderAggregate;
 using AsparagusN.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

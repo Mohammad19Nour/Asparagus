@@ -1,6 +1,6 @@
-﻿using AsparagusN.DTOs.DriverDtos;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.DTOs.DriverDtos;
 using AsparagusN.DTOs.ZoneDtos;
-using AsparagusN.Entities;
 using AsparagusN.Enums;
 using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;

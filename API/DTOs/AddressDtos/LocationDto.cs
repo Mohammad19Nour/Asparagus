@@ -1,4 +1,4 @@
-﻿namespace AsparagusN.DTOs;
+﻿namespace AsparagusN.DTOs.AddressDtos;
 
 public class LocationDto
 {

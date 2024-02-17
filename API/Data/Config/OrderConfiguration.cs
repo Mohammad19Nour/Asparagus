@@ -1,4 +1,4 @@
-﻿using AsparagusN.Entities.OrderAggregate;
+﻿using AsparagusN.Data.Entities.OrderAggregate;
 using AsparagusN.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

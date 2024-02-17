@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AsparagusN.DTOs;
+namespace AsparagusN.DTOs.AccountDtos;
 
 public class LoginDto
 {

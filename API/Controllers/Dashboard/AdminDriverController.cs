@@ -1,6 +1,6 @@
-﻿using AsparagusN.DTOs.DriverDtos;
-using AsparagusN.Entities;
-using AsparagusN.Entities.Identity;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.Identity;
+using AsparagusN.DTOs.DriverDtos;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;

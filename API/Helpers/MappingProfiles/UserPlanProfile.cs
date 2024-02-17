@@ -1,11 +1,11 @@
-﻿using AsparagusN.Data.Entities.MealPlan.UserPlan;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.Meal;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.AllergyDtos;
 using AsparagusN.DTOs.CarbDtos;
 using AsparagusN.DTOs.DrinksDtos;
 using AsparagusN.DTOs.UserPlanDtos;
-using AsparagusN.Entities;
-using AsparagusN.Entities.MealPlan;
 using AsparagusN.Enums;
 using AutoMapper;
 

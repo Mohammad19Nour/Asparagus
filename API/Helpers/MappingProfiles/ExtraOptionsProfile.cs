@@ -1,7 +1,6 @@
-﻿using AsparagusN.Data.Entities.MealPlan.Admin;
+﻿using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
-using AsparagusN.DTOs.AdditionDtos;
-using AsparagusN.Entities;
+using AsparagusN.DTOs.ExtraOptionDtos;
 using AutoMapper;
 
 namespace AsparagusN.Helpers.MappingProfiles;

@@ -1,4 +1,4 @@
-﻿namespace AsparagusN.Entities;
+﻿namespace AsparagusN.Data.Entities.Meal;
 
 public class Allergy
 {

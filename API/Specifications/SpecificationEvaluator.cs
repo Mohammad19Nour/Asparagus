@@ -1,5 +1,4 @@
-﻿using AsparagusN.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Specifications;
 

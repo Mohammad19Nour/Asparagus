@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using AsparagusN.Data;
+using AsparagusN.Data.Repositories;
 using AsparagusN.Errors;
 using AsparagusN.Helpers;
 using AsparagusN.Helpers.MappingProfiles;

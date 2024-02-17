@@ -1,6 +1,5 @@
 ﻿using AsparagusN.Data.Entities.OrderAggregate;
 using AsparagusN.DTOs.OrderDtos;
-using AsparagusN.Entities.OrderAggregate;
 using AutoMapper;
 
 namespace AsparagusN.Helpers.MappingProfiles;

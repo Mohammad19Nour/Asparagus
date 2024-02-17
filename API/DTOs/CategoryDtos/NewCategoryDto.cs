@@ -1,4 +1,4 @@
-﻿namespace AsparagusN.DTOs;
+﻿namespace AsparagusN.DTOs.CategoryDtos;
 
 public class NewCategoryDto
 {

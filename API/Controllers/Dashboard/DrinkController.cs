@@ -1,5 +1,5 @@
-﻿using AsparagusN.DTOs.DrinksDtos;
-using AsparagusN.Entities;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.DTOs.DrinksDtos;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AutoMapper;

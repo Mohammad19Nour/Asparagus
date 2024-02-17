@@ -2,7 +2,7 @@
 using AsparagusN.Enums;
 using AsparagusN.Interfaces;
 
-namespace AsparagusN.Entities;
+namespace AsparagusN.Data.Entities;
 
 public class ExtraOption : ISoftDeletable
 {

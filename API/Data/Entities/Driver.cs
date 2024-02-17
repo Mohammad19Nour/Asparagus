@@ -1,6 +1,6 @@
 ﻿using AsparagusN.Enums;
 
-namespace AsparagusN.Entities;
+namespace AsparagusN.Data.Entities;
 
 public class Driver
 {

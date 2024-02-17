@@ -1,5 +1,5 @@
-﻿using AsparagusN.DTOs.CarbDtos;
-using AsparagusN.Entities;
+﻿using AsparagusN.Data.Entities.Meal;
+using AsparagusN.DTOs.CarbDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;

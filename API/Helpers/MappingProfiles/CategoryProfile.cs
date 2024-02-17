@@ -1,13 +1,8 @@
-﻿using AsparagusN.DTOs;
-using AsparagusN.DTOs.AllergyDtos;
-using AsparagusN.DTOs.IngredientDtos;
-using AsparagusN.DTOs.MealDtos;
-using AsparagusN.Entities;
-using AsparagusN.Entities.Identity;
-using AsparagusN.Enums;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.DTOs.CategoryDtos;
 using AutoMapper;
 
-namespace AsparagusN.Helpers;
+namespace AsparagusN.Helpers.MappingProfiles;
 
 public class CategoryProfile : Profile
 {

@@ -1,5 +1,4 @@
-﻿using AsparagusN.Entities.MealPlan;
-using AsparagusN.Enums;
+﻿using AsparagusN.Enums;
 
 namespace AsparagusN.Data.Entities.MealPlan.UserPlan;
 
@@ -9,6 +8,9 @@ public class UserPlanDay
     public int UserPlanId { get; set; }
     public UserPlan UserPlan { get; set; }
     public DateTime Day { get; set; }
+    public int DeliveryLocationId { get; set; }
+    public Address DeliveryLocation { get; set; }
+    public Period DeliveryPeriod { get; set; }
     public ICollection<UserSelectedDrink> SelectedDrinks { get; set; } = new List<UserSelectedDrink>();
 
     public ICollection<UserSelectedExtraOption> SelectedExtraOptions { get; set; } =

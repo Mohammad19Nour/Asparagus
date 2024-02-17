@@ -1,11 +1,12 @@
-﻿using AsparagusN.Data.Entities.MealPlan.UserPlan;
+﻿using AsparagusN.Data.Entities.Meal;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.Data.Entities.OrderAggregate;
+using AsparagusN.DTOs;
 using AsparagusN.DTOs.AdminPlanDtos;
 using AsparagusN.DTOs.AllergyDtos;
 using AsparagusN.DTOs.CarbDtos;
 using AsparagusN.DTOs.IngredientDtos;
 using AsparagusN.DTOs.MealDtos;
-using AsparagusN.Entities;
 using AutoMapper;
 
 namespace AsparagusN.Helpers.MappingProfiles;
@@ -14,6 +15,7 @@ public class MealProfile : Profile
 {
     public MealProfile()
     {
+        CreateMap<Meal, MealLoyaltyPointDto>();
         CreateMap<Ingredient, UserMealCarb>().ForMember(dest=>dest.Id,opt=>opt.Ignore());
         CreateMap<Meal, CarbDto>();
         CreateMap<MealAllergy, AllergyDto>()

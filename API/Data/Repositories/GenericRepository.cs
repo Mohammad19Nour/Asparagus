@@ -1,9 +1,8 @@
-﻿using AsparagusN.Entities;
-using AsparagusN.Interfaces;
+﻿using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using Microsoft.EntityFrameworkCore;
 
-namespace AsparagusN.Data;
+namespace AsparagusN.Data.Repositories;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {

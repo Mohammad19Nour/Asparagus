@@ -1,5 +1,6 @@
-﻿using AsparagusN.DTOs;
-using AsparagusN.Entities;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.DTOs;
+using AsparagusN.DTOs.AddressDtos;
 using AutoMapper;
 
 namespace AsparagusN.Helpers.MappingProfiles;

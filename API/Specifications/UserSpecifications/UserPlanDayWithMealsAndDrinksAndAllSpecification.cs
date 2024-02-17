@@ -1,8 +1,7 @@
-﻿using System.Linq.Expressions;
-using AsparagusN.Data.Entities.MealPlan.UserPlan;
+﻿using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using Microsoft.EntityFrameworkCore;
 
-namespace AsparagusN.Specifications;
+namespace AsparagusN.Specifications.UserSpecifications;
 
 public class UserPlanDayWithMealsAndDrinksAndAllSpecification : BaseSpecification<UserPlanDay>
 {

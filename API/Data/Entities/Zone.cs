@@ -1,4 +1,4 @@
-﻿namespace AsparagusN.Entities;
+﻿namespace AsparagusN.Data.Entities;
 
 public class Zone
 {

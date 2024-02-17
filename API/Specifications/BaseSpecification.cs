@@ -12,7 +12,7 @@ public class BaseSpecification<T> : ISpecification<T>
 
     public Expression<Func<T, bool>> Criteria { get; }
     public  List<Func<IQueryable<T>, IIncludableQueryable<T, object>>> Includes { get; } = new List<Func<IQueryable<T>, IIncludableQueryable<T, object>>>();
-    protected void AddInclude(Func<IQueryable<T>, IIncludableQueryable<T, object>>exp)
+    public void AddInclude(Func<IQueryable<T>, IIncludableQueryable<T, object>>exp)
     {
       Includes.Add(exp);   
     }

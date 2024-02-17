@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AsparagusN.DTOs;
+namespace AsparagusN.DTOs.BasketDtos;
 
 public class AddBasketItemDto
 {

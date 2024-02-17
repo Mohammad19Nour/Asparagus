@@ -1,8 +1,8 @@
-﻿using AsparagusN.DTOs.ZoneDtos;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.DTOs.ZoneDtos;
 
 namespace AsparagusN.Controllers.Dashboard;
 using DTOs.ZoneDtos;
-using AsparagusN.Entities;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;

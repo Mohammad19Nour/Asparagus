@@ -1,4 +1,5 @@
 ﻿using AsparagusN.Data.Entities.MealPlan.UserPlan;
+using AsparagusN.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -17,10 +18,11 @@ public class UserPlanDayConfiguration : IEntityTypeConfiguration<UserPlanDay>
             .WithOne(y => y.UserPlanDay)
             .HasForeignKey(f => f.UserPlanDayId)
             .OnDelete(DeleteBehavior.Cascade);
-       
+
         builder.HasMany(x => x.SelectedExtraOptions)
             .WithOne(y => y.UserPlanDay)
             .HasForeignKey(f => f.UserPlanDayId)
             .OnDelete(DeleteBehavior.Cascade);
+        builder.Property(x => x.DeliveryPeriod).HasConversion(o => o.ToString(), o => (Period)Enum.Parse(typeof(Period), o));
     }
 }

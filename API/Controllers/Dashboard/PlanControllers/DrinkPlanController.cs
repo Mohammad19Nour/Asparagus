@@ -1,4 +1,4 @@
-﻿using AsparagusN.Data.Entities.MealPlan.Admin;
+﻿using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.DTOs.DrinksDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;

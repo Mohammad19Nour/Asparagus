@@ -1,4 +1,4 @@
-﻿using AsparagusN.Entities;
+﻿using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Enums;
 
 namespace AsparagusN.Data.Entities.MealPlan.AdminPlans;

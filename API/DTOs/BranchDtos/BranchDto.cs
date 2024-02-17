@@ -1,4 +1,6 @@
-﻿namespace AsparagusN.DTOs.BranchDtos;
+﻿using AsparagusN.DTOs.AddressDtos;
+
+namespace AsparagusN.DTOs.BranchDtos;
 
 public class BranchDto
 {

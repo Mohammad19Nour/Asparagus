@@ -1,10 +1,9 @@
-﻿using AsparagusN.Data.Entities.MealPlan.Admin;
+﻿using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.DTOs.AdminPlanDtos;
-using AsparagusN.Entities;
-using AsparagusN.Entities.MealPlan;
 using AsparagusN.Errors;
 using AsparagusN.Specifications;
+using AsparagusN.Specifications.AdminPlanSpecifications;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.Dashboard.PlanControllers;

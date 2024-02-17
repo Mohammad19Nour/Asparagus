@@ -1,6 +1,5 @@
-﻿using AsparagusN.Data.Entities.MealPlan.Admin;
-using AsparagusN.Data.Entities.MealPlan.AdminPlans;
-using AsparagusN.DTOs.AdditionDtos;
+﻿using AsparagusN.Data.Entities.MealPlan.AdminPlans;
+using AsparagusN.DTOs.ExtraOptionDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
 using Microsoft.AspNetCore.Mvc;

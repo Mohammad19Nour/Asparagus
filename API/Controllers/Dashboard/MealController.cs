@@ -1,6 +1,7 @@
-﻿using AsparagusN.DTOs;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.Meal;
+using AsparagusN.DTOs;
 using AsparagusN.DTOs.MealDtos;
-using AsparagusN.Entities;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;

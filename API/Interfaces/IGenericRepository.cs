@@ -1,5 +1,4 @@
-﻿using AsparagusN.Entities;
-using AsparagusN.Specifications;
+﻿using AsparagusN.Specifications;
 
 namespace AsparagusN.Interfaces;
 

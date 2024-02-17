@@ -1,5 +1,4 @@
-﻿using AsparagusN.Entities;
-using AsparagusN.Entities.Identity;
+﻿using AsparagusN.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

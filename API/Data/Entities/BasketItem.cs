@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using AsparagusN.Entities;
 
 namespace AsparagusN.Data.Entities;
 
@@ -7,7 +6,7 @@ public class BasketItem
 {
     public int CustomerBasketId { get; set; }
     public CustomerBasket CustomerBasket { get; set; }
-    public Meal Meal { get; set; }
+    public Meal.Meal Meal { get; set; }
     public int MealId { get; set; }
 
     [Required]

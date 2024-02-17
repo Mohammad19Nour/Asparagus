@@ -1,4 +1,6 @@
-﻿namespace AsparagusN.DTOs.OrderDtos;
+﻿using AsparagusN.DTOs.AddressDtos;
+
+namespace AsparagusN.DTOs.OrderDtos;
 
 public class NewOrderDto
 {

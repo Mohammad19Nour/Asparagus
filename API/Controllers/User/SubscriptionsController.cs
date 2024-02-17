@@ -1,18 +1,19 @@
-﻿using AsparagusN.Data.Entities.MealPlan.UserPlan;
+﻿using AsparagusN.Data.Entities.Identity;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.UserPlanDtos;
-using AsparagusN.Entities.Identity;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.User;
-
+[Authorize]
 public class SubscriptionsController : BaseApiController
 {
     private readonly ISubscriptionService _subscriptionService;
@@ -37,7 +38,7 @@ public class SubscriptionsController : BaseApiController
 
         var subs = await _subscriptionService.GetUserSubscriptionAsync(user,planType);
 
-        if (subs == null) return Ok(new ApiResponse(404,"not fount"));
+        if (subs == null) return Ok(new ApiResponse(404,"You dont have subscription"));
         return Ok(new ApiOkResponse<SubscriptionDto>(_mapper.Map<SubscriptionDto>(subs)));
     }
 

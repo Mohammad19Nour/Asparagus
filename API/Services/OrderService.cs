@@ -1,7 +1,6 @@
 ﻿using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.OrderAggregate;
-using AsparagusN.Entities;
-using AsparagusN.Entities.OrderAggregate;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;

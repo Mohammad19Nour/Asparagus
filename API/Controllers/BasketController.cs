@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.Identity;
+using AsparagusN.Data.Entities.Meal;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.BasketDtos;
-using AsparagusN.Entities;
-using AsparagusN.Entities.Identity;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;

@@ -1,5 +1,5 @@
-﻿using AsparagusN.DTOs;
-using AsparagusN.Entities;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.DTOs;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;

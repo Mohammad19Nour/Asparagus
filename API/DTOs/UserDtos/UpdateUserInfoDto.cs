@@ -1,4 +1,6 @@
-﻿namespace AsparagusN.DTOs;
+﻿using AsparagusN.DTOs.AddressDtos;
+
+namespace AsparagusN.DTOs.UserDtos;
 
 public class UpdateUserInfoDto
 {

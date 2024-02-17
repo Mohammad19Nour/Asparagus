@@ -1,6 +1,6 @@
-﻿using AsparagusN.Data.Entities.MealPlan.UserPlan;
+﻿using AsparagusN.Data.Entities.Identity;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs.UserPlanDtos;
-using AsparagusN.Entities.Identity;
 using AsparagusN.Enums;
 using Stripe;
 

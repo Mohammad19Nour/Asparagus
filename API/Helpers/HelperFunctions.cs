@@ -1,5 +1,5 @@
-﻿using AsparagusN.Data.Entities.MealPlan.UserPlan;
-using AsparagusN.Entities;
+﻿using AsparagusN.Data.Entities.Meal;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AutoMapper;
 
 namespace AsparagusN.Helpers;

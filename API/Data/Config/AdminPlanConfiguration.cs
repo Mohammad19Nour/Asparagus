@@ -1,7 +1,5 @@
 ﻿using System.Globalization;
-using AsparagusN.Data.Entities.MealPlan.Admin;
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
-using AsparagusN.Entities.MealPlan;
 using AsparagusN.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

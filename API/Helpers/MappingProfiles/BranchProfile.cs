@@ -1,5 +1,5 @@
-﻿using AsparagusN.DTOs.BranchDtos;
-using AsparagusN.Entities;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.DTOs.BranchDtos;
 using AutoMapper;
 
 namespace AsparagusN.Helpers.MappingProfiles;

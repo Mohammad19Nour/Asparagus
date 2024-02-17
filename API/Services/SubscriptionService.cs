@@ -1,15 +1,14 @@
 ﻿using AsparagusN.Data;
-using AsparagusN.Data.Entities.MealPlan.Admin;
+using AsparagusN.Data.Entities.Identity;
+using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.UserPlanDtos;
-using AsparagusN.Entities;
-using AsparagusN.Entities.Identity;
-using AsparagusN.Entities.MealPlan;
 using AsparagusN.Enums;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
+using AsparagusN.Specifications.AdminPlanSpecifications;
 using AsparagusN.Specifications.UserSpecifications;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -116,11 +115,14 @@ public class SubscriptionService : ISubscriptionService
             if (plan != null)
                 return (null, "You have a subscription with this plan type");
 
+            var planPoints = (await _unitOfWork.Repository<PlanType>().ListAllAsync()).First(x => x.PlanTypeE == subscriptionDto.PlanType).Points;
             plan = new UserPlan();
 
             var result = await Add(subscriptionDto, user, plan);
             if (!result.Succes) return (null, result.Message);
             user!.IsMealPlanMember = true;
+            plan.NumberOfRemainingSnacks = plan.NumberOfSnacks;
+            plan.User.LoyaltyPoints += planPoints;
             _unitOfWork.Repository<UserPlan>().Add(plan);
 
             if (await _unitOfWork.SaveChanges()) return (plan, "Success");
@@ -364,6 +366,7 @@ public class SubscriptionService : ISubscriptionService
             subscriptionDto.Duration -= plan.Duration;
             plan.NumberOfSnacks = subscriptionDto.NumberOfSnacks;
             plan.NumberOfMealPerDay = subscriptionDto.NumberOfMealPerDay;
+            plan.NumberOfRemainingSnacks += numberOfUpdatedSnacks;
 
             if (!validation.Success) return (false, validation.Message);
 
@@ -479,6 +482,10 @@ public class SubscriptionService : ISubscriptionService
             if (days == null)
                 return (false, "Something happened");
 
+            foreach (var day in days)
+            {
+                day.DeliveryLocationId = user.HomeAddressId;
+            }
             plan.Days = days;
 
             var addProcess = await AddDrinksToDaysPlan(subscriptionDto.SelectedDrinks, plan.Days!, plan.PlanType);

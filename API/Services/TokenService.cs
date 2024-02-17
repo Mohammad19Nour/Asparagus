@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using AsparagusN.Entities.Identity;
+using AsparagusN.Data.Entities.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AsparagusN.Services;

@@ -1,7 +1,6 @@
-﻿using AsparagusN.Data.Entities.OrderAggregate;
-using AsparagusN.Enums;
+﻿using AsparagusN.Enums;
 
-namespace AsparagusN.Entities.OrderAggregate;
+namespace AsparagusN.Data.Entities.OrderAggregate;
 
 public class Order
 {

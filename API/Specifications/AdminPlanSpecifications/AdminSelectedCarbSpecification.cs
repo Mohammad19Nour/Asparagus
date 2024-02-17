@@ -1,9 +1,8 @@
-﻿using System.Linq.Expressions;
-using AsparagusN.Data.Entities.MealPlan.AdminPlans;
+﻿using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace AsparagusN.Specifications;
+namespace AsparagusN.Specifications.AdminPlanSpecifications;
 
 public class AdminSelectedCarbSpecification : BaseSpecification<AdminSelectedCarb>
 {

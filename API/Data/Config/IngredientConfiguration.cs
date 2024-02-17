@@ -1,4 +1,4 @@
-﻿using AsparagusN.Entities;
+﻿using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

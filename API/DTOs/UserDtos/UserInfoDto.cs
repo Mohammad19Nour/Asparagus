@@ -1,6 +1,6 @@
-﻿using AsparagusN.Enums;
+﻿using AsparagusN.DTOs.AddressDtos;
 
-namespace AsparagusN.DTOs;
+namespace AsparagusN.DTOs.UserDtos;
 
 public class UserInfoDto
 {

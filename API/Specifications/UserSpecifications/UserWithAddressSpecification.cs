@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using AsparagusN.Entities.Identity;
+using AsparagusN.Data.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Specifications.UserSpecifications;

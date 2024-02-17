@@ -2,7 +2,7 @@
 using AsparagusN.Interfaces;
 using StackExchange.Redis;
 using Stripe;
-using Order = AsparagusN.Entities.OrderAggregate.Order;
+using Order = AsparagusN.Data.Entities.OrderAggregate.Order;
 
 namespace AsparagusN.Services;
 

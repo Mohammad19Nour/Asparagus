@@ -1,6 +1,4 @@
-﻿using AsparagusN.Entities.MealPlan;
-
-namespace AsparagusN.Data.Entities.MealPlan.UserPlan;
+﻿namespace AsparagusN.Data.Entities.MealPlan.UserPlan;
 
 public class UserSelectedMeal
 {
