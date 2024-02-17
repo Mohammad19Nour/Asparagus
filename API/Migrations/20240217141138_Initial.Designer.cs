@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240217043951_ssd")]
-    partial class ssd
+    [Migration("20240217141138_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -60,30 +60,9 @@ namespace AsparagusN.Migrations
                     b.Property<int>("AddedProtein")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("NameAR")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NameEN")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Note")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<string>("PictureUrl")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("PricePerCarb")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("PricePerProtein")
-                        .HasColumnType("REAL");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
@@ -92,6 +71,8 @@ namespace AsparagusN.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("CustomerBasketId", "MealId");
+
+                    b.HasIndex("MealId");
 
                     b.ToTable("BasketItems");
                 });
@@ -244,10 +225,6 @@ namespace AsparagusN.Migrations
                     b.Property<double>("Carb")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("ExtraInfo")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<double>("Fat")
                         .HasColumnType("REAL");
 
@@ -262,18 +239,12 @@ namespace AsparagusN.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
-
                     b.Property<double>("Protein")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Weight")
                         .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserChangedCarbs");
+                    b.ToTable("UserMealCarb");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlan", b =>
@@ -397,9 +368,6 @@ namespace AsparagusN.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("REAL");
 
-                    b.Property<double>("PricePerUnit")
-                        .HasColumnType("REAL");
-
                     b.Property<int>("UserPlanDayId")
                         .HasColumnType("INTEGER");
 
@@ -419,19 +387,13 @@ namespace AsparagusN.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AddedCarb")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AddedProtein")
-                        .HasColumnType("INTEGER");
-
                     b.Property<double>("Calories")
                         .HasColumnType("REAL");
 
                     b.Property<double>("Carbs")
                         .HasColumnType("REAL");
 
-                    b.Property<int?>("ChangedCarbId")
+                    b.Property<int>("ChangedCarbId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("DescriptionAR")
@@ -455,6 +417,9 @@ namespace AsparagusN.Migrations
                     b.Property<string>("NameEN")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("OriginalMealId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PictureUrl")
                         .IsRequired()
@@ -1305,7 +1270,15 @@ namespace AsparagusN.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("AsparagusN.Entities.Meal", "Meal")
+                        .WithMany()
+                        .HasForeignKey("MealId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("CustomerBasket");
+
+                    b.Navigation("Meal");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.Admin.AdminSelectedDrink", b =>
@@ -1416,7 +1389,9 @@ namespace AsparagusN.Migrations
                 {
                     b.HasOne("AsparagusN.Data.Entities.MealPlan.UserPlan.UserMealCarb", "ChangedCarb")
                         .WithMany()
-                        .HasForeignKey("ChangedCarbId");
+                        .HasForeignKey("ChangedCarbId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlanDay", "UserPlanDay")
                         .WithMany("SelectedMeals")

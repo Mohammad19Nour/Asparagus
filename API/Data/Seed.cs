@@ -14,32 +14,24 @@ public static class Seed
     public static async Task SeedData(DataContext context, RoleManager<AppRole> roleManager)
     {
         await SeedRoles(roleManager);
-        await SeedBranches(context);
+        await SeedAdminPlans(context);
+        await SeedAllergies(context);
         await SeedCategories(context);
         await SeedIngredients(context);
-        await SeedAllergies(context);
-        await SeedMeals(context);
-        await SeedAdminPlans(context);
-        await SeedZones(context);
-        await SeedDrinks(context: context);
+        await SeedDrinks(context);
         await SeedExtraOptions(context);
+        await SeedZones(context);
+        await SeedBranches(context);
+        await SeedMeals(context);
+        await SeedAdminSelectedDrinks(context);
+        await SeedAdminSelectedExtraOptions(context);
+        await SeedAdminSelectedMeals(context);
+        await SeedAdminSelectedSnacks(context);
         await SeedPlanTypes(context);
+        await SeedAdminSelectedCarbs(context);
     }
 
-    private static async Task SeedPrices(DataContext context)
-    {
-        return;
-        if (await context.PlanPrices.AnyAsync())return;
-        foreach (SubscriptionDuration duration in Enum.GetValues(typeof(SubscriptionDuration)))
-        {
-            for (var j = 1; j <= 3; j++)
-            {
-                context.PlanPrices.Add(new PlanPrice { Duration = duration, NumberOfMealsPerDay = 3, Price = CalculatePrice(duration , j) }
-                );
-            }
-        }
-    }
-    private static decimal CalculatePrice(SubscriptionDuration duration , int numberOfMeals)
+    private static decimal CalculatePrice(SubscriptionDuration duration, int numberOfMeals)
     {
         return duration switch
         {
@@ -49,6 +41,21 @@ public static class Seed
             SubscriptionDuration.ThirtyDays => 200.00m * numberOfMeals,
             _ => throw new ArgumentOutOfRangeException(nameof(duration), "Unknown duration")
         };
+    }
+
+    private static async Task SeedPrices(DataContext context)
+    {
+        return;
+        if (await context.PlanPrices.AnyAsync()) return;
+        foreach (SubscriptionDuration duration in Enum.GetValues(typeof(SubscriptionDuration)))
+        {
+            for (var j = 1; j <= 3; j++)
+            {
+                context.PlanPrices.Add(new PlanPrice
+                    { Duration = duration, NumberOfMealsPerDay = 3, Price = CalculatePrice(duration, j) }
+                );
+            }
+        }
     }
 
     private static async Task SeedPlanTypes(DataContext context)
@@ -106,66 +113,134 @@ public static class Seed
     {
         if (await context.ExtraOptions.AnyAsync()) return;
 
-        context.ExtraOptions.Add(new ExtraOption
+        var random = new Random();
+        var extraOptions = new List<ExtraOption>
         {
-            NameEnglish = "Caesar Salad", NameArabic = "سلطة السيزر", Price = 2.5m, Weight = 100,
-            PictureUrl = "caesar_salad.jpg", OptionType = ExtraOptionType.Salad
-        });
-        context.ExtraOptions.Add(new ExtraOption
-        {
-            NameEnglish = "Mixed Nuts", NameArabic = "مكسرات مشكلة", Price = 1.8m, Weight = 80,
-            PictureUrl = "mixed_nuts.jpg", OptionType = ExtraOptionType.Nuts
-        });
-        context.ExtraOptions.Add(new ExtraOption
-        {
-            NameEnglish = "Garlic Sauce", NameArabic = "صلصة الثوم", Price = 0.8m, Weight = 50,
-            PictureUrl = "garlic_sauce.jpg", OptionType = ExtraOptionType.Sauce
-        });
-        // Add more extra options here
-        await context.SaveChangesAsync();
-    }
-
-
-    private static async Task SeedDrinks(DataContext context)
-    {
-        if (await context.Drinks.AnyAsync()) return;
-
-        context.Drinks.Add(new Drink
-        {
-            NameEnglish = "Orange Juice", NameArabic = "عصير البرتقال", Price = 2.5m, Volume = CapacityLevel.Medium,
-            PictureUrl = "orange_juice.jpg"
-        });
-        context.Drinks.Add(new Drink
-        {
-            NameEnglish = "Coffee", NameArabic = "قهوة", Price = 3.0m, Volume = CapacityLevel.Small,
-            PictureUrl = "coffee.jpg"
-        });
-        context.Drinks.Add(new Drink
-        {
-            NameEnglish = "Tea", NameArabic = "شاي", Price = 1.8m, Volume = CapacityLevel.Small, PictureUrl = "tea.jpg"
-        });
-        context.Drinks.Add(new Drink
-        {
-            NameEnglish = "Milkshake", NameArabic = "ميلك شيك", Price = 4.0m, Volume = CapacityLevel.Large,
-            PictureUrl = "milkshake.jpg"
-        });
-        // Add more drinks here
-        await context.SaveChangesAsync();
-    }
-
-    private static async Task SeedZones(DataContext context)
-    {
-        if (await context.Zones.AnyAsync()) return;
-
-        var zones = new List<Zone>
-        {
-            new Zone { NameAR = "المنطقة الشمالية", NameEN = "North Zone" },
-            new Zone { NameAR = "المنطقة الجنوبية", NameEN = "South Zone" },
-            new Zone { NameAR = "المنطقة الغربية", NameEN = "West Zone" },
+            // Nuts
+            new ExtraOption
+            {
+                NameEnglish = "Peanuts", NameArabic = "فول سوداني", Price = 3.99m, Weight = 30,
+                PictureUrl = "peanuts.jpg", OptionType = ExtraOptionType.Nuts
+            },
+            new ExtraOption
+            {
+                NameEnglish = "Almonds", NameArabic = "لوز", Price = 4.99m, Weight = 40, PictureUrl = "almonds.jpg",
+                OptionType = ExtraOptionType.Nuts
+            },
+            new ExtraOption
+            {
+                NameEnglish = "Cashews", NameArabic = "كاجو", Price = 5.99m, Weight = 50, PictureUrl = "cashews.jpg",
+                OptionType = ExtraOptionType.Nuts
+            },
+            // Sauces
+            new ExtraOption
+            {
+                NameEnglish = "Barbecue Sauce", NameArabic = "صوص الشواء", Price = 2.49m, Weight = 25,
+                PictureUrl = "bbq_sauce.jpg", OptionType = ExtraOptionType.Sauce
+            },
+            new ExtraOption
+            {
+                NameEnglish = "Soy Sauce", NameArabic = "صوص الصويا", Price = 1.99m, Weight = 20,
+                PictureUrl = "soy_sauce.jpg", OptionType = ExtraOptionType.Sauce
+            },
+            // Salads
+            new ExtraOption
+            {
+                NameEnglish = "Caesar Salad", NameArabic = "سلطة السيزار", Price = 6.49m, Weight = 60,
+                PictureUrl = "caesar_salad.jpg", OptionType = ExtraOptionType.Salad
+            },
+            new ExtraOption
+            {
+                NameEnglish = "Greek Salad", NameArabic = "سلطة يونانية", Price = 5.49m, Weight = 55,
+                PictureUrl = "greek_salad.jpg", OptionType = ExtraOptionType.Salad
+            },
+            // Mixed
+            new ExtraOption
+            {
+                NameEnglish = "Mixed Nuts", NameArabic = "مكسرات مشكلة", Price = 12.99m, Weight = 120,
+                PictureUrl = "mixed_nuts.jpg", OptionType = ExtraOptionType.Nuts
+            },
+            new ExtraOption
+            {
+                NameEnglish = "Spicy Sauce", NameArabic = "صوص حار", Price = 3.99m, Weight = 35,
+                PictureUrl = "spicy_sauce.jpg", OptionType = ExtraOptionType.Sauce
+            }
         };
 
-        await context.Zones.AddRangeAsync(zones);
+        await context.ExtraOptions.AddRangeAsync(extraOptions);
         await context.SaveChangesAsync();
+    }
+
+
+    private static async Task SeedDrinks(DataContext _context)
+    {
+        if (await _context.Drinks.AnyAsync()) return;
+
+        var random = new Random();
+        var defaultPictureUrl = "default_picture.jpg"; // Provide a default picture URL here
+
+        var drinks = new List<Drink>
+        {
+            new Drink
+            {
+                NameEnglish = "Water", NameArabic = "ماء", Price = (decimal)random.NextDouble() * 5,
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+            },
+            new Drink
+            {
+                NameEnglish = "Orange Juice", NameArabic = "عصير البرتقال", Price = (decimal)random.NextDouble() * 10,
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+            },
+            new Drink
+            {
+                NameEnglish = "Cola", NameArabic = "كولا", Price = (decimal)random.NextDouble() * 5,
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+            },
+            new Drink
+            {
+                NameEnglish = "Coffee", NameArabic = "قهوة", Price = (decimal)random.NextDouble() * 10,
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+            },
+            new Drink
+            {
+                NameEnglish = "Tea", NameArabic = "شاي", Price = (decimal)random.NextDouble() * 5,
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+            },
+            new Drink
+            {
+                NameEnglish = "Mango Shake", NameArabic = "شيك المانجو", Price = (decimal)random.NextDouble() * 10,
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+            },
+            new Drink
+            {
+                NameEnglish = "Lemonade", NameArabic = "عصير الليمون", Price = (decimal)random.NextDouble() * 5,
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+            }
+        };
+
+        await _context.Drinks.AddRangeAsync(drinks);
+        await _context.SaveChangesAsync();
+    }
+
+
+    private static async Task SeedZones(DataContext _context)
+    {
+        if (await _context.Zones.AnyAsync()) return;
+
+        var random = new Random();
+        var zones = new List<Zone>
+        {
+            new Zone { NameEN = "Zone 1", NameAR = "المنطقة 1" },
+            new Zone { NameEN = "Zone 2", NameAR = "المنطقة 2" },
+            new Zone { NameEN = "Zone 3", NameAR = "المنطقة 3" },
+            new Zone { NameEN = "Zone 4", NameAR = "المنطقة 4" },
+            new Zone { NameEN = "Zone 5", NameAR = "المنطقة 5" },
+            new Zone { NameEN = "Zone 6", NameAR = "المنطقة 6" },
+            new Zone { NameEN = "Zone 7", NameAR = "المنطقة 7" }
+        };
+
+        await _context.Zones.AddRangeAsync(zones);
+        await _context.SaveChangesAsync();
     }
 
     private static async Task SeedRoles(RoleManager<AppRole> roleManager)
@@ -228,53 +303,99 @@ public static class Seed
         await context.SaveChangesAsync();
     }
 
-    private static async Task SeedCategories(DataContext context)
+    private static async Task SeedCategories(DataContext _context)
     {
-        if (await context.Categories.AnyAsync()) return;
+        if (await _context.Categories.AnyAsync()) return;
 
+        var random = new Random();
         var categories = new List<Category>
         {
-            new Category("Breakfast", "وجبة الفطور", "Morning meal options"),
-            new Category("Lunch", "وجبة الغداء", "Midday meal options"),
-            new Category("Dinner", "وجبة العشاء", "Evening meal options"),
-            // Add more categories here
+            new Category("Main Course", "الطبق الرئيسي", "Description for main courses"),
+            new Category("Salads", "السلطات", "Description for salads"),
+            new Category("Appetizers", "المقبلات", "Description for appetizers"),
+            new Category("Desserts", "الحلويات", "Description for desserts"),
+            new Category("Drinks", "المشروبات", "Description for drinks"),
+            new Category("Sides", "المقبلات", "Description for sides")
         };
 
-        await context.Categories.AddRangeAsync(categories);
-        await context.SaveChangesAsync();
+        await _context.Categories.AddRangeAsync(categories);
+        await _context.SaveChangesAsync();
     }
 
-    private static async Task SeedBranches(DataContext context)
+    private static async Task SeedBranches(DataContext _context)
     {
-        if (await context.Branches.AnyAsync()) return;
+        if (await _context.Branches.AnyAsync()) return;
 
+        var random = new Random();
         var branches = new List<Branch>
         {
             new Branch
             {
-                NameEN = "Main Branch",
-                NameAR = "الفرع الرئيسي",
+                NameEN = "Branch 1", NameAR = "الفرع 1",
                 Address = new Location
-                    { City = "Main City", StreetName = "Main Street", Longitude = 0.0m, Latitude = 0.0m }
+                {
+                    City = "City 1", StreetName = "Street 1", Latitude = Convert.ToDecimal(random.NextDouble()),
+                    Longitude = Convert.ToDecimal(random.NextDouble())
+                }
             },
             new Branch
             {
-                NameEN = "South Branch",
-                NameAR = "الفرع الجنوبي",
+                NameEN = "Branch 2", NameAR = "الفرع 2",
                 Address = new Location
-                    { City = "South City", StreetName = "South Street", Longitude = 0.0m, Latitude = 0.0m }
+                {
+                    City = "City 2", StreetName = "Street 2", Latitude = Convert.ToDecimal(random.NextDouble()),
+                    Longitude = Convert.ToDecimal(random.NextDouble())
+                }
             },
             new Branch
             {
-                NameEN = "West Branch",
-                NameAR = "الفرع الغربي",
+                NameEN = "Branch 3", NameAR = "الفرع 3",
                 Address = new Location
-                    { City = "West City", StreetName = "West Street", Longitude = 0.0m, Latitude = 0.0m }
+                {
+                    City = "City 3", StreetName = "Street 3", Latitude = Convert.ToDecimal(random.NextDouble()),
+                    Longitude = Convert.ToDecimal(random.NextDouble())
+                }
             },
+            new Branch
+            {
+                NameEN = "Branch 4", NameAR = "الفرع 4",
+                Address = new Location
+                {
+                    City = "City 4", StreetName = "Street 4", Latitude = Convert.ToDecimal(random.NextDouble()),
+                    Longitude = Convert.ToDecimal(random.NextDouble())
+                }
+            },
+            new Branch
+            {
+                NameEN = "Branch 5", NameAR = "الفرع 5",
+                Address = new Location
+                {
+                    City = "City 5", StreetName = "Street 5", Latitude = Convert.ToDecimal(random.NextDouble()),
+                    Longitude = Convert.ToDecimal(random.NextDouble())
+                }
+            },
+            new Branch
+            {
+                NameEN = "Branch 6", NameAR = "الفرع 6",
+                Address = new Location
+                {
+                    City = "City 6", StreetName = "Street 6", Latitude = Convert.ToDecimal(random.NextDouble()),
+                    Longitude = Convert.ToDecimal(random.NextDouble())
+                }
+            },
+            new Branch
+            {
+                NameEN = "Branch 7", NameAR = "الفرع 7",
+                Address = new Location
+                {
+                    City = "City 7", StreetName = "Street 7", Latitude = Convert.ToDecimal(random.NextDouble()),
+                    Longitude = Convert.ToDecimal(random.NextDouble())
+                }
+            }
         };
 
-        await context.Branches.AddRangeAsync(branches);
-        await context.SaveChangesAsync();
+        await _context.Branches.AddRangeAsync(branches);
+        await _context.SaveChangesAsync();
     }
 
     private static async Task SeedMeals(DataContext context)
@@ -389,23 +510,141 @@ public static class Seed
         await context.SaveChangesAsync();
     }
 
+
     private static async Task SeedIngredients(DataContext context)
     {
         if (await context.Ingredients.AnyAsync()) return;
 
+        var random = new Random();
         var ingredients = new List<Ingredient>
         {
-            new Ingredient("Rice", "أرز", "Long grain rice", 200, 5, 1, 40, 0, 3, IngredientType.Carb),
-            new Ingredient("Chicken", "دجاج", "Boneless chicken breast", 150, 15, 30, 0, 3, 0, IngredientType.Protein),
-            new Ingredient("Spinach", "سبانخ", "Fresh spinach leaves", 100, 3, 2, 5, 0, 2, IngredientType.Carb),
-            new Ingredient("Tomato", "طماطم", "Ripe tomatoes", 80, 2, 1, 4, 0, 1, IngredientType.Protein),
-            new Ingredient("Olive Oil", "زيت زيتون", "Extra virgin olive oil", 20, 10, 0, 0, 10, 0,
-                IngredientType.Soup),
-            new Ingredient("Lentils", "عدس", "Dried lentils", 120, 3, 9, 20, 0, 8, IngredientType.Soup),
-            new Ingredient("Salmon", "سلمون", "Fresh salmon fillet", 180, 20, 25, 0, 12, 0, IngredientType.Protein)
+            new Ingredient("Tomato", "طماطم", "Info about Tomato", random.Next(50, 200),
+                (decimal)random.NextDouble() * 10, (decimal)random.NextDouble() * 50, (decimal)random.NextDouble() * 5,
+                (decimal)random.NextDouble() * 5, (decimal)random.NextDouble() * 2, (IngredientType)random.Next(3)),
+            new Ingredient("Chicken Breast", "صدر دجاج", "Info about Chicken Breast", random.Next(50, 200),
+                (decimal)random.NextDouble() * 10, (decimal)random.NextDouble() * 50, (decimal)random.NextDouble() * 5,
+                (decimal)random.NextDouble() * 5, (decimal)random.NextDouble() * 2, (IngredientType)random.Next(3)),
+            new Ingredient("Rice", "أرز", "Info about Rice", random.Next(50, 200), (decimal)random.NextDouble() * 10,
+                (decimal)random.NextDouble() * 50, (decimal)random.NextDouble() * 5, (decimal)random.NextDouble() * 5,
+                (decimal)random.NextDouble() * 2, (IngredientType)random.Next(3)),
+            new Ingredient("Broccoli", "بروكلي", "Info about Broccoli", random.Next(50, 200),
+                (decimal)random.NextDouble() * 10, (decimal)random.NextDouble() * 50, (decimal)random.NextDouble() * 5,
+                (decimal)random.NextDouble() * 5, (decimal)random.NextDouble() * 2, (IngredientType)random.Next(3)),
+            new Ingredient("Salmon", "سمك السلمون", "Info about Salmon", random.Next(50, 200),
+                (decimal)random.NextDouble() * 10, (decimal)random.NextDouble() * 50, (decimal)random.NextDouble() * 5,
+                (decimal)random.NextDouble() * 5, (decimal)random.NextDouble() * 2, (IngredientType)random.Next(3)),
+            new Ingredient("Spinach", "سبانخ", "Info about Spinach", random.Next(50, 200),
+                (decimal)random.NextDouble() * 10, (decimal)random.NextDouble() * 50, (decimal)random.NextDouble() * 5,
+                (decimal)random.NextDouble() * 5, (decimal)random.NextDouble() * 2, (IngredientType)random.Next(3)),
+            new Ingredient("Potato", "بطاطا", "Info about Potato", random.Next(50, 200),
+                (decimal)random.NextDouble() * 10, (decimal)random.NextDouble() * 50, (decimal)random.NextDouble() * 5,
+                (decimal)random.NextDouble() * 5, (decimal)random.NextDouble() * 2, (IngredientType)random.Next(3)),
         };
 
         await context.Ingredients.AddRangeAsync(ingredients);
         await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedAdminSelectedSnacks(DataContext _context)
+    {
+        if (await _context.AdminSelectedSnacks.AnyAsync()) return;
+
+        var random = new Random();
+        var adminSelectedSnacks = new List<AdminSelectedSnack>
+        {
+            new AdminSelectedSnack { SnackId = 4, PlanTypeEnum = PlanTypeEnum.FutureLeader},
+            new AdminSelectedSnack { SnackId = 3, PlanTypeEnum = PlanTypeEnum.LossWeight },
+            new AdminSelectedSnack { SnackId = 2, PlanTypeEnum = PlanTypeEnum.MaintainWeight },
+           };
+
+        await _context.AdminSelectedSnacks.AddRangeAsync(adminSelectedSnacks);
+        await _context.SaveChangesAsync();
+    }
+
+    private static async Task SeedAdminSelectedCarbs(DataContext _context)
+    {
+        if (await _context.AdminSelectedCarbs.AnyAsync()) return;
+
+        var random = new Random();
+        var adminSelectedCarbs = new List<AdminSelectedCarb>
+        {
+            new AdminSelectedCarb { CarbId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedCarb { CarbId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedCarb { CarbId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedCarb { CarbId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedCarb { CarbId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedCarb { CarbId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedCarb { CarbId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) }
+        };
+
+        await _context.AdminSelectedCarbs.AddRangeAsync(adminSelectedCarbs);
+        await _context.SaveChangesAsync();
+    }
+
+    private static async Task SeedAdminSelectedDrinks(DataContext _context)
+    {
+        if (await _context.AdminSelectedDrinks.AnyAsync()) return;
+
+        var random = new Random();
+        var adminSelectedDrinks = new List<AdminSelectedDrink>
+        {
+            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) }
+        };
+
+        await _context.AdminSelectedDrinks.AddRangeAsync(adminSelectedDrinks);
+        await _context.SaveChangesAsync();
+    }
+
+    private static async Task SeedAdminSelectedExtraOptions(DataContext _context)
+    {
+        if (await _context.AdminSelectedExtraOptions.AnyAsync()) return;
+
+        var random = new Random();
+        var adminSelectedExtraOptions = new List<AdminSelectedExtraOption>
+        {
+            new AdminSelectedExtraOption
+                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedExtraOption
+                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedExtraOption
+                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedExtraOption
+                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedExtraOption
+                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedExtraOption
+                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) },
+            new AdminSelectedExtraOption
+                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = (PlanTypeEnum)random.Next(3) }
+        };
+
+        await _context.AdminSelectedExtraOptions.AddRangeAsync(adminSelectedExtraOptions);
+        await _context.SaveChangesAsync();
+    }
+
+    private static async Task SeedAdminSelectedMeals(DataContext _context)
+    {
+        if (await _context.AdminSelectedMeals.AnyAsync()) return;
+
+        var random = new Random();
+        var adminSelectedMeals = new List<AdminSelectedMeal>
+        {
+            new AdminSelectedMeal { MealId = random.Next(1, 4), AdminPlanDayId = random.Next(1, 7) },
+            new AdminSelectedMeal { MealId = random.Next(1, 4), AdminPlanDayId = random.Next(1, 7) },
+            new AdminSelectedMeal { MealId = random.Next(1, 4), AdminPlanDayId = random.Next(1, 7) },
+            new AdminSelectedMeal { MealId = random.Next(1, 4), AdminPlanDayId = random.Next(1, 7) },
+            new AdminSelectedMeal { MealId = random.Next(1, 4), AdminPlanDayId = random.Next(1, 7) },
+            new AdminSelectedMeal { MealId = random.Next(1, 4), AdminPlanDayId = random.Next(1, 7) },
+            new AdminSelectedMeal { MealId = random.Next(1, 4), AdminPlanDayId = random.Next(1, 7) }
+        };
+
+        await _context.AdminSelectedMeals.AddRangeAsync(adminSelectedMeals);
+        await _context.SaveChangesAsync();
     }
 }

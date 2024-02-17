@@ -32,8 +32,8 @@ public partial class PlanController : BaseApiController
     [HttpGet]
     public async Task<ActionResult<PlanDetailsDto>> GetPlan(PlanTypeEnum planType)
     {
-        Console.WriteLine(HelperFunctions.WeekStartDay());
-        var plan = await _unitOfWork.Repository<PlanType>().GetQueryable().Where(x => x.PlanTypeE == planType)
+        var plan = await _unitOfWork.Repository<PlanType>().GetQueryable()
+            .Where(x => x.PlanTypeE == planType)
             .FirstOrDefaultAsync();
 
         if (plan == null) return Ok(new ApiResponse(404, "Plan not found"));

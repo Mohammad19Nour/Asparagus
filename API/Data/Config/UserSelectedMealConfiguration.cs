@@ -8,6 +8,8 @@ public class UserSelectedMealConfiguration : IEntityTypeConfiguration<UserSelect
 {
     public void Configure(EntityTypeBuilder<UserSelectedMeal> builder)
     {
-     //   builder.Property(x=>x.ChangedCarb).
+        builder.HasOne(x => x.ChangedCarb)
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

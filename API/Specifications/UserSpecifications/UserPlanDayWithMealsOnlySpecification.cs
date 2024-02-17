@@ -10,7 +10,6 @@ public class UserPlanDayWithMealsOnlySpecification : BaseSpecification<UserPlanD
         : base(x=>x.UserPlan.AppUserId == userId && x.Id == dayId)
     {
         AddInclude(x=>x.Include(y=>y.UserPlan));
-        AddInclude(x=>x.Include(y=>y.SelectedMeals)
-            .ThenInclude(c=>c.ChangedCarb));
+        AddInclude(x=>x.Include(y=>y.SelectedMeals).ThenInclude(y=>y.ChangedCarb));
     }
 }

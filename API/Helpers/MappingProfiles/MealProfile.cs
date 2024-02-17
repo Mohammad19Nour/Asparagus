@@ -14,7 +14,7 @@ public class MealProfile : Profile
 {
     public MealProfile()
     {
-        CreateMap<UserMealCarb,UserMealCarbDto>();
+        CreateMap<Ingredient, UserMealCarb>().ForMember(dest=>dest.Id,opt=>opt.Ignore());
         CreateMap<Meal, CarbDto>();
         CreateMap<MealAllergy, AllergyDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(x => x.Allergy.Id))

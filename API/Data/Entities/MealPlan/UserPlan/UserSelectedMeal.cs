@@ -20,9 +20,7 @@ public class UserSelectedMeal
     public decimal Fats{ get; set; }
     public decimal Carbs{ get; set; }
     public decimal Protein{ get; set; }
-    public int AddedCarb { get; set; }
-    public int AddedProtein { get; set; }
-    public UserMealCarb? ChangedCarb { get; set; }
-    public int? ChangedCarbId { get; set; }
-    
+    public UserMealCarb ChangedCarb { get; set; }
+    public int ChangedCarbId { get; set; }
+    public int OriginalMealId { get; set; }
 }

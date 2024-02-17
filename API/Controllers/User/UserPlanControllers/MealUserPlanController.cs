@@ -3,10 +3,15 @@ using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.UserPlanDtos;
+using AsparagusN.Entities;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
+using AsparagusN.Helpers;
 using AsparagusN.Specifications;
+using AsparagusN.Specifications.AdminPlanSpecifications;
 using AsparagusN.Specifications.UserSpecifications;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.User.UserPlanControllers;
 
@@ -60,15 +65,14 @@ public partial class UserPlanController : BaseApiController
             var adminDay = await _unitOfWork.Repository<AdminPlanDay>().GetEntityWithSpec(adminMealSpec);
 
             if (adminDay == null) return Ok(new ApiResponse(400, "Admin day not found"));
-            Console.WriteLine("G");
-            Console.WriteLine(planDay.UserPlan.PlanType);
-            Console.WriteLine(adminDay.Id);
+
             if (planDay.Day != adminDay.AvailableDate)
                 return Ok(new ApiResponse(400, "Meal not found in this day"));
 
             if (planDay.UserPlan.PlanType != adminDay.PlanType)
                 return Ok(new ApiResponse(400, "user plan type not as same as admin plan type"));
 
+          
             var meal = adminDay.Meals.FirstOrDefault(x => x.Id == adminMealId);
             if (meal == null) return Ok(new ApiResponse(404, "Meal not found"));
 
@@ -77,9 +81,24 @@ public partial class UserPlanController : BaseApiController
                 UserPlanDay = planDay,
                 UserPlanDayId = planDay.Id
             };
+            
             _mapper.Map(meal.Meal, mealToAdd);
+            var ingredients = await _unitOfWork.Repository<MealIngredient>().GetQueryable()
+                .Include(x => x.Ingredient)
+                .Where(x => x.MealId == meal.MealId).ToListAsync();
 
-            mealToAdd.Id = 0;
+            var carb = ingredients.FirstOrDefault(x => x.Ingredient.TypeOfIngredient == IngredientType.Carb);
+
+            var carbSelected = new UserMealCarb();
+            if (carb != null)
+            {
+                _mapper.Map(carb.Ingredient, carbSelected);
+                HelperFunctions.CalcNewPropertyForCarbOfMeal(carbSelected,carb.Weight,carb.Ingredient.Weight);
+            }
+
+            mealToAdd.ChangedCarb = carbSelected;
+
+            mealToAdd.OriginalMealId = meal.MealId;
             planDay.SelectedMeals.Add(mealToAdd);
 
             _unitOfWork.Repository<UserPlanDay>().Update(planDay);
@@ -96,7 +115,7 @@ public partial class UserPlanController : BaseApiController
         }
     }
 
-    [HttpPut("meals/{dayId:int}")]
+   /* [HttpPut("meals/{dayId:int}")]
     public async Task<ActionResult> UpdateMeal(int dayId, UpdateUserMealDto updatedMeal)
     {
         try
@@ -146,7 +165,7 @@ public partial class UserPlanController : BaseApiController
             Console.WriteLine(e);
             throw;
         }
-    }
+    }*/
 
     [HttpDelete("meals/{dayId:int}")]
     public async Task<ActionResult> DeleteMeal(int dayId, int mealId)

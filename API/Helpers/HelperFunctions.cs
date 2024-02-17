@@ -1,4 +1,8 @@
-﻿namespace AsparagusN.Helpers;
+﻿using AsparagusN.Data.Entities.MealPlan.UserPlan;
+using AsparagusN.Entities;
+using AutoMapper;
+
+namespace AsparagusN.Helpers;
 
 public static class HelperFunctions
 {
@@ -44,5 +48,45 @@ public static class HelperFunctions
         }
 
         return result;
+    }
+    
+    public static void CalcNewPropertyForCarb(UserSelectedMeal meal, Ingredient newCarb)
+    {
+       // Console.WriteLine(meal.Carbs);
+       // Console.WriteLine(meal.Fats);
+       // Console.WriteLine(meal.Fibers);
+       // Console.WriteLine(meal.Protein);
+        meal.Carbs -= meal.ChangedCarb.Carb;
+        meal.Fats -= meal.ChangedCarb.Fat;
+        meal.Protein -= meal.ChangedCarb.Protein;
+        meal.Fibers -= meal.ChangedCarb.Fiber;
+
+       // Console.WriteLine("\n");
+       // Console.WriteLine(meal.Carbs);
+       // Console.WriteLine(meal.Fats);
+       // Console.WriteLine(meal.Fibers);
+        //Console.WriteLine(meal.Protein);
+        
+        meal.ChangedCarb.Carb = newCarb.Carb;
+        meal.ChangedCarb.Protein = newCarb.Protein;
+        meal.ChangedCarb.Fiber = newCarb.Fiber;
+        meal.ChangedCarb.Fat = newCarb.Fat;
+        meal.ChangedCarb.NameAR = newCarb.NameAR;
+        meal.ChangedCarb.NameEN = newCarb.NameEN;
+        
+        meal.Carbs += meal.ChangedCarb.Carb;
+        meal.Fats += meal.ChangedCarb.Fat;
+        meal.Protein += meal.ChangedCarb.Protein;
+        meal.Fibers += meal.ChangedCarb.Fiber;
+        
+    }
+
+    public static void CalcNewPropertyForCarbOfMeal(UserMealCarb carbSelected, decimal carbWeight, decimal ingredientWeight)
+    {
+        var percent = carbWeight / ingredientWeight;
+        carbSelected.Protein *= percent;
+        carbSelected.Fat *= percent;
+        carbSelected.Carb *= percent;
+        carbSelected.Fiber *= percent;
     }
 }

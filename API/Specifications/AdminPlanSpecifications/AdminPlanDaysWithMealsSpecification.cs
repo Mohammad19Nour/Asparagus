@@ -1,11 +1,8 @@
-﻿using System.Linq.Expressions;
-using AsparagusN.Data.Entities.MealPlan.Admin;
-using AsparagusN.Data.Entities.MealPlan.AdminPlans;
-using AsparagusN.Entities.MealPlan;
+﻿using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace AsparagusN.Specifications;
+namespace AsparagusN.Specifications.AdminPlanSpecifications;
 
 public class AdminPlanDaysWithMealsSpecification : BaseSpecification<AdminPlanDay>
 {

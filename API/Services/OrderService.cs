@@ -87,4 +87,45 @@ public class OrderService : IOrderService
       
         return order;
     }
+
+    private async Task<List<OrderItem>?> CalculateBasketPrice(int basketId)
+    { 
+        var spec = new BasketSpecification(basketId);
+        var basket = await _unitOfWork.Repository<CustomerBasket>().GetEntityWithSpec(spec);
+        if (basket == null) return null;
+
+        var basketOldTotal = basket.TotalPrice();
+        var items = new List<OrderItem>();
+
+        foreach (var item in basket.Items)
+        {
+            var meal = item.Meal;
+
+            if (!meal.IsMainMenu) return null;
+
+            var itemOrdered = _mapper.Map<MealItemOrdered>(meal);
+            itemOrdered.MealId = meal.Id;
+
+            itemOrdered.AddedProtein = item.AddedProtein;
+            itemOrdered.AddedCarb = item.AddedCarb;
+            var price = meal.Price + itemOrdered.PricePerCarb * itemOrdered.AddedCarb
+                                   + itemOrdered.PricePerProtein * itemOrdered.AddedProtein;
+
+            var orderItem = new OrderItem
+            {
+                OrderedMeal = itemOrdered,
+                Price = price,
+                Quantity = item.Quantity
+            };
+            items.Add(orderItem);
+        }
+
+        var subtotal = items.Sum(x => x.Price * x.Quantity);
+        if (basketOldTotal != subtotal)
+        {
+            _unitOfWork.Repository<CustomerBasket>().Update(basket);
+        }
+
+        return items;
+    }
 }

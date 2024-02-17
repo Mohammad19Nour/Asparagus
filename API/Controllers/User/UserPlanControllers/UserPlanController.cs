@@ -1,4 +1,5 @@
-﻿using AsparagusN.Data.Entities.MealPlan.UserPlan;
+﻿using AsparagusN.Data.Entities.MealPlan.AdminPlans;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Entities;
 using AsparagusN.Entities.Identity;
@@ -44,7 +45,21 @@ public partial class UserPlanController : BaseApiController
 
         if (plan == null) return Ok(new ApiResponse(404, "No plan found"));
 
-        return Ok(new ApiOkResponse<UserPlanDto>(_mapper.Map<UserPlanDto>(plan)));
+        var result = _mapper.Map<UserPlanDto>(plan);
+        foreach (var day in result.Days)
+        {
+            await AddAdminDayId(planType, day);
+        }
+        return Ok(new ApiOkResponse<UserPlanDto>(result));
+    }
+
+    private async Task AddAdminDayId(PlanTypeEnum planType, UserPlanDayDto day)
+    {
+        var adminDay = await _unitOfWork.Repository<AdminPlanDay>().GetQueryable()
+            .Where(c => c.PlanType == planType && c.AvailableDate == day.Day)
+            .FirstOrDefaultAsync();
+
+        if (adminDay != null) day.AdminDayId = adminDay.Id;
     }
 
     [HttpGet("{dayId:int}")]
@@ -56,7 +71,11 @@ public partial class UserPlanController : BaseApiController
         var spec = new UserPlanDayWithMealsAndDrinksAndAllSpecification(user.Id, dayId);
         var res = await _unitOfWork.Repository<UserPlanDay>().GetEntityWithSpec(spec);
 
-        return Ok(new ApiOkResponse<UserPlanDayDto>(_mapper.Map<UserPlanDayDto>(res)));
+        if (res == null) return Ok(new ApiResponse(404,"Day not found"));
+        var day = _mapper.Map<UserPlanDayDto>(res);
+       
+        await AddAdminDayId(res.UserPlan.PlanType, day);
+        return Ok(new ApiOkResponse<UserPlanDayDto>(day));
     }
 
     [HttpPut]
@@ -74,7 +93,13 @@ public partial class UserPlanController : BaseApiController
         if (!res.Success) return Ok(new ApiResponse(400, res.Message));
         _unitOfWork.Repository<UserPlan>().Update(plan);
 
-        if (await _unitOfWork.SaveChanges()) return Ok(new ApiOkResponse<UserPlanDto>(_mapper.Map<UserPlanDto>(plan)));
+        var result = _mapper.Map<UserPlanDto>(plan);
+        foreach (var day in result.Days)
+        {
+            await AddAdminDayId(updatePlanDto.PlanType, day);
+        }
+        
+        if (await _unitOfWork.SaveChanges()) return Ok(new ApiOkResponse<UserPlanDto>(result));
         return Ok(new ApiResponse(400, "Failed to update plan"));
     }
 

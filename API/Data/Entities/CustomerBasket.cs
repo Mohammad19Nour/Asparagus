@@ -18,6 +18,6 @@ public class CustomerBasket
     public decimal TotalPrice()
     {
         return Items.Sum(x => x.Quantity * 
-                              (x.PricePerCarb * x.AddedCarb + x.AddedProtein * x.PricePerProtein + x.Price) );
+                              (x.Meal.PricePerCarb * x.AddedCarb + x.AddedProtein * x.Meal.PricePerProtein + x.Meal.Price) );
     }
 }

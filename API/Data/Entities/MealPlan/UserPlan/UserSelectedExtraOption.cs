@@ -14,5 +14,4 @@ public class UserSelectedExtraOption
     public string PictureUrl { get; set; }
     public ExtraOptionType OptionType { get; set; }
     public decimal Price { get; set; }
-    public decimal PricePerUnit { get; set; }
 }

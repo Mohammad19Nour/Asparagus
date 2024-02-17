@@ -12,4 +12,5 @@ public class UserPlanDayDto
     public ICollection<UserSelectedExtraOptionDto> SelectedSalads { get; set; }
     public ICollection<UserSelectedMealDto> SelectedMeals { get; set; } = new List<UserSelectedMealDto>();
     public string DayOrderStatus { get; set; }
+    public int AdminDayId { get; set; }
 }

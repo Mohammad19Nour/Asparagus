@@ -3,13 +3,11 @@
 public class UserMealCarb
 {
     public int Id { get; set; }
-    public string NameEN { get; set; } 
-    public string NameAR { get; set; } 
-    public string ExtraInfo { get; set; }
-    public decimal Weight { get; set; }
-    public decimal Price { get; set; }
-    public decimal Protein { get; set; }
-    public decimal Carb { get; set; }
-    public decimal Fat { get; set; }
-    public decimal Fiber { get; set; }
+    public string NameEN { get; set; } = "This meal doesn't have carb";
+    public string NameAR { get; set; } = "لا تحتوي هذه الوجبة على كارب";
+    public decimal Protein { get; set; } = 0;
+    public decimal Carb { get; set; } = 0;
+    public decimal Fat { get; set; } = 0;
+    public decimal Fiber { get; set; } = 0;
+
 }

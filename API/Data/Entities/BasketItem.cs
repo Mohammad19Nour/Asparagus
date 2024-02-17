@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using AsparagusN.Entities;
 
 namespace AsparagusN.Data.Entities;
 
@@ -6,13 +7,8 @@ public class BasketItem
 {
     public int CustomerBasketId { get; set; }
     public CustomerBasket CustomerBasket { get; set; }
-    [Required] public int MealId { get; set; }
-    public string NameEN { get; set; }
-    public string NameAR { get; set; }
-
-    [Required]
-    [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
-    public decimal Price { get; set; }
+    public Meal Meal { get; set; }
+    public int MealId { get; set; }
 
     [Required]
     [Range(1, double.MaxValue, ErrorMessage = "Quantity should be at least 1")]
@@ -20,9 +16,6 @@ public class BasketItem
 
     public int AddedCarb { get; set; }
     public int AddedProtein { get; set; }
-    public decimal PricePerProtein { get; set; }
-    public decimal PricePerCarb{ get; set; }
-    public string PictureUrl { get; set; }
 
     public string Note { get; set; }
     public bool RemoveSauce { get; set; }

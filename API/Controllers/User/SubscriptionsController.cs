@@ -30,14 +30,15 @@ public class SubscriptionsController : BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<SubscriptionDto>>> AllSubscriptions()
+    public async Task<ActionResult<SubscriptionDto>> Subscription(PlanTypeEnum planType)
     {
         var user = await _getUser();
         if (user == null) return Ok(new ApiResponse(404, "user not found"));
 
-        var subs = await _subscriptionService.GetAllUserSubscriptionsAsync(user);
+        var subs = await _subscriptionService.GetUserSubscriptionAsync(user,planType);
 
-        return Ok(new ApiOkResponse<List<SubscriptionDto>>(_mapper.Map<List<SubscriptionDto>>(subs)));
+        if (subs == null) return Ok(new ApiResponse(404,"not fount"));
+        return Ok(new ApiOkResponse<SubscriptionDto>(_mapper.Map<SubscriptionDto>(subs)));
     }
 
     [HttpPost]

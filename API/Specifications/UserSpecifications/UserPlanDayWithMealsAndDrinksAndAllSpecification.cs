@@ -13,6 +13,6 @@ public class UserPlanDayWithMealsAndDrinksAndAllSpecification : BaseSpecificatio
         AddInclude(x => x.Include(y => y.SelectedDrinks));
         AddInclude(x => x.Include(y => y.SelectedExtraOptions));
         AddInclude(x => x.Include(y => y.SelectedSnacks));
-        AddInclude(x => x.Include(y => y.SelectedMeals).ThenInclude(c => c.ChangedCarb));
+        AddInclude(x => x.Include(y => y.SelectedMeals).ThenInclude(y=>y.ChangedCarb));
     }
 }

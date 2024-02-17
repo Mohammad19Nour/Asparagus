@@ -14,6 +14,7 @@ public class SubscriptionDto
     public int NumberOfRemainingSnacks { get; set; }
     public string? Notes { get; set; }
     public string DeliveryCity { get; set; }
+    public List<AllergyDto> Allergies { get; set; }
 
     public DateTime EndDate{ get; set; }
 }
