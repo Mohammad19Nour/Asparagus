@@ -26,6 +26,31 @@ public static class Seed
         await SeedPlanTypes(context);
     }
 
+    private static async Task SeedPrices(DataContext context)
+    {
+        return;
+        if (await context.PlanPrices.AnyAsync())return;
+        foreach (SubscriptionDuration duration in Enum.GetValues(typeof(SubscriptionDuration)))
+        {
+            for (var j = 1; j <= 3; j++)
+            {
+                context.PlanPrices.Add(new PlanPrice { Duration = duration, NumberOfMealsPerDay = 3, Price = CalculatePrice(duration , j) }
+                );
+            }
+        }
+    }
+    private static decimal CalculatePrice(SubscriptionDuration duration , int numberOfMeals)
+    {
+        return duration switch
+        {
+            SubscriptionDuration.FiveDays => 50.00m * numberOfMeals,
+            SubscriptionDuration.SevenDays => 70.00m * numberOfMeals,
+            SubscriptionDuration.FifteenDays => 120.00m * numberOfMeals,
+            SubscriptionDuration.ThirtyDays => 200.00m * numberOfMeals,
+            _ => throw new ArgumentOutOfRangeException(nameof(duration), "Unknown duration")
+        };
+    }
+
     private static async Task SeedPlanTypes(DataContext context)
     {
         if (await context.PlanTypes.AnyAsync()) return;

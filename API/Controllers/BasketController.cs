@@ -114,12 +114,12 @@ public class BasketController : BaseApiController
 
         if (meal == null) return Ok(new ApiException(404, "Meal not found"));
         meal.Quantity = newQuantity;
+        _unitOfWork.Repository<BasketItem>().Update(meal);
         _unitOfWork.Repository<CustomerBasket>().Update(dbBasket);
         if (await _unitOfWork.SaveChanges())
             return Ok(new ApiOkResponse<CustomerBasketDto>(_mapper.Map<CustomerBasketDto>(dbBasket)));
         return Ok(new ApiResponse(400, "Failed to update item"));
     }
-
     [HttpDelete]
     public async Task<ActionResult> DeleteBasketItem(int mealId)
     {

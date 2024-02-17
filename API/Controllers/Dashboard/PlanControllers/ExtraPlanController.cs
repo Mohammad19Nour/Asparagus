@@ -1,4 +1,5 @@
 ﻿using AsparagusN.Data.Entities.MealPlan.Admin;
+using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.DTOs.AdditionDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
@@ -8,7 +9,6 @@ namespace AsparagusN.Controllers.Dashboard.PlanControllers;
 
 public partial class PlanController
 {
-    
     [HttpPost("extras")]
     public async Task<ActionResult> AddExtra(ExtraIdsDto ids, PlanTypeEnum planTypeEnum)
     {
@@ -34,7 +34,15 @@ public partial class PlanController
     [HttpGet("extras")]
     public async Task<ActionResult<List<ExtraOptionDto>>> GetExtras(PlanTypeEnum planTypeEnum)
     {
-        return Ok(new ApiOkResponse<List<ExtraOptionDto>>(await _getExtraOptions(planTypeEnum)));
+        return Ok(new ApiOkResponse<List<ExtraOptionDto>>(await _getExtraOptions(planTypeEnum, null)));
+    }
+
+    [HttpGet("extras/{typeId:int}")]
+    public async Task<ActionResult<List<ExtraOptionDto>>> GetSpecific(PlanTypeEnum planTypeEnum, int typeId)
+    {
+        var optionType = ExtraOptionType.Nuts;
+        if (typeId == 1) optionType = ExtraOptionType.Salad;
+        return Ok(new ApiOkResponse<List<ExtraOptionDto>>(await _getExtraOptions(planTypeEnum, optionType)));
     }
 
 

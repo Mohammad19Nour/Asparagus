@@ -3,6 +3,7 @@ using System;
 using AsparagusN.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240215112756_wsw")]
+    partial class wsw
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
@@ -397,12 +400,17 @@ namespace AsparagusN.Migrations
                     b.Property<int>("UserPlanDayId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("UserPlanDayId1")
+                        .HasColumnType("INTEGER");
+
                     b.Property<double>("Weight")
                         .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserPlanDayId");
+
+                    b.HasIndex("UserPlanDayId1");
 
                     b.ToTable("UserSelectedExtraOptions");
                 });
@@ -1383,6 +1391,10 @@ namespace AsparagusN.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlanDay", null)
+                        .WithMany("SelectedSalads")
+                        .HasForeignKey("UserPlanDayId1");
+
                     b.Navigation("UserPlanDay");
                 });
 
@@ -1658,6 +1670,8 @@ namespace AsparagusN.Migrations
                     b.Navigation("SelectedExtraOptions");
 
                     b.Navigation("SelectedMeals");
+
+                    b.Navigation("SelectedSalads");
 
                     b.Navigation("SelectedSnacks");
                 });

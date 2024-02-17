@@ -46,7 +46,7 @@ public partial class PlanController : BaseApiController
 
         var days = await _unitOfWork.Repository<AdminPlanDay>().ListWithSpecAsync(specDays);
         result.Drinks = await _getDrinks(planType);
-        result.ExtraOptionDtos = await _getExtraOptions(planType);
+        result.ExtraOptionDtos = await _getExtraOptions(planType,null);
         result.Snacks = await _getSnacks(planType);
         result.Days = _mapper.Map<List<AdminPlanDayDto>>(days);
 
@@ -97,10 +97,13 @@ public partial class PlanController : BaseApiController
 
     private async Task<bool> _addExtraOption(List<int> optionIds, PlanTypeEnum typeEnum)
     {
+        var alreadySelectedExtras = await _unitOfWork.Repository<AdminSelectedExtraOption>().ListAllAsync();
+        alreadySelectedExtras = alreadySelectedExtras.Where(x => x.PlanTypeEnum == typeEnum).ToList();
+
         foreach (var id in optionIds)
         {
-            var spec = new AdminSelectedExtraOptionSpecification(typeEnum, id: id);
-            var item = await _unitOfWork.Repository<AdminSelectedExtraOption>().GetEntityWithSpec(spec);
+            var item = alreadySelectedExtras.FirstOrDefault(x => x.ExtraOptionId == id);
+
             if (item != null) continue;
 
             var extra = await _unitOfWork.Repository<ExtraOption>().GetByIdAsync(id);
@@ -113,7 +116,7 @@ public partial class PlanController : BaseApiController
 
         return true;
     }
-    
+
 
     private async Task<bool> _addDrinks(List<int> drinkIds, PlanTypeEnum typeEnum)
     {
@@ -153,9 +156,11 @@ public partial class PlanController : BaseApiController
         return (true, "ok");
     }
 
-    private async Task<List<ExtraOptionDto>> _getExtraOptions(PlanTypeEnum planTypeEnum)
+    private async Task<List<ExtraOptionDto>> _getExtraOptions(PlanTypeEnum planTypeEnum, ExtraOptionType? optionType)
     {
-        var spec = new AdminSelectedExtraOptionSpecification(planTypeEnum);
+        var spec = new AdminSelectedExtrasAndSaladsSpecification(planTypeEnum);
+        if (optionType != null)
+            spec = new AdminSelectedExtrasAndSaladsSpecification(optionType.Value, planTypeEnum);
         var drinks = await _unitOfWork.Repository<AdminSelectedExtraOption>()
             .ListWithSpecAsync(spec);
         return _mapper.Map<List<ExtraOptionDto>>(drinks);
@@ -170,6 +175,7 @@ public partial class PlanController : BaseApiController
         var drinksDto = _mapper.Map<List<DrinkDto>>(drinks);
         return drinksDto;
     }
+
     private async Task<List<SnackDto>> _getSnacks(PlanTypeEnum planTypeEnum)
     {
         var spec = new AdminSelectedSnacksSpecification(planTypeEnum);

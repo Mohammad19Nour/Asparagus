@@ -17,6 +17,7 @@ public class UserPlanDayConfiguration : IEntityTypeConfiguration<UserPlanDay>
             .WithOne(y => y.UserPlanDay)
             .HasForeignKey(f => f.UserPlanDayId)
             .OnDelete(DeleteBehavior.Cascade);
+       
         builder.HasMany(x => x.SelectedExtraOptions)
             .WithOne(y => y.UserPlanDay)
             .HasForeignKey(f => f.UserPlanDayId)

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://localhost:5257", "http://192.168.1.27:5257");
+//builder.WebHost.UseUrls("http://localhost:5257", "http://192.168.1.39:5257");
 // Add services to the container.
 
 builder.Services.AddControllers().AddNewtonsoftJson(opt =>

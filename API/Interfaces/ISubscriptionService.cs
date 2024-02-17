@@ -2,12 +2,16 @@
 using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Entities.Identity;
 using AsparagusN.Enums;
+using Stripe;
 
 namespace AsparagusN.Interfaces;
 
 public interface ISubscriptionService
 {
     Task<(UserPlan? createdPlan, string Message)> CreateSubscriptionAsync(NewSubscriptionDto newSubscriptionDto, AppUser user);
-    Task<bool>  CheckExistingSubscriptionPlanForUserAsync(int userId, PlanTypeEnum planType);
-    Task<(UserPlan?, string Message)> UpdateDuration(int userId, PlanTypeEnum planType, int duration);
+    public Task<(UserPlan?, string Message)> UpdateSubscription(UpdateSubscriptionDto subscriptionDto, AppUser user);
+    Task<UserPlan?> GetUserSubscriptionAsync(AppUser user, PlanTypeEnum planTypeEnum);
+    Task<List<UserPlan>> GetAllUserSubscriptionsAsync(AppUser user);
+    Task<(decimal? Price, string Message)> GetPriceForUpdate(UpdateSubscriptionDto subscription, AppUser user);
+    Task<(decimal? Price, string Message)> GetPriceForCreate(NewSubscriptionDto subscription, AppUser user);
 }

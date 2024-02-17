@@ -5,10 +5,6 @@ namespace AsparagusN.Data.Entities.MealPlan.UserPlan;
 
 public class UserPlanDay
 {
-    public UserPlanDay()
-    {
-    }
-
     public int Id { get; set; }
     public int UserPlanId { get; set; }
     public UserPlan UserPlan { get; set; }

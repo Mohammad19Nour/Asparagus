@@ -18,11 +18,15 @@ public class UserPlan
     public int NumberOfSnacks { get; set; }
     public int NumberOfRemainingSnacks { get; set; }
     public List<UserPlanDay> Days { get; set; } = new List<UserPlanDay>();
+    public List<UserPlanAllergy> Allergies { get; set; } = new List<UserPlanAllergy>();
+    public string? Notes { get; set; }
+    public string DeliveryCity { get; set; }
 
     public DateTime EndDate()
     {
         return StartDate.AddDays(Duration);
     }
+
     public UserPlan()
     {
         NumberOfRemainingSnacks = NumberOfSnacks;

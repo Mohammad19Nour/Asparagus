@@ -9,6 +9,7 @@ public class UserPlanDayDto
     public DateTime Day { get; set; }
     public ICollection<UserSelectedDrinkDto> SelectedDrinks { get; set; }
     public ICollection<UserSelectedExtraOptionDto> SelectedExtraOptions { get; set; }
+    public ICollection<UserSelectedExtraOptionDto> SelectedSalads { get; set; }
     public ICollection<UserSelectedMealDto> SelectedMeals { get; set; } = new List<UserSelectedMealDto>();
     public string DayOrderStatus { get; set; }
 }

@@ -8,8 +8,9 @@ namespace AsparagusN.Specifications.UserSpecifications;
 public class UserPlanWithMealsDrinksAndExtrasSpecification : BaseSpecification<UserPlan>
 {
     public UserPlanWithMealsDrinksAndExtrasSpecification(int userId, PlanTypeEnum planType)
-        : base(x => x.PlanType == planType && userId == x.AppUserId)
+        : base(x => x.PlanType == planType && userId == x.AppUserId && x.StartDate.AddDays(x.Duration) > DateTime.Today)
     {
+        AddInclude(x => x.Include(y => y.Allergies));
         AddInclude(x => x.Include(y => y.Days).ThenInclude(
             d => d.SelectedDrinks));
 
@@ -22,5 +23,5 @@ public class UserPlanWithMealsDrinksAndExtrasSpecification : BaseSpecification<U
                 d => d.SelectedMeals)
             .ThenInclude(c => c.ChangedCarb));
     }
-    
+
 }

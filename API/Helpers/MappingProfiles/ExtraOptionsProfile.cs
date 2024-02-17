@@ -1,4 +1,5 @@
 ﻿using AsparagusN.Data.Entities.MealPlan.Admin;
+using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.DTOs.AdditionDtos;
 using AsparagusN.Entities;
 using AutoMapper;

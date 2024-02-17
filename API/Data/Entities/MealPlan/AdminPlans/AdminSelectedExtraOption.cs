@@ -1,8 +1,7 @@
 ﻿using AsparagusN.Entities;
-using AsparagusN.Entities.MealPlan;
 using AsparagusN.Enums;
 
-namespace AsparagusN.Data.Entities.MealPlan.Admin;
+namespace AsparagusN.Data.Entities.MealPlan.AdminPlans;
 
 public class AdminSelectedExtraOption
 {
