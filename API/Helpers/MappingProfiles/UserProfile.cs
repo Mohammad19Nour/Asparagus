@@ -12,8 +12,10 @@ public class UserProfile : Profile
     {
         CreateMap<RegisterDto, AppUser>();
         CreateMap<AppUser, AccountDto>();
-        CreateMap<AppUser, UserInfoDto>();
-        CreateMap<UpdateUserInfoDto, AppUser>().ForAllMembers
+        CreateMap<AppUser, UserInfoDto>()
+            .ForMember(dest=>dest.Gender,opt=>opt.MapFrom(src=>Enum.GetName(src.Gender)));
+        CreateMap<UpdateUserInfoDto, AppUser>().
+            ForAllMembers
         (opt =>
             opt.Condition((src, dest, srcMember) => srcMember != null));
     }

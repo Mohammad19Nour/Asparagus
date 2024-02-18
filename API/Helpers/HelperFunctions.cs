@@ -52,20 +52,10 @@ public static class HelperFunctions
     
     public static void CalcNewPropertyForCarb(UserSelectedMeal meal, Ingredient newCarb)
     {
-       // Console.WriteLine(meal.Carbs);
-       // Console.WriteLine(meal.Fats);
-       // Console.WriteLine(meal.Fibers);
-       // Console.WriteLine(meal.Protein);
         meal.Carbs -= meal.ChangedCarb.Carb;
         meal.Fats -= meal.ChangedCarb.Fat;
         meal.Protein -= meal.ChangedCarb.Protein;
         meal.Fibers -= meal.ChangedCarb.Fiber;
-
-       // Console.WriteLine("\n");
-       // Console.WriteLine(meal.Carbs);
-       // Console.WriteLine(meal.Fats);
-       // Console.WriteLine(meal.Fibers);
-        //Console.WriteLine(meal.Protein);
         
         meal.ChangedCarb.Carb = newCarb.Carb;
         meal.ChangedCarb.Protein = newCarb.Protein;

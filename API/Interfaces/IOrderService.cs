@@ -1,6 +1,8 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.OrderAggregate;
 using AsparagusN.DTOs;
+using AsparagusN.DTOs.OrderDtos;
+using AsparagusN.Enums;
 
 namespace AsparagusN.Interfaces;
 
@@ -9,6 +11,9 @@ public interface IOrderService
     Task<Order?> GetOrderByIdAsync(int orderId, string buyerEmail);
     Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string buyerEmail);
 
-    Task<Order?> CreateOrderAsync(string buyerEmail, int basketId,
-        Address shippingAddress);
+    Task<(Order? Order, string Message)> CreateOrderAsync(string buyerEmail, int basketId,
+        NewOrderInfoDto newOrderInfoDto);
+
+    public Task<(Order? Order, string Message)> CalcPriceOfOrder(string buyerEmail, int basketId,
+        NewOrderInfoDto newOrderInfoDto);
 }

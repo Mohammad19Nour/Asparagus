@@ -1,6 +1,9 @@
 ﻿using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.OrderAggregate;
+using AsparagusN.DTOs.OrderDtos;
+using AsparagusN.Enums;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
@@ -38,11 +41,46 @@ public class OrderService : IOrderService
         return orders;
     }
 
-    public async Task<Order?> CreateOrderAsync(string buyerEmail, int basketId, Address shippingAddress)
+    public async Task<(Order? Order, string Message)> CreateOrderAsync(string buyerEmail, int basketId,
+        NewOrderInfoDto newOrderInfoDto)
+    {
+        var user = await _unitOfWork.Repository<AppUser>().GetByIdAsync(basketId);
+        Order? order;
+        (order, var message) = await CalcPriceOfOrder(buyerEmail, basketId, newOrderInfoDto);
+
+        if (order == null) return (order, Message: message);
+
+        if (order.PaymentType == PaymentType.Card)
+        {
+            // if payment through card failed then return from here
+        }
+
+        if (order.PaymentType == PaymentType.Points)
+        {
+            if (order.PointsPrice > user.LoyaltyPoints)
+                return (null, "You don't enough points");
+            user.LoyaltyPoints -= order.PointsPrice;
+        }
+
+        _unitOfWork.Repository<Order>().Add(order);
+
+        if (!await _unitOfWork.SaveChanges())
+            return (null, "Something happened during saving order ");
+
+
+        return (order: order, "Done");
+    }
+
+    public async Task<(Order? Order, string Message)> CalcPriceOfOrder(string buyerEmail, int basketId,
+        NewOrderInfoDto newOrderInfoDto)
     {
         var spec = new BasketSpecification(basketId);
         var basket = await _unitOfWork.Repository<CustomerBasket>().GetEntityWithSpec(spec);
-        if (basket == null) return null;
+
+        if (basket == null || basket.Items.Count == 0) return (null, "Your basket is empty");
+
+        if (await _unitOfWork.Repository<Branch>().GetByIdAsync(newOrderInfoDto.BranchId) == null)
+            return (null, "Branch not found");
 
         var items = new List<OrderItem>();
 
@@ -50,7 +88,7 @@ public class OrderService : IOrderService
         {
             var meal = await _unitOfWork.Repository<Meal>().GetByIdAsync(item.MealId);
 
-            if (meal == null || !meal.IsMainMenu) return null;
+            if (meal == null || !meal.IsMainMenu) return (null, $"Meal with id = {item.MealId} not found");
 
             var itemOrdered = _mapper.Map<MealItemOrdered>(meal);
             itemOrdered.MealId = meal.Id;
@@ -66,65 +104,29 @@ public class OrderService : IOrderService
                 Price = price,
                 Quantity = item.Quantity
             };
+            if (newOrderInfoDto.PaymentType == PaymentType.Points)
+            {
+                if (meal.LoyaltyPoints == null) return (null, $"you can't buy {meal.NameEN} using points ");
+                orderItem.PointsPrice = meal.LoyaltyPoints.Value;
+            }
+
             items.Add(orderItem);
         }
 
         var subtotal = items.Sum(x => x.Price * x.Quantity);
+        var pointsPrice = items.Sum(x => x.PointsPrice * x.Quantity);
 
         var order = new Order
         {
             BuyerEmail = buyerEmail,
             Items = items,
-            ShipToAddress = shippingAddress,
-            Subtotal = subtotal
+            ShipToAddress = _mapper.Map<Address>(newOrderInfoDto.ShipToAddress),
+            Subtotal = subtotal,
+            PaymentType = newOrderInfoDto.PaymentType,
+            BranchId = newOrderInfoDto.BranchId,
+            PointsPrice = pointsPrice
         };
-
-        _unitOfWork.Repository<Order>().Add(order);
-
-        if (!await _unitOfWork.SaveChanges())
-            return null;
-      
-        return order;
-    }
-
-    private async Task<List<OrderItem>?> CalculateBasketPrice(int basketId)
-    { 
-        var spec = new BasketSpecification(basketId);
-        var basket = await _unitOfWork.Repository<CustomerBasket>().GetEntityWithSpec(spec);
-        if (basket == null) return null;
-
-        var basketOldTotal = basket.TotalPrice();
-        var items = new List<OrderItem>();
-
-        foreach (var item in basket.Items)
-        {
-            var meal = item.Meal;
-
-            if (!meal.IsMainMenu) return null;
-
-            var itemOrdered = _mapper.Map<MealItemOrdered>(meal);
-            itemOrdered.MealId = meal.Id;
-
-            itemOrdered.AddedProtein = item.AddedProtein;
-            itemOrdered.AddedCarb = item.AddedCarb;
-            var price = meal.Price + itemOrdered.PricePerCarb * itemOrdered.AddedCarb
-                                   + itemOrdered.PricePerProtein * itemOrdered.AddedProtein;
-
-            var orderItem = new OrderItem
-            {
-                OrderedMeal = itemOrdered,
-                Price = price,
-                Quantity = item.Quantity
-            };
-            items.Add(orderItem);
-        }
-
-        var subtotal = items.Sum(x => x.Price * x.Quantity);
-        if (basketOldTotal != subtotal)
-        {
-            _unitOfWork.Repository<CustomerBasket>().Update(basket);
-        }
-
-        return items;
+        basket.Items.Clear();
+        return (order, "Done");
     }
 }

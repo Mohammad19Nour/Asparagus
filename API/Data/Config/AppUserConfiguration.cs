@@ -1,4 +1,5 @@
 ﻿using AsparagusN.Data.Entities.Identity;
+using AsparagusN.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,6 +13,9 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
             .WithOne(u => u.User)
             .HasForeignKey(ur => ur.UserId)
             .IsRequired();
-      
+
+        builder.Property(s => s.Gender).HasConversion(o => o.ToString(),
+            o => (Gender)Enum.Parse(typeof(Gender), o)
+        );
     }
 }

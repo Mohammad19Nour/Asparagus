@@ -12,4 +12,8 @@ public class OrderDto
     public AddressDto ShipToAddress { get; set; }
     public decimal Subtotal { get; set; }
     public string Status { get; set; }
+    public string PaymentType { get; set; }
+    public string BranchNameAR { get; set; }
+    public string BranchNameEN { get; set; }
+    public int PointsPrice { get; set; }
 }

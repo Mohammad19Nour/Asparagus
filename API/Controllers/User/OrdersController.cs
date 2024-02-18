@@ -4,6 +4,7 @@ using AsparagusN.DTOs;
 using AsparagusN.DTOs.AddressDtos;
 using AsparagusN.DTOs.BranchDtos;
 using AsparagusN.DTOs.OrderDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
@@ -14,14 +15,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.User;
 
-public class OrderController :BaseApiController
+public class OrdersController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IOrderService _orderService;
     private readonly IMapper _mapper;
     private readonly UserManager<AppUser> _userManager;
 
-    public OrderController(IUnitOfWork unitOfWork,IOrderService orderService,IMapper mapper, UserManager<AppUser> userManager)
+    public OrdersController(IUnitOfWork unitOfWork, IOrderService orderService, IMapper mapper,
+        UserManager<AppUser> userManager)
     {
         _unitOfWork = unitOfWork;
         _orderService = orderService;
@@ -30,18 +32,18 @@ public class OrderController :BaseApiController
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateOrder(AddressDto shipToAddress)
+    public async Task<ActionResult> CreateOrder(NewOrderInfoDto newOrderInfo)
     {
         var user = await _getUser();
         if (user == null) return Ok(new ApiResponse(404, "User not found"));
 
-        var address = _mapper.Map<AddressDto,Address>(shipToAddress);
+        var address = _mapper.Map<AddressDto, Address>(newOrderInfo.ShipToAddress);
 
-        var order = await _orderService.CreateOrderAsync(user.Email, user.Id, address);
+        var result = await _orderService.CreateOrderAsync(user.Email, user.Id, newOrderInfo);
 
-        if (order == null) return Ok(new ApiResponse(400, "Failed to add order"));
+        if (result.Order == null) return Ok(new ApiResponse(400, result.Message));
 
-        return Ok(new ApiOkResponse<OrderDto>(_mapper.Map<OrderDto>(order)));
+        return Ok(new ApiOkResponse<OrderDto>(_mapper.Map<OrderDto>(result.Order)));
     }
 
     [HttpGet]
@@ -49,23 +51,24 @@ public class OrderController :BaseApiController
     {
         var email = HttpContext.User.GetEmail();
         if (email == null) return Ok(new ApiResponse(404, "User not found"));
-        
+
         var orders = await _orderService.GetOrdersForUserAsync(email);
         return Ok(new ApiOkResponse<IReadOnlyList<OrderDto>>(_mapper.Map<IReadOnlyList<OrderDto>>(orders)));
     }
-    
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult<OrderDto>> GetOrderByIdForUser(int id)
     {
         var email = HttpContext.User.GetEmail();
         if (email == null) return Ok(new ApiResponse(404, "User not found"));
-        
-        var order = await _orderService.GetOrderByIdAsync(id,email);
-        
+
+        var order = await _orderService.GetOrderByIdAsync(id, email);
+
         if (order == null) return Ok(new ApiResponse(404, "Order not found"));
-        
+
         return Ok(new ApiOkResponse<OrderDto>(_mapper.Map<OrderDto>(order)));
     }
+
     private async Task<AppUser?> _getUser()
     {
         var email = HttpContext.User.GetEmail();
