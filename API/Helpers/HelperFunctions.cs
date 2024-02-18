@@ -94,8 +94,8 @@ public static class HelperFunctions
         foreach (var snack in snacks)
         {
             if (type == "protein") result += snack.Protein * snack.Quantity;
-            if (type == "fat") result += snack.Fat * snack.Quantity;
-            if (type == "carb") result += snack.Carb * snack.Quantity;
+            if (type == "fat") result += snack.Fats * snack.Quantity;
+            if (type == "carb") result += snack.Carbs * snack.Quantity;
         }
 
         return result;

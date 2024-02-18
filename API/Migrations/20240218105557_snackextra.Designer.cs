@@ -3,6 +3,7 @@ using System;
 using AsparagusN.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240218105557_snackextra")]
+    partial class snackextra
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
@@ -1034,24 +1037,17 @@ namespace AsparagusN.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Calories")
+                    b.Property<double>("Carb")
                         .HasColumnType("REAL");
 
-                    b.Property<double>("Carbs")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("DescriptionAR")
+                    b.Property<string>("ExtraInfo")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DescriptionEN")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("Fats")
+                    b.Property<double>("Fat")
                         .HasColumnType("REAL");
 
-                    b.Property<double>("Fibers")
+                    b.Property<double>("Fiber")
                         .HasColumnType("REAL");
 
                     b.Property<string>("NameAR")
@@ -1062,9 +1058,8 @@ namespace AsparagusN.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PictureUrl")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Protein")
                         .HasColumnType("REAL");
@@ -1074,6 +1069,9 @@ namespace AsparagusN.Migrations
 
                     b.Property<int?>("UserPlanDayId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<double>("Weight")
+                        .HasColumnType("REAL");
 
                     b.HasKey("Id");
 

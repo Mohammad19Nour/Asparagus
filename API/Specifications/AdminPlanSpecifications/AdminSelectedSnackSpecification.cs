@@ -13,8 +13,8 @@ public class AdminSelectedSnackSpecification : BaseSpecification<AdminSelectedSn
         AddInclude(x => x.Include(y => y.Snack));
     }
 
-    public AdminSelectedSnackSpecification(int id)
-        : base(x => x.Id == id)
+    public AdminSelectedSnackSpecification(int id,PlanTypeEnum planType)
+        : base(x => x.Id == id && x.PlanTypeEnum == planType)
     {
         AddInclude(x => x.Include(y => y.Snack));
     }

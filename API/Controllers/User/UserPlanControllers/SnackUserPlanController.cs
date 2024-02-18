@@ -49,7 +49,7 @@ public partial class UserPlanController
         if (planDay.UserPlan.NumberOfRemainingSnacks < quantity)
             return Ok(new ApiResponse(400, "You have no enough snacks"));
 
-        var adminSpec = new AdminSelectedSnackSpecification(snackId);
+        var adminSpec = new AdminSelectedSnackSpecification(snackId,planDay.UserPlan.PlanType);
         var adminSnack = await _unitOfWork.Repository<AdminSelectedSnack>().GetEntityWithSpec(adminSpec);
 
         if (adminSnack == null || adminSnack.PlanTypeEnum != planDay.UserPlan.PlanType)
@@ -94,7 +94,7 @@ public partial class UserPlanController
 
         if (snackDto.AdminNewSnackId != null)
         {
-            var specAdmin = new AdminSelectedSnackSpecification(snackDto.AdminNewSnackId.Value);
+            var specAdmin = new AdminSelectedSnackSpecification(snackDto.AdminNewSnackId.Value,planDay.UserPlan.PlanType);
             var adminSnack = await _unitOfWork.Repository<AdminSelectedSnack>()
                 .GetEntityWithSpec(specAdmin);
 
