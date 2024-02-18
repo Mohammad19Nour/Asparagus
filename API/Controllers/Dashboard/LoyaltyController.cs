@@ -33,7 +33,7 @@ public class LoyaltyController : BaseApiController
         var result = _mapper.Map<List<MealLoyaltyPointDto>>(meals);
         return Ok(new ApiOkResponse<List<MealLoyaltyPointDto>>(result));
     }
-    [HttpGet("snack")]
+    [HttpGet("snacks")]
     public async Task<ActionResult<List<MealLoyaltyPointDto>>> GetSnacks()
     {
         var spec = new BaseSpecification<Meal>(x => x.LoyaltyPoints == null && x.IsMainMenu && x.Category.NameEN.ToLower().StartsWith("snack"));
