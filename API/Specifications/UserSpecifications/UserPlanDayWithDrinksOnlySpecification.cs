@@ -6,7 +6,7 @@ namespace AsparagusN.Specifications.UserSpecifications;
 
 public class UserPlanDayWithDrinksOnlySpecification:BaseSpecification<UserPlanDay>
 {
-    public UserPlanDayWithDrinksOnlySpecification(int userId, int dayId)
+    public UserPlanDayWithDrinksOnlySpecification(int userId, int dayId )
         : base(x => x.Id == dayId && x.UserPlan.AppUserId == userId)
     {
         AddInclude(x => x.Include(y => y.UserPlan));

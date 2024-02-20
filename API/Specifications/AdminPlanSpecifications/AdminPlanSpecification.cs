@@ -22,11 +22,4 @@ public class AdminPlanSpecification : BaseSpecification<AdminPlanDay>
         AddInclude(x => x.Include(y => y.Meals)
             .ThenInclude(y => y.Meal).ThenInclude(d => d.Allergies).ThenInclude(h => h.Allergy));
     }
-
-    public AdminPlanSpecification()
-        : base(x => HelperFunctions.getDatesOfCurrentWeek().Contains(x.AvailableDate))
-    {
-        AddInclude(x => x.Include(y => y.Meals)
-            .ThenInclude(y => y.Meal));
-    }
 }

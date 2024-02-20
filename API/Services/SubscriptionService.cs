@@ -49,7 +49,8 @@ public class SubscriptionService : ISubscriptionService
         try
         {
             var spec = new BaseSpecification<UserPlan>(x =>
-                x.AppUserId == user.Id && x.StartDate.Date >= HelperFunctions.WeekStartDay() && x.StartDate <= HelperFunctions.WeekEndDay());
+                x.AppUserId == user.Id && x.StartDate.Date >= HelperFunctions.WeekStartDay() &&
+                x.StartDate <= HelperFunctions.WeekEndDay());
 
             return (await _unitOfWork.Repository<UserPlan>().ListWithSpecAsync(spec)).ToList();
         }
@@ -116,7 +117,11 @@ public class SubscriptionService : ISubscriptionService
             if (plan != null)
                 return (null, "You have a subscription with this plan type");
 
-            var planPoints = (await _unitOfWork.Repository<PlanType>().ListAllAsync()).First(x => x.PlanTypeE == subscriptionDto.PlanType).Points;
+            if (!HelperFunctions.CheckExistAddress(user.HomeAddress) &&
+                !HelperFunctions.CheckExistAddress(user.WorkAddress))
+                return (null, "You have to provide at least one address");
+            var planPoints = (await _unitOfWork.Repository<PlanType>().ListAllAsync())
+                .First(x => x.PlanTypeE == subscriptionDto.PlanType).Points;
             plan = new UserPlan();
 
             var result = await Add(subscriptionDto, user, plan);
@@ -350,6 +355,9 @@ public class SubscriptionService : ISubscriptionService
     {
         try
         {
+            if (DateTime.Today.AddDays(1) >= plan.EndDate())
+                return (false,
+                    "Can't update your plan now... you have to wait until end of this subscription and subscribe again ");
             if (subscriptionDto.Duration < plan!.Duration)
                 return (false, "The updated duration should be greater than or equal the previous one");
 
@@ -373,6 +381,7 @@ public class SubscriptionService : ISubscriptionService
             if (!validation.Success) return (false, validation.Message);
 
 
+            Console.WriteLine(plan.EndDate());
             var days = new List<UserPlanDay>();
             var updateDuration = true;
 
@@ -421,6 +430,13 @@ public class SubscriptionService : ISubscriptionService
             plan.Price +=
                 numberOfUpdatedMealsPerDay * updatedPlanDays.Count * 10; // update meals per day for previous days
 
+            plan.Days.Add(new UserPlanDay
+            {
+                Day = DateTime.Today,
+                DeliveryLocation = HelperFunctions.CheckExistAddress(user.HomeAddress)
+                    ? user.HomeAddress
+                    : user.WorkAddress
+            });
             if (numberOfUpdatedDays > 0)
                 plan.Price += numberOfUpdatedDays * plan.NumberOfMealPerDay * 10;
 
@@ -433,7 +449,6 @@ public class SubscriptionService : ISubscriptionService
 
                 foreach (var extra in day.SelectedExtraOptions)
                 {
-                    Console.WriteLine(extra.Price);
                     plan.Price += extra.Price;
                 }
             }
@@ -453,9 +468,14 @@ public class SubscriptionService : ISubscriptionService
 
             if (updateDuration)
                 foreach (var day in days)
+                {
+                    day.DeliveryLocation = HelperFunctions.CheckExistAddress(user.HomeAddress)
+                        ? user.HomeAddress
+                        : user.WorkAddress;
                     plan.Days.Add(day);
+                }
 
-
+            Console.WriteLine(plan.EndDate());
             return (true, "ok");
         }
         catch (Exception e)
@@ -488,6 +508,7 @@ public class SubscriptionService : ISubscriptionService
             {
                 day.DeliveryLocationId = user.HomeAddressId;
             }
+
             plan.Days = days;
 
             var addProcess = await AddDrinksToDaysPlan(subscriptionDto.SelectedDrinks, plan.Days!, plan.PlanType);

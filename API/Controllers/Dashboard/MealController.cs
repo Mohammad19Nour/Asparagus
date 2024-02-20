@@ -40,7 +40,6 @@ public class MealController : BaseApiController
         var spec = new MealWithIngredientsAdnAllergiesSpecification();
         var d = (await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec)).ToList();
 
-        return Ok(d);
         return Ok(new ApiOkResponse<List<MealWithIngredientsDto>>(_mapper.Map<List<MealWithIngredientsDto>>(d)));
     }
 

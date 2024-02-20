@@ -42,7 +42,6 @@ public partial class UserPlanController : BaseApiController
         var user = await _getUser();
         if (user == null) return Ok(new ApiResponse(404, "user not found"));
 
-
         var plan = await _subscriptionService.GetUserSubscriptionAsync(user, planType);
 
         if (plan == null) return Ok(new ApiResponse(404, "No plan found"));

@@ -143,7 +143,7 @@ public class AdminCashiersController : BaseApiController
 
                 if (cashier == null)
                     return Ok(new ApiResponse(404, "Cashier not found"));
-
+                
                 _mapper.Map(updateCashierDto, cashier);
 
                 if (updateCashierDto.BranchId != null)
@@ -155,6 +155,9 @@ public class AdminCashiersController : BaseApiController
                     cashier.Branch = branch;
                 }
 
+                var cashierUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == cashier.Email);
+                if (cashierUser == null) return Ok(new ApiResponse(404, "cashier not found"));
+              
                 if (updateCashierDto.Image != null)
                 {
                     var img = await _mediaService.AddPhotoAsync(updateCashierDto.Image);
@@ -164,8 +167,6 @@ public class AdminCashiersController : BaseApiController
 
                 if (updateCashierDto.Password != null && !string.IsNullOrEmpty(updateCashierDto.Password.Trim()))
                 {
-                    var cashierUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == cashier.Email);
-                    if (cashierUser == null) return Ok(new ApiResponse(404, "cashier not found"));
 
                     var token = await _userManager.GeneratePasswordResetTokenAsync(cashierUser);
                     var result = await _userManager.ResetPasswordAsync(cashierUser, token, updateCashierDto.Password);
@@ -181,6 +182,13 @@ public class AdminCashiersController : BaseApiController
                     }
 
                     cashier.Password = updateCashierDto.Password;
+                }
+
+                if (updateCashierDto.Email.ToLower() != cashier.Email.ToLower())
+                {
+                    var exist = _userManager.Users.FirstOrDefault(x => x.Email == updateCashierDto.Email.ToLower());
+
+                  //  if (exist != null) return Ok(new);
                 }
 
                 _unitOfWork.Repository<Cashier>().Update(cashier);

@@ -6,7 +6,8 @@ namespace AsparagusN.Specifications.AdminPlanSpecifications;
 
 public class AdminSelectedSnacksSpecification : BaseSpecification<AdminSelectedSnack>
 {
-    public AdminSelectedSnacksSpecification(PlanTypeEnum planTypeEnum) : base(x => x.PlanTypeEnum == planTypeEnum)
+    public AdminSelectedSnacksSpecification(PlanTypeEnum planTypeEnum) 
+        : base(x => x.PlanTypeEnum == planTypeEnum)
     {
         AddInclude(x => x.Include(y => y.Snack));
     }

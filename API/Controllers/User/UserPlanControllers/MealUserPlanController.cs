@@ -52,6 +52,10 @@ public partial class UserPlanController : BaseApiController
 
             if (planDay == null) return Ok(new ApiResponse(404, "Plan day not found"));
 
+            
+            if (!HelperFunctions.CanUpdate(planDay.Day.Date))
+                return Ok(new ApiResponse(403,"Can't update before two days or less"));
+
             var allowedMeals = planDay.UserPlan.NumberOfMealPerDay;
             var usedMeal = planDay.SelectedMeals.Count;
 
@@ -176,6 +180,10 @@ public partial class UserPlanController : BaseApiController
         var planDay = await _unitOfWork.Repository<UserPlanDay>().GetEntityWithSpec(spec);
 
         if (planDay == null) return Ok(new ApiResponse(404, "Plan day not found"));
+
+        
+        if (!HelperFunctions.CanUpdate(planDay.Day.Date))
+            return Ok(new ApiResponse(403,"Can't update before two days or less"));
 
         var meal = planDay.SelectedMeals.FirstOrDefault(x => x.Id == mealId);
         if (meal == null) return Ok(new ApiResponse(404, "Meal not found"));

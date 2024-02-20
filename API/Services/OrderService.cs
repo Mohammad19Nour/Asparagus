@@ -7,6 +7,7 @@ using AsparagusN.Enums;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Services;
 
@@ -56,6 +57,14 @@ public class OrderService : IOrderService
         if (!await _locationService.CanDeliver(newOrderInfoDto.ShipToAddress))
             return (null, "Can't deliver to this location");
 
+        AppCoupon? coupon = null;
+        if (newOrderInfoDto.CouponCode != null)
+        {
+            coupon = await _unitOfWork.Repository<AppCoupon>().GetQueryable()
+                .Where(x => x.Code == newOrderInfoDto.CouponCode).FirstOrDefaultAsync();
+            if (coupon == null) return (null, "coupon not valid");
+        }
+        
         if (order.PaymentType == PaymentType.Card)
         {
             // if payment through card failed then return from here

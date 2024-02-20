@@ -2,6 +2,7 @@
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.DTOs.AdminPlanDtos;
 using AsparagusN.Errors;
+using AsparagusN.Helpers;
 using AsparagusN.Specifications;
 using AsparagusN.Specifications.AdminPlanSpecifications;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,8 @@ public partial class PlanController
         var spec = new AdminPlanSpecification(dayId);
 
         var plan = await _unitOfWork.Repository<AdminPlanDay>().GetEntityWithSpec(spec);
-
+        if (plan == null) return Ok(new ApiResponse(400, "Day not found"));
+        
         return Ok(new ApiOkResponse<AdminPlanDayDto>(_mapper.Map<AdminPlanDayDto>(plan)));
     }
 
@@ -27,18 +29,20 @@ public partial class PlanController
 
         var spec = new AdminPlanSpecification(dayId);
 
-        var plan = await _unitOfWork.Repository<AdminPlanDay>().GetEntityWithSpec(spec);
+        var planDay = await _unitOfWork.Repository<AdminPlanDay>().GetEntityWithSpec(spec);
 
-        if (plan == null) return Ok(new ApiResponse(404, messageEN: "Plan not found"));
+        if (planDay == null) return Ok(new ApiResponse(404, messageEN: "Day not found"));
+        if (!HelperFunctions.CanUpdate(planDay.AvailableDate))
+            return Ok(new ApiResponse(403,"Can't update before two days or less"));
 
-        ok = await _addMeals(newAdminPlanDto.MealIds, plan);
+        ok = await _addMeals(newAdminPlanDto.MealIds, planDay);
 
-        _unitOfWork.Repository<AdminPlanDay>().Update(plan);
+        _unitOfWork.Repository<AdminPlanDay>().Update(planDay);
         await _unitOfWork.SaveChanges();
 
         if (!ok) return Ok(new ApiResponse(404, messageEN: "not found"));
 
-        return Ok(new ApiOkResponse<AdminPlanDayDto>(_mapper.Map<AdminPlanDayDto>(plan)));
+        return Ok(new ApiOkResponse<AdminPlanDayDto>(_mapper.Map<AdminPlanDayDto>(planDay)));
     }
 
     [HttpDelete("meals/{mealId:int}")]
@@ -55,8 +59,13 @@ public partial class PlanController
 
 
         var spec = new AdminPlanSpecification(meal.AdminPlanDayId);
-        var plan = await _unitOfWork.Repository<AdminPlanDay>().GetEntityWithSpec(spec);
-        return Ok(new ApiOkResponse<AdminPlanDayDto>(_mapper.Map<AdminPlanDayDto>(plan)));
+        var planDay = await _unitOfWork.Repository<AdminPlanDay>().GetEntityWithSpec(spec);
+        if (planDay == null) return Ok(new ApiResponse(404, messageEN: "Day not found"));
+
+        if (!HelperFunctions.CanUpdate(planDay.AvailableDate))
+            return Ok(new ApiResponse(403,"Can't update before two days or less"));
+
+        return Ok(new ApiOkResponse<AdminPlanDayDto>(_mapper.Map<AdminPlanDayDto>(planDay)));
     }
 
     private async Task<bool> _addMeals(List<int> mealIds, AdminPlanDay planDay)
