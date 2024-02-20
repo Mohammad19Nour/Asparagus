@@ -15,13 +15,10 @@ public class UserPlanProfile : Profile
 {
     public UserPlanProfile()
     {
-        
         CreateMap<UserMealCarb, UserMealCarbDto>();
         CreateMap<Allergy, UserPlanAllergy>().ForMember(dest => dest.Id, opt => opt.Ignore());
         CreateMap<UserSelectedSnack, UserSnackDto>();
-        CreateMap<UserSelectedMeal, UserSelectedMealDto>().ForMember(dest => dest.ChangedCarbNameEN,
-                opt => opt.MapFrom(src => src.ChangedCarb.NameEN))
-            .ForMember(dest => dest.ChangedCarbNameAR, opt => opt.MapFrom(src => src.ChangedCarb.NameAR));
+        CreateMap<UserSelectedMeal, UserSelectedMealDto>();
         CreateMap<UserSelectedExtraOption, UserSelectedExtraOptionDto>();
         CreateMap<UserSelectedDrink, UserSelectedDrinkDto>();
         CreateMap<UserPlanDay, UserPlanDayDto>()

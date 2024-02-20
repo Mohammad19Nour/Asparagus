@@ -15,9 +15,9 @@ public class BranchController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-    private IDistanceCalculationService _distanceService;
+    private ILocationService _distanceService;
 
-    public BranchController(IUnitOfWork unitOfWork, IMapper mapper, IDistanceCalculationService distanceService)
+    public BranchController(IUnitOfWork unitOfWork, IMapper mapper, ILocationService distanceService)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;

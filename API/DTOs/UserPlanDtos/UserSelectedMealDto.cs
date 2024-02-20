@@ -18,6 +18,5 @@ public class UserSelectedMealDto
     public decimal Fats{ get; set; }
     public decimal Carbs{ get; set; }
     public decimal Protein{ get; set; }
-    public string? ChangedCarbNameAR { get; set; }
-    public string? ChangedCarbNameEN { get; set; }
+    public UserMealCarbDto ChangedCarb { get; set; }
 }

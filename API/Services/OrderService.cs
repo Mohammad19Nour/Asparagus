@@ -7,18 +7,20 @@ using AsparagusN.Enums;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Services;
 
 public class OrderService : IOrderService
 {
+    private readonly ILocationService _locationService;
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly INotificationService _notificationService;
 
-    public OrderService(IMapper mapper, IUnitOfWork unitOfWork,INotificationService notificationService)
+    public OrderService(ILocationService locationService, IMapper mapper, IUnitOfWork unitOfWork,
+        INotificationService notificationService)
     {
+        _locationService = locationService;
         _mapper = mapper;
         _unitOfWork = unitOfWork;
         _notificationService = notificationService;
@@ -51,6 +53,8 @@ public class OrderService : IOrderService
         (order, var message) = await CalcPriceOfOrder(buyerEmail, basketId, newOrderInfoDto);
 
         if (order == null) return (order, Message: message);
+        if (!await _locationService.CanDeliver(newOrderInfoDto.ShipToAddress))
+            return (null, "Can't deliver to this location");
 
         if (order.PaymentType == PaymentType.Card)
         {
@@ -66,7 +70,7 @@ public class OrderService : IOrderService
 
         order.BuyerPhoneNumber = user!.PhoneNumber;
         _unitOfWork.Repository<Order>().Add(order);
-        await _notificationService.NotifyUserByEmail(user.Email,"ara","eng");
+        await _notificationService.NotifyUserByEmail(user.Email, "ara", "eng");
 
         if (!await _unitOfWork.SaveChanges())
             return (null, "Something happened during saving order ");
@@ -130,7 +134,7 @@ public class OrderService : IOrderService
             BranchId = newOrderInfoDto.BranchId,
             PointsPrice = pointsPrice
         };
-        
+
         basket.Items.Clear();
         return (order, "Done");
     }
