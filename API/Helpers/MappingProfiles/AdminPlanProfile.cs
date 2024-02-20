@@ -24,7 +24,11 @@ public class AdminPlanProfile : Profile
             .ForMember(x => x.Fat, o => o.MapFrom(src => src.Carb.Fat))
             .ForMember(x => x.Fiber, o => o.MapFrom(src => src.Carb.Fiber));
 
-        CreateMap<AdminSelectedMeal, MealWithoutIngredientsDto>()
+        CreateMap<AdminSelectedMeal, MealWithIngredientsDto>()
+            .ForMember(x => x.SelectedCarb,
+                opt => opt.MapFrom(src =>
+                    src.Meal.Ingredients
+                        .FirstOrDefault(y => y.Ingredient.TypeOfIngredient == IngredientType.Carb)))
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.NameEN, opt => opt.MapFrom(src => src.Meal.NameEN))
             .ForMember(dest => dest.NameAR, opt => opt.MapFrom(src => src.Meal.NameAR))

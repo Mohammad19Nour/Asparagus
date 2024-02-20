@@ -20,7 +20,7 @@ public static class ApplicationServiceExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
         services.AddScoped<IValidationService, ValidationService>();
-       // services.AddSingleton<JsonConverter<decimal>, RoundedNumberConverter>();
+        services.AddScoped<INotificationService, NotificationService>();
         services.AddHostedService<BackgroundTask>();
         services.Configure<KestrelServerOptions>(options => { options.Limits.MaxRequestBodySize = null; });
         services.AddAutoMapper(typeof(AppCouponProfile),typeof(BasketProfile),typeof(SnackProfile), typeof(UserPlanProfile), typeof(OrderProfile),

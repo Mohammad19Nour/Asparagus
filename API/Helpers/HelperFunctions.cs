@@ -1,6 +1,8 @@
 ﻿using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AutoMapper;
+using Stripe;
+using Address = AsparagusN.Data.Entities.Address;
 
 namespace AsparagusN.Helpers;
 
@@ -49,29 +51,29 @@ public static class HelperFunctions
 
         return result;
     }
-    
+
     public static void CalcNewPropertyForCarb(UserSelectedMeal meal, Ingredient newCarb)
     {
         meal.Carbs -= meal.ChangedCarb.Carb;
         meal.Fats -= meal.ChangedCarb.Fat;
         meal.Protein -= meal.ChangedCarb.Protein;
         meal.Fibers -= meal.ChangedCarb.Fiber;
-        
+
         meal.ChangedCarb.Carb = newCarb.Carb;
         meal.ChangedCarb.Protein = newCarb.Protein;
         meal.ChangedCarb.Fiber = newCarb.Fiber;
         meal.ChangedCarb.Fat = newCarb.Fat;
         meal.ChangedCarb.NameAR = newCarb.NameAR;
         meal.ChangedCarb.NameEN = newCarb.NameEN;
-        
+
         meal.Carbs += meal.ChangedCarb.Carb;
         meal.Fats += meal.ChangedCarb.Fat;
         meal.Protein += meal.ChangedCarb.Protein;
         meal.Fibers += meal.ChangedCarb.Fiber;
-        
     }
 
-    public static void CalcNewPropertyForCarbOfMeal(UserMealCarb carbSelected, decimal carbWeight, decimal ingredientWeight)
+    public static void CalcNewPropertyForCarbOfMeal(UserMealCarb carbSelected, decimal carbWeight,
+        decimal ingredientWeight)
     {
         var percent = carbWeight / ingredientWeight;
         carbSelected.Protein *= percent;
@@ -80,7 +82,8 @@ public static class HelperFunctions
         carbSelected.Fiber *= percent;
     }
 
-    public static decimal Calculate(string type,ICollection<UserSelectedMeal>meals,ICollection<UserSelectedSnack>snacks)
+    public static decimal Calculate(string type, ICollection<UserSelectedMeal> meals,
+        ICollection<UserSelectedSnack> snacks)
     {
         type = type.ToLower();
         var result = 0m;
@@ -91,6 +94,7 @@ public static class HelperFunctions
             if (type == "fat") result += meal.Fats;
             if (type == "carb") result += meal.Carbs;
         }
+
         foreach (var snack in snacks)
         {
             if (type == "protein") result += snack.Protein * snack.Quantity;
@@ -99,5 +103,13 @@ public static class HelperFunctions
         }
 
         return result;
+    }
+
+    public static bool CheckExistAddress(Address? address)
+    {
+        if (address == null) return false;
+
+        return !string.IsNullOrEmpty(address.City) || !string.IsNullOrEmpty(address.StreetName) ||
+               !string.IsNullOrEmpty(address.BuildingName);
     }
 }

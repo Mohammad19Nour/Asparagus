@@ -47,12 +47,9 @@ public class OrdersController : BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetOrdersForUser()
+    public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetOrders(OrderStatus status)
     {
-        var email = HttpContext.User.GetEmail();
-        if (email == null) return Ok(new ApiResponse(404, "User not found"));
-
-        var orders = await _orderService.GetOrdersForUserAsync(email);
+        var orders = await _orderService.GetOrderWithStatus(status);
         return Ok(new ApiOkResponse<IReadOnlyList<OrderDto>>(_mapper.Map<IReadOnlyList<OrderDto>>(orders)));
     }
 

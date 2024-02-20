@@ -15,11 +15,13 @@ public class OrderService : IOrderService
 {
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly INotificationService _notificationService;
 
-    public OrderService(IMapper mapper, IUnitOfWork unitOfWork)
+    public OrderService(IMapper mapper, IUnitOfWork unitOfWork,INotificationService notificationService)
     {
         _mapper = mapper;
         _unitOfWork = unitOfWork;
+        _notificationService = notificationService;
     }
 
     public async Task<Order?> GetOrderByIdAsync(int orderId, string buyerEmail)
@@ -57,12 +59,14 @@ public class OrderService : IOrderService
 
         if (order.PaymentType == PaymentType.Points)
         {
-            if (order.PointsPrice > user.LoyaltyPoints)
+            if (order.PointsPrice > user!.LoyaltyPoints)
                 return (null, "You don't enough points");
             user.LoyaltyPoints -= order.PointsPrice;
         }
 
+        order.BuyerPhoneNumber = user!.PhoneNumber;
         _unitOfWork.Repository<Order>().Add(order);
+        await _notificationService.NotifyUserByEmail(user.Email,"ara","eng");
 
         if (!await _unitOfWork.SaveChanges())
             return (null, "Something happened during saving order ");
@@ -126,7 +130,15 @@ public class OrderService : IOrderService
             BranchId = newOrderInfoDto.BranchId,
             PointsPrice = pointsPrice
         };
+        
         basket.Items.Clear();
         return (order, "Done");
+    }
+
+    public async Task<ICollection<Order>> GetOrderWithStatus(OrderStatus status)
+    {
+        var spec = new OrderWithItemsSpecification(status);
+        var orders = await _unitOfWork.Repository<Order>().ListWithSpecAsync(spec);
+        return orders.ToList();
     }
 }

@@ -11,7 +11,7 @@ public class UserProfile : Profile
     public UserProfile()
     {
         CreateMap<RegisterDto, AppUser>();
-        CreateMap<AppUser, AccountDto>();
+        CreateMap<AppUser, AccountDto>().ForMember(dest=>dest.HomeAddress,opt=>opt.MapFrom(y=>HelperFunctions.CheckExistAddress(y.WorkAddress) ? y.HomeAddress : null));
         CreateMap<AppUser, UserInfoDto>()
             .ForMember(dest=>dest.Gender,opt=>opt.MapFrom(src=>Enum.GetName(src.Gender)));
         CreateMap<UpdateUserInfoDto, AppUser>().

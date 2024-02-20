@@ -16,4 +16,6 @@ public interface IOrderService
 
     public Task<(Order? Order, string Message)> CalcPriceOfOrder(string buyerEmail, int basketId,
         NewOrderInfoDto newOrderInfoDto);
+
+    public Task<ICollection<Order>> GetOrderWithStatus(OrderStatus status);
 }

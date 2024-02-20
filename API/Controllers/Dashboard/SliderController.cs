@@ -22,7 +22,7 @@ public class SliderController : BaseApiController
     }
 
     [HttpPost("add-photo")]
-    public async Task<ActionResult> AddPhoto([FromForm] IFormFile file)
+    public async Task<ActionResult> AddPhoto(IFormFile file)
     {
         try
         {

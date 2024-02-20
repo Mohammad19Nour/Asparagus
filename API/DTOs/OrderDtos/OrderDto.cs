@@ -7,6 +7,7 @@ public class OrderDto
 {
     public int Id { get; set; }
     public string BuyerEmail { get; set; }
+    public string BuyerPhoneNumber { get; set; }
     public ICollection<OrderItemDto> Items { get; set; }
     public DateTimeOffset OrderDate { get; set; }
     public AddressDto ShipToAddress { get; set; }

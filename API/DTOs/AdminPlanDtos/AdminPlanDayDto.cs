@@ -8,6 +8,6 @@ public class AdminPlanDayDto
     public int Id { get; set; }
     public DateTime AvailableDate { get; set; }
     public string PlanType { get; set; }
-    public List<MealWithoutIngredientsDto> Meals { get; set; }
+    public List<MealWithIngredientsDto> Meals { get; set; }
    
 }

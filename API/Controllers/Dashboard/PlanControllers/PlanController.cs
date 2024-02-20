@@ -87,12 +87,12 @@ public partial class PlanController : BaseApiController
     }
 
     [HttpGet("plan-menu")]
-    public async Task<ActionResult<List<MealWithoutIngredientsDto>>> GetMenuMealPlan()
+    public async Task<ActionResult<List<MealWithIngredientsDto>>> GetMenuMealPlan()
     {
         var spec = new MealWithIngredientsAdnAllergiesSpecification(includeIngredients: true, mealPlansOnly: true);
         var d = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
 
-        return Ok(new ApiOkResponse<List<MealWithoutIngredientsDto>>(_mapper.Map<List<MealWithoutIngredientsDto>>(d)));
+        return Ok(new ApiOkResponse<List<MealWithIngredientsDto>>(_mapper.Map<List<MealWithIngredientsDto>>(d)));
     }
 
     private async Task<bool> _addExtraOption(List<int> optionIds, PlanTypeEnum typeEnum)

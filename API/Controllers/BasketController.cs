@@ -79,10 +79,15 @@ public class BasketController : BaseApiController
             oldItem = new BasketItem();
             _mapper.Map(meal, oldItem);
             dbBasket.Items.Add(oldItem);
+            _mapper.Map(basketItem, oldItem);
             created = true;
         }
+        else oldItem.Quantity += basketItem.Quantity;
 
-        _mapper.Map(basketItem, oldItem);
+        Console.WriteLine(basketItem.Quantity);
+        if (oldItem.Quantity <= 0)
+            return Ok(new ApiResponse(400,"Quantity should be greater than zero"));
+        
         if (!basketCreated)
             _unitOfWork.Repository<CustomerBasket>().Update(dbBasket);
         else

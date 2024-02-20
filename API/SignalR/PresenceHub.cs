@@ -16,7 +16,18 @@ public class PresenceHub : Hub
 
     public override async Task OnConnectedAsync()
     {
-        _tracker.UserConnected(Context.User.GetEmail(),Context.ConnectionId);
+        var email = "";
+        if (Context.User != null)
+        {
+             email = Context.User.GetEmail();
+        }
+        else
+        {
+            throw new HubException("UnAuthorized");
+        }
+        if (email == null)   throw new HubException("UnAuthorized");
+
+        _tracker.UserConnected(email,Context.ConnectionId);
         // send notifiaction to all users except ont who connected
         await Clients.Others.SendAsync("UserIsOnline", Context.User.GetEmail());
 
@@ -25,6 +36,16 @@ public class PresenceHub : Hub
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
+        var email = "";
+        if (Context.User != null)
+        {
+            email = Context.User.GetEmail();
+        }
+        else
+        {
+            throw new HubException("UnAuthorized");
+        }
+        if (email == null)   throw new HubException("UnAuthorized");
         
         _tracker.UserDisconnected(Context.User.GetEmail(),Context.ConnectionId);
         // send notifiaction to all users except ont who connected
