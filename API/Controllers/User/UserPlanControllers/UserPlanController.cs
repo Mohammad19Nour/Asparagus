@@ -7,6 +7,7 @@ using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
+using AsparagusN.Helpers;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AsparagusN.Specifications.UserSpecifications;
@@ -46,6 +47,7 @@ public partial class UserPlanController : BaseApiController
 
         if (plan == null) return Ok(new ApiResponse(404, "No plan found"));
 
+        plan.Days = plan.Days.Where(x => HelperFunctions.InThisWeek(x.Day.Date)).ToList();
         var result = _mapper.Map<UserPlanDto>(plan);
         foreach (var day in result.Days)
         {
@@ -74,6 +76,9 @@ public partial class UserPlanController : BaseApiController
         var res = await _unitOfWork.Repository<UserPlanDay>().GetEntityWithSpec(spec);
 
         if (res == null) return Ok(new ApiResponse(404, "Day not found"));
+
+        if (HelperFunctions.InThisWeek(res.Day.Date))
+            return Ok(new ApiResponse(404, "day not available yet"));
         var day = _mapper.Map<UserPlanDayDto>(res);
 
         await AddAdminDayId(res.UserPlan.PlanType, day);

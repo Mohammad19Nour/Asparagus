@@ -24,6 +24,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     {
     }
 
+    public DbSet<Cashier> Cashiers { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<AdminSelectedCarb> AdminSelectedCarbs { get; set; }
     public DbSet<AdminSelectedSnack> AdminSelectedSnacks { get; set; }
@@ -54,7 +55,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<BasketItem> BasketItems { get; set; }
     public DbSet<UserSelectedSnack> UserSelectedSnacks { get; set; }
     public DbSet<PlanType> PlanTypes { get; set; }
-    public DbSet<AppCoupon>AppCoupons { get; set; }
+    public DbSet<AppCoupon> AppCoupons { get; set; }
     public DbSet<PlanPrice> PlanPrices { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -109,5 +110,24 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
                         .HasPrecision(38, 12);
             }
         }
+    }
+
+    public override int SaveChanges()
+    {
+        // Iterate through entities being saved
+        foreach (var entry in ChangeTracker.Entries<UserPlan>())
+        {
+            if (entry.State == EntityState.Added)
+            {
+                var userPlan = entry.Entity;
+
+                // Set default value for NumberOfRemainingSnacks based on NumberOfSnacks
+                userPlan.NumberOfRemainingSnacks = userPlan.NumberOfSnacks;
+                var dif = (userPlan.StartDate - userPlan.CreatedDate).TotalDays;
+                if (dif < 2) userPlan.StartDate = userPlan.CreatedDate.AddDays(2);
+            }
+        }
+
+        return base.SaveChanges();
     }
 }

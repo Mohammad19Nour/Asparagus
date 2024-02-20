@@ -112,4 +112,14 @@ public static class HelperFunctions
         return !string.IsNullOrEmpty(address.City) || !string.IsNullOrEmpty(address.StreetName) ||
                !string.IsNullOrEmpty(address.BuildingName);
     }
+
+    public static bool CanUpdate(DateTime day)
+    {
+        return (day.Date - DateTime.Now.Date).Days > 2;
+    }
+
+    public static bool InThisWeek(DateTime day)
+    {
+        return WeekStartDay() <= day && day <= WeekEndDay();
+    }
 }

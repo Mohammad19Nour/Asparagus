@@ -6,6 +6,7 @@ using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Enums;
+using AsparagusN.Helpers;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AsparagusN.Specifications.AdminPlanSpecifications;
@@ -48,7 +49,7 @@ public class SubscriptionService : ISubscriptionService
         try
         {
             var spec = new BaseSpecification<UserPlan>(x =>
-                x.AppUserId == user.Id && x.StartDate.AddDays(x.Duration) > DateTime.Today);
+                x.AppUserId == user.Id && x.StartDate.Date >= HelperFunctions.WeekStartDay() && x.StartDate <= HelperFunctions.WeekEndDay());
 
             return (await _unitOfWork.Repository<UserPlan>().ListWithSpecAsync(spec)).ToList();
         }
@@ -121,6 +122,7 @@ public class SubscriptionService : ISubscriptionService
             var result = await Add(subscriptionDto, user, plan);
             if (!result.Succes) return (null, result.Message);
             user!.IsMealPlanMember = true;
+            user!.IsNormalUser = false;
             plan.NumberOfRemainingSnacks = plan.NumberOfSnacks;
             plan.User.LoyaltyPoints += planPoints;
             _unitOfWork.Repository<UserPlan>().Add(plan);
