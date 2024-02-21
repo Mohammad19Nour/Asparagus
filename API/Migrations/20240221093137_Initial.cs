@@ -208,6 +208,23 @@ namespace AsparagusN.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserEmail = table.Column<string>(type: "TEXT", nullable: false),
+                    ArabicContent = table.Column<string>(type: "TEXT", nullable: false),
+                    EnglishContent = table.Column<string>(type: "TEXT", nullable: false),
+                    IsSent = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PlanPrices",
                 columns: table => new
                 {
@@ -718,12 +735,40 @@ namespace AsparagusN.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Cashiers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    Password = table.Column<string>(type: "TEXT", nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    BranchId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ZoneId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    Period = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cashiers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Cashiers_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     BuyerEmail = table.Column<string>(type: "TEXT", nullable: false),
+                    BuyerPhoneNumber = table.Column<string>(type: "TEXT", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ShipToAddressId = table.Column<int>(type: "INTEGER", nullable: false),
                     BranchId = table.Column<int>(type: "INTEGER", nullable: false),
@@ -731,7 +776,8 @@ namespace AsparagusN.Migrations
                     Status = table.Column<string>(type: "TEXT", nullable: false),
                     PaymentType = table.Column<string>(type: "TEXT", nullable: false),
                     PointsPrice = table.Column<int>(type: "INTEGER", nullable: false),
-                    BillId = table.Column<string>(type: "TEXT", nullable: true)
+                    BillId = table.Column<string>(type: "TEXT", nullable: true),
+                    DriverId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -748,6 +794,12 @@ namespace AsparagusN.Migrations
                         principalTable: "Branches",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Orders_Drivers_DriverId",
+                        column: x => x.DriverId,
+                        principalTable: "Drivers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -1036,6 +1088,11 @@ namespace AsparagusN.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Cashiers_BranchId",
+                table: "Cashiers",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Drivers_ZoneId",
                 table: "Drivers",
                 column: "ZoneId");
@@ -1064,6 +1121,11 @@ namespace AsparagusN.Migrations
                 name: "IX_Orders_BranchId",
                 table: "Orders",
                 column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_DriverId",
+                table: "Orders",
+                column: "DriverId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_ShipToAddressId",
@@ -1156,7 +1218,7 @@ namespace AsparagusN.Migrations
                 name: "BasketItems");
 
             migrationBuilder.DropTable(
-                name: "Drivers");
+                name: "Cashiers");
 
             migrationBuilder.DropTable(
                 name: "MealAllergies");
@@ -1166,6 +1228,9 @@ namespace AsparagusN.Migrations
 
             migrationBuilder.DropTable(
                 name: "MediaUrls");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "OrderItems");
@@ -1207,9 +1272,6 @@ namespace AsparagusN.Migrations
                 name: "CustomerBaskets");
 
             migrationBuilder.DropTable(
-                name: "Zones");
-
-            migrationBuilder.DropTable(
                 name: "Allergies");
 
             migrationBuilder.DropTable(
@@ -1234,10 +1296,16 @@ namespace AsparagusN.Migrations
                 name: "Branches");
 
             migrationBuilder.DropTable(
+                name: "Drivers");
+
+            migrationBuilder.DropTable(
                 name: "UserPlans");
 
             migrationBuilder.DropTable(
                 name: "Location");
+
+            migrationBuilder.DropTable(
+                name: "Zones");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

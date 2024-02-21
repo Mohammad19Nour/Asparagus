@@ -135,6 +135,7 @@ public partial class UserPlanController : BaseApiController
             return Ok(new ApiResponse(404, "Day not found"));
 
         planDay.DeliveryLocationId = addressType == 1 ? user!.HomeAddressId : user!.WorkAddressId;
+        planDay.IsHomeAddress = addressType == 1;
 
         _unitOfWork.Repository<UserPlanDay>().Update(planDay);
         if (await _unitOfWork.SaveChanges())

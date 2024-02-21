@@ -8,6 +8,6 @@ public class Notification
     public string UserEmail { get; set; }
     public string ArabicContent { get; set; } = "";
     public string EnglishContent { get; set; } = "";
-    public bool IsSent { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public bool IsSent { get; set; } = false;
 }

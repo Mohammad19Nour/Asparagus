@@ -1,7 +1,10 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
+using AsparagusN.DTOs;
 using AsparagusN.Interfaces;
 using AsparagusN.SignalR;
+using AsparagusN.Specifications;
+using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,13 +12,16 @@ namespace AsparagusN.Services;
 
 public class NotificationService : INotificationService
 {
-    private readonly IHubContext<PresenceHub> _presenceHub;
+    private readonly IMapper _mapper;
+    private readonly IHubContext<NotificationHub> _notificationHub;
     private readonly PresenceTracker _tracker;
     private readonly IUnitOfWork _unitOfWork;
 
-    public NotificationService(IHubContext<PresenceHub> presenceHub, PresenceTracker tracker, IUnitOfWork unitOfWork)
+    public NotificationService(IMapper mapper,IHubContext<NotificationHub> notificationHub, PresenceTracker tracker,
+        IUnitOfWork unitOfWork)
     {
-        _presenceHub = presenceHub;
+        _mapper = mapper;
+        _notificationHub = notificationHub;
         _tracker = tracker;
         _unitOfWork = unitOfWork;
     }
@@ -29,13 +35,16 @@ public class NotificationService : INotificationService
                 ArabicContent = arabicContent,
                 EnglishContent = englishContent,
                 CreatedAt = DateTime.UtcNow,
-                IsSent = false
+                IsSent = false,
+                UserEmail = userEmail
             };
             var connections = await _tracker.GetConnectionsForUser(userEmail);
-            if (connections != null)
+            if (connections.Count > 0)
             {
-                await _presenceHub.Clients.Clients(connections)
-                    .SendAsync("ReceiveNotification", notification);
+                var result = _mapper.Map<NotificationDto>(notification);
+               
+                await _notificationHub.Clients.Clients(connections)
+                    .SendAsync(Constants.NewNotificationEventName, new List<NotificationDto> { result });
                 notification.IsSent = true;
             }
 
@@ -75,6 +84,33 @@ public class NotificationService : INotificationService
             if (!ok) return false;
         }
 
+        return true;
+    }
+
+    public async Task<List<Notification>> GetUnsentNotificationsForUserAsync(string userEmail)
+    {
+        var spec = new UnsentNotificationsForUserSpecification(userEmail);
+        var notifications = await _unitOfWork.Repository<Notification>().ListWithSpecAsync(spec);
+        return notifications.ToList();
+    }
+
+    public async Task<List<Notification>> GetAllNotificationsForUserAsync(string userEmail)
+    {
+        var notifications = await _unitOfWork.Repository<Notification>().GetQueryable()
+            .Where(x => x.UserEmail.ToLower() == userEmail.ToLower()).OrderByDescending(x => x.CreatedAt).ToListAsync();
+        notifications = notifications.OrderByDescending(x => x.CreatedAt).ToList();
+        return notifications.ToList();
+    }
+
+    public async Task<bool> MarkSent(List<Notification> notifications)
+    {
+        foreach (var notification in notifications)
+        {
+            notification.IsSent = true;
+            _unitOfWork.Repository<Notification>().Update(notification);
+        }
+
+        await _unitOfWork.SaveChanges();
         return true;
     }
 }

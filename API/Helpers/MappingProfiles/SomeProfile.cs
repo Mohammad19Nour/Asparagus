@@ -12,6 +12,7 @@ public class SomeProfile : Profile
 {
     public SomeProfile()
     {
+        CreateMap<Notification, NotificationDto>();
         CreateMap<Allergy, AllergyDto>();
         CreateMap<NewAllergyDto,Allergy>();
         CreateMap<UpdateAllergyDto,Allergy>().ForAllMembers(x=>

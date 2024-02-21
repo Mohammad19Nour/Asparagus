@@ -143,6 +143,9 @@ public class AdminDriverController : BaseApiController
                 if (driver == null)
                     return Ok(new ApiResponse(404, "Driver not found"));
 
+                var driverUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == driver.Email);
+                if (driverUser == null) return Ok(new ApiResponse(404, "Driver not found"));
+
                 _mapper.Map(updateDriverDto, driver);
 
                 if (updateDriverDto.ZoneId != null)
@@ -163,9 +166,6 @@ public class AdminDriverController : BaseApiController
 
                 if (updateDriverDto.Password != null && !string.IsNullOrEmpty(updateDriverDto.Password.Trim()))
                 {
-                    var driverUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == driver.Email);
-                    if (driverUser == null) return Ok(new ApiResponse(404, "driver not found"));
-
                     var token = await _userManager.GeneratePasswordResetTokenAsync(driverUser);
                     var result = await _userManager.ResetPasswordAsync(driverUser, token, updateDriverDto.Password);
                     if (!result.Succeeded)
@@ -180,6 +180,17 @@ public class AdminDriverController : BaseApiController
                     }
 
                     driver.Password = updateDriverDto.Password;
+                }
+                if (updateDriverDto.Email != null)
+                {
+                    var exist = await _userManager.Users.FirstOrDefaultAsync(x =>
+                        x.Email.ToLower() == updateDriverDto.Email.ToLower());
+                    if (exist != null)
+                        return Ok(new ApiResponse(400, "Email already taken"));
+                    
+                    driverUser.UserName = updateDriverDto.Email.ToLower();
+                    driverUser.Email = updateDriverDto.Email.ToLower();
+                    driverUser.NormalizedUserName = _userManager.NormalizeEmail(updateDriverDto.Email);
                 }
 
                 _unitOfWork.Repository<Driver>().Update(driver);

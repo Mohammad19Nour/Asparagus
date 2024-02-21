@@ -15,6 +15,7 @@ public class UserPlanDayDto
     public ICollection<UserSelectedMealDto> SelectedMeals { get; set; } = new List<UserSelectedMealDto>();
     public string DayOrderStatus { get; set; }
     public int AdminDayId { get; set; }
+    public bool IsHomeAddress { get; set; }
 
     public AddressDto DeliveryLocation { get; set; }
     public string DeliveryPeriod { get; set; }

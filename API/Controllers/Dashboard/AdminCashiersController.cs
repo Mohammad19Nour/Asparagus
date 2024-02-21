@@ -144,6 +144,9 @@ public class AdminCashiersController : BaseApiController
                 if (cashier == null)
                     return Ok(new ApiResponse(404, "Cashier not found"));
                 
+                var cashierUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == cashier.Email);
+                if (cashierUser == null) return Ok(new ApiResponse(404, "Cashier not found"));
+
                 _mapper.Map(updateCashierDto, cashier);
 
                 if (updateCashierDto.BranchId != null)
@@ -154,10 +157,7 @@ public class AdminCashiersController : BaseApiController
 
                     cashier.Branch = branch;
                 }
-
-                var cashierUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == cashier.Email);
-                if (cashierUser == null) return Ok(new ApiResponse(404, "cashier not found"));
-              
+                
                 if (updateCashierDto.Image != null)
                 {
                     var img = await _mediaService.AddPhotoAsync(updateCashierDto.Image);
@@ -184,12 +184,19 @@ public class AdminCashiersController : BaseApiController
                     cashier.Password = updateCashierDto.Password;
                 }
 
-                if (updateCashierDto.Email.ToLower() != cashier.Email.ToLower())
+                
+                if (updateCashierDto.Email != null)
                 {
-                    var exist = _userManager.Users.FirstOrDefault(x => x.Email == updateCashierDto.Email.ToLower());
-
-                  //  if (exist != null) return Ok(new);
+                    var exist = await _userManager.Users.FirstOrDefaultAsync(x =>
+                        x.Email.ToLower() == updateCashierDto.Email.ToLower());
+                    if (exist != null)
+                        return Ok(new ApiResponse(400, "Email already taken"));
+                    
+                    cashierUser.UserName = updateCashierDto.Email.ToLower();
+                    cashierUser.Email = updateCashierDto.Email.ToLower();
+                    cashierUser.NormalizedUserName = _userManager.NormalizeEmail(updateCashierDto.Email);
                 }
+
 
                 _unitOfWork.Repository<Cashier>().Update(cashier);
 

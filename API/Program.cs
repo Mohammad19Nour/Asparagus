@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-//builder.WebHost.UseUrls("http://localhost:5257", "http://192.168.1.39:5257");
+builder.WebHost.UseUrls("http://localhost:5257", "http://*:5257");
 // Add services to the container.
 
 builder.Services.AddControllers().AddNewtonsoftJson(opt =>
@@ -51,7 +51,7 @@ app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<PresenceHub>("hubs/presence");
+app.MapHub<NotificationHub>("hubs/presence");
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try

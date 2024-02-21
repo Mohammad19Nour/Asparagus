@@ -1,4 +1,5 @@
-﻿using AsparagusN.Enums;
+﻿using AsparagusN.Data.Entities.OrderAggregate;
+using AsparagusN.Enums;
 
 namespace AsparagusN.Data.Entities;
 
@@ -14,4 +15,6 @@ public class Driver
     public int ZoneId { get; set; }
     public string PictureUrl { get; set; }
     public Period Period { get; set; }
+    
+    public List<Order> Orders{ get; set; }
 }

@@ -5,11 +5,18 @@
 namespace AsparagusN.Migrations
 {
     /// <inheritdoc />
-    public partial class ee : Migration
+    public partial class ishomeaddress : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<bool>(
+                name: "IsHomeAddress",
+                table: "UserPlanDays",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: false);
+
             migrationBuilder.AlterColumn<int>(
                 name: "Id",
                 table: "OrderItems",
@@ -23,6 +30,10 @@ namespace AsparagusN.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "IsHomeAddress",
+                table: "UserPlanDays");
+
             migrationBuilder.AlterColumn<int>(
                 name: "Id",
                 table: "OrderItems",

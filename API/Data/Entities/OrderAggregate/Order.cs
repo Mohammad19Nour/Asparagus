@@ -17,6 +17,8 @@ public class Order
     public PaymentType PaymentType { get; set; }
     public int PointsPrice { get; set; }
     public string? BillId { get; set; }
+    public Driver? Driver { get; set; }
+    public int? DriverId { get; set; }
 
     public decimal GetTotal()
     {

@@ -11,7 +11,7 @@ public class CashierWithBranchSpecification : BaseSpecification<Cashier>
         AddInclude(x=>x.Include(y=>y.Branch));
     }
     
-    public CashierWithBranchSpecification(int driverId) : base(x=>x.Id == driverId)
+    public CashierWithBranchSpecification(int cashierId) : base(x=>x.Id == cashierId)
     {
         AddInclude(x=>x.Include(y=>y.Branch));
     }

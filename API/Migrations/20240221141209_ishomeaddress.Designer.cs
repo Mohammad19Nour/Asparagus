@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240220102434_cashier")]
-    partial class cashier
+    [Migration("20240221141209_ishomeaddress")]
+    partial class ishomeaddress
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -931,6 +931,9 @@ namespace AsparagusN.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsHomeAddress")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("UserPlanId")
                         .HasColumnType("INTEGER");
 
@@ -1200,6 +1203,9 @@ namespace AsparagusN.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("DriverId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("TEXT");
 
@@ -1223,6 +1229,8 @@ namespace AsparagusN.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BranchId");
+
+                    b.HasIndex("DriverId");
 
                     b.HasIndex("ShipToAddressId");
 
@@ -1673,6 +1681,11 @@ namespace AsparagusN.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("AsparagusN.Data.Entities.Driver", "Driver")
+                        .WithMany("Orders")
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("AsparagusN.Data.Entities.Address", "ShipToAddress")
                         .WithMany()
                         .HasForeignKey("ShipToAddressId")
@@ -1680,6 +1693,8 @@ namespace AsparagusN.Migrations
                         .IsRequired();
 
                     b.Navigation("Branch");
+
+                    b.Navigation("Driver");
 
                     b.Navigation("ShipToAddress");
                 });
@@ -1781,6 +1796,11 @@ namespace AsparagusN.Migrations
             modelBuilder.Entity("AsparagusN.Data.Entities.CustomerBasket", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("AsparagusN.Data.Entities.Driver", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.Identity.AppRole", b =>

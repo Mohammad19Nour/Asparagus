@@ -96,6 +96,11 @@ public class AccountController : BaseApiController
             var res = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (res.Succeeded == false) return Ok(res.Errors);
+            IdentityResult roleResult;
+            roleResult = await _userManager.AddToRoleAsync(user, "User");
+
+
+            if (!roleResult.Succeeded) return BadRequest(new ApiResponse(400, "Failed to add roles"));
 
             var respons = await GenerateTokenAndSendEmailForUser(user);
 

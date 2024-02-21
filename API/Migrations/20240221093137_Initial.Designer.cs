@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240220071158_Initial")]
+    [Migration("20240221093137_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -132,6 +132,51 @@ namespace AsparagusN.Migrations
                         .IsUnique();
 
                     b.ToTable("Branches");
+                });
+
+            modelBuilder.Entity("AsparagusN.Data.Entities.Cashier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Period")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ZoneId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.ToTable("Cashiers");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.Category", b =>
@@ -1106,6 +1151,35 @@ namespace AsparagusN.Migrations
                     b.ToTable("MediaUrls");
                 });
 
+            modelBuilder.Entity("AsparagusN.Data.Entities.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ArabicContent")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EnglishContent")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsSent")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("AsparagusN.Data.Entities.OrderAggregate.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -1121,6 +1195,13 @@ namespace AsparagusN.Migrations
                     b.Property<string>("BuyerEmail")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<string>("BuyerPhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("DriverId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("TEXT");
@@ -1145,6 +1226,8 @@ namespace AsparagusN.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BranchId");
+
+                    b.HasIndex("DriverId");
 
                     b.HasIndex("ShipToAddressId");
 
@@ -1327,6 +1410,17 @@ namespace AsparagusN.Migrations
                         .IsRequired();
 
                     b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("AsparagusN.Data.Entities.Cashier", b =>
+                {
+                    b.HasOne("AsparagusN.Data.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.Driver", b =>
@@ -1584,6 +1678,11 @@ namespace AsparagusN.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("AsparagusN.Data.Entities.Driver", "Driver")
+                        .WithMany("Orders")
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("AsparagusN.Data.Entities.Address", "ShipToAddress")
                         .WithMany()
                         .HasForeignKey("ShipToAddressId")
@@ -1591,6 +1690,8 @@ namespace AsparagusN.Migrations
                         .IsRequired();
 
                     b.Navigation("Branch");
+
+                    b.Navigation("Driver");
 
                     b.Navigation("ShipToAddress");
                 });
@@ -1692,6 +1793,11 @@ namespace AsparagusN.Migrations
             modelBuilder.Entity("AsparagusN.Data.Entities.CustomerBasket", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("AsparagusN.Data.Entities.Driver", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.Identity.AppRole", b =>
