@@ -29,7 +29,7 @@ public class MediaService : IMediaService
             await file.CopyToAsync(stream);
             await stream.DisposeAsync();
 
-            var imageLink = "/images/" + fileName;
+            var imageLink = "images/" + fileName;
             return (true, imageLink, "done");
         }
         catch (Exception e)
@@ -59,7 +59,7 @@ public class MediaService : IMediaService
             await file.CopyToAsync(stream);
             await stream.DisposeAsync();
 
-            var imageLink = "/videos/" + fileName;
+            var imageLink = "videos/" + fileName;
             return (true, imageLink, "done");
         }
         catch (Exception e)

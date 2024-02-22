@@ -35,6 +35,29 @@ public class OrderService : IOrderService
         return order;
     }
 
+    public async Task<(bool Success, string Message)> AssignOrderToDriver(int orderId, int driverId)
+    {
+        var spec = new OrderWithItemsSpecification(orderId);
+        var order = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
+
+        if (order == null) return (false, "Order not found");
+
+        var driver = await _unitOfWork.Repository<Driver>().GetByIdAsync(driverId);
+        if (driver == null) return (false, "Driver not found");
+
+        if (order.Driver != null) return (false, $"Order assigned to driver {order.Driver.Email}");
+
+        if (order.Status != OrderStatus.Pending) return (false, "Order isn't pending");
+
+        order.Driver = driver;
+        _unitOfWork.Repository<Order>().Update(order);
+
+        if (await _unitOfWork.SaveChanges())
+            return (true, "Assigned successfully");
+
+        return (false, "Failed to assign driver");
+    }
+
     public async Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string buyerEmail)
     {
         buyerEmail = buyerEmail.ToLower();
@@ -49,43 +72,58 @@ public class OrderService : IOrderService
     public async Task<(Order? Order, string Message)> CreateOrderAsync(string buyerEmail, int basketId,
         NewOrderInfoDto newOrderInfoDto)
     {
-        var user = await _unitOfWork.Repository<AppUser>().GetByIdAsync(basketId);
-        Order? order;
-        (order, var message) = await CalcPriceOfOrder(buyerEmail, basketId, newOrderInfoDto);
-
-        if (order == null) return (order, Message: message);
-        if (!await _locationService.CanDeliver(newOrderInfoDto.ShipToAddress))
-            return (null, "Can't deliver to this location");
-
-        AppCoupon? coupon = null;
-        if (newOrderInfoDto.CouponCode != null)
+        try
         {
-            coupon = await _unitOfWork.Repository<AppCoupon>().GetQueryable()
-                .Where(x => x.Code == newOrderInfoDto.CouponCode).FirstOrDefaultAsync();
-            if (coupon == null) return (null, "coupon not valid");
+            using (var transaction = _unitOfWork.BeginTransaction())
+            {
+                var user = await _unitOfWork.Repository<AppUser>().GetByIdAsync(basketId);
+                Order? order;
+                (order, var message) = await CalcPriceOfOrder(buyerEmail, basketId, newOrderInfoDto);
+
+                if (order == null) return (order, Message: message);
+                if (!await _locationService.CanDeliver(newOrderInfoDto.ShipToAddress))
+                    return (null, "Can't deliver to this location");
+
+                AppCoupon? coupon = null;
+                if (newOrderInfoDto.CouponCode != null)
+                {
+                    coupon = await _unitOfWork.Repository<AppCoupon>().GetQueryable()
+                        .Where(x => x.Code == newOrderInfoDto.CouponCode).FirstOrDefaultAsync();
+                    if (coupon == null) return (null, "coupon not valid");
+                }
+
+                if (order.PaymentType == PaymentType.Card)
+                {
+                    // if payment through card failed then return from here
+                }
+
+                if (order.PaymentType == PaymentType.Points)
+                {
+                    if (order.PointsPrice > user!.LoyaltyPoints)
+                        return (null, "You don't enough points");
+                    user.LoyaltyPoints -= order.PointsPrice;
+                }
+
+                order.BuyerPhoneNumber = user!.PhoneNumber;
+                _unitOfWork.Repository<Order>().Add(order);
+
+                if (!(await _unitOfWork.SaveChanges()))
+                {
+                    await transaction.RollbackAsync();
+                    return (null, "Something happened during saving order ");
+                }
+
+                await _notificationService.NotifyUserByEmail(user.Email, "تم اضافة الطلب", "Order added");
+
+                await transaction.CommitAsync();
+                return (order: order, "Done");
+            }
         }
-        
-        if (order.PaymentType == PaymentType.Card)
+        catch (Exception e)
         {
-            // if payment through card failed then return from here
+            Console.WriteLine(e);
+            throw;
         }
-
-        if (order.PaymentType == PaymentType.Points)
-        {
-            if (order.PointsPrice > user!.LoyaltyPoints)
-                return (null, "You don't enough points");
-            user.LoyaltyPoints -= order.PointsPrice;
-        }
-
-        order.BuyerPhoneNumber = user!.PhoneNumber;
-        _unitOfWork.Repository<Order>().Add(order);
-        await _notificationService.NotifyUserByEmail(user.Email, "ara", "eng");
-
-        if (!await _unitOfWork.SaveChanges())
-            return (null, "Something happened during saving order ");
-
-
-        return (order: order, "Done");
     }
 
     public async Task<(Order? Order, string Message)> CalcPriceOfOrder(string buyerEmail, int basketId,
@@ -112,8 +150,8 @@ public class OrderService : IOrderService
 
             itemOrdered.AddedProtein = item.AddedProtein;
             itemOrdered.AddedCarb = item.AddedCarb;
-            var price = meal.Price + itemOrdered.PricePerCarb * itemOrdered.AddedCarb
-                                   + itemOrdered.PricePerProtein * itemOrdered.AddedProtein;
+            var price = meal.Price + (decimal)itemOrdered.PricePerCarb * (decimal)itemOrdered.AddedCarb
+                                   +  (decimal)itemOrdered.PricePerProtein * itemOrdered.AddedProtein;
 
             var orderItem = new OrderItem
             {

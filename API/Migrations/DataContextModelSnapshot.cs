@@ -1714,6 +1714,12 @@ namespace AsparagusN.Migrations
                             b1.Property<int>("AddedProtein")
                                 .HasColumnType("INTEGER");
 
+                            b1.Property<double>("Calories")
+                                .HasColumnType("REAL");
+
+                            b1.Property<double>("Carbs")
+                                .HasColumnType("REAL");
+
                             b1.Property<string>("DescriptionAR")
                                 .IsRequired()
                                 .HasColumnType("TEXT");
@@ -1721,6 +1727,12 @@ namespace AsparagusN.Migrations
                             b1.Property<string>("DescriptionEN")
                                 .IsRequired()
                                 .HasColumnType("TEXT");
+
+                            b1.Property<double>("Fats")
+                                .HasColumnType("REAL");
+
+                            b1.Property<double>("Fibers")
+                                .HasColumnType("REAL");
 
                             b1.Property<int>("MealId")
                                 .HasColumnType("INTEGER");
@@ -1736,6 +1748,15 @@ namespace AsparagusN.Migrations
                             b1.Property<string>("PictureUrl")
                                 .IsRequired()
                                 .HasColumnType("TEXT");
+
+                            b1.Property<double>("PricePerCarb")
+                                .HasColumnType("REAL");
+
+                            b1.Property<double>("PricePerProtein")
+                                .HasColumnType("REAL");
+
+                            b1.Property<double>("Protein")
+                                .HasColumnType("REAL");
 
                             b1.HasKey("OrderItemId");
 

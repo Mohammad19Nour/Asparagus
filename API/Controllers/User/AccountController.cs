@@ -1,6 +1,7 @@
 ﻿using AsparagusN.Data.Entities.Identity;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.AccountDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
 
 namespace AsparagusN.Controllers.User;
 
@@ -51,6 +53,20 @@ public class AccountController : BaseApiController
         var res = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
         if (!res.Succeeded)
             return Ok(new ApiResponse(400, messageEN: "Invalid password", messageAR: "كلمة السر خاطئة"));
+        if (!user.EmailConfirmed)
+        {
+            var response = await GenerateTokenAndSendEmailForUser(user);
+
+            if (!response)
+                return Ok(new ApiResponse(400, messageEN: "Failed to send email.", messageAR: "فشل ارسال الايميل"));
+
+            return Ok(new ApiResponse(200, messageEN: "You have confirm your account first," +
+                                                      "The confirmation link will be resent to your email," +
+                                                      " please check your email and confirm your account.",
+                messageAR:
+                "يجب عليك تاكيد الحساب اولا, سيتم إعادة إرسال رابط التأكيد إليك... الرجاء التأكد من صندوق الوارد لديك من اجل تاكيد حسابك"));
+        }
+
         var userDto = _mapper.Map<AppUser, AccountDto>(user);
         userDto.Token = _tokenService.CreateToken(user);
         return Ok(new ApiOkResponse<AccountDto>(userDto));

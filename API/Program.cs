@@ -3,6 +3,7 @@ using AsparagusN.Data;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Extensions;
 using AsparagusN.Helpers;
+using AsparagusN.Helpers.MappingProfiles;
 using AsparagusN.Middleware;
 using AsparagusN.SignalR;
 using Microsoft.AspNetCore.Identity;
@@ -15,6 +16,7 @@ builder.WebHost.UseUrls("http://localhost:5257", "http://*:5257");
 builder.Services.AddControllers().AddNewtonsoftJson(opt =>
 {
     opt.SerializerSettings.Converters.Add(new RoundedNumberConverter(2));
+    opt.SerializerSettings.Converters.Add(new PictureUrlConverter(builder.Configuration["ApiUrl"]));
     //   opt.JsonSerializerOptions.Converters.Add();
 });
 builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
@@ -58,8 +60,9 @@ try
 {
     var context = services.GetRequiredService<DataContext>();
     var roleContext = services.GetRequiredService<RoleManager<AppRole>>();
+    var userContext = services.GetRequiredService<UserManager<AppUser>>();
     await context.Database.MigrateAsync();
-    await Seed.SeedData(context, roleContext);
+    await Seed.SeedData(context, roleContext,userContext);
 }
 catch (Exception e)
 {

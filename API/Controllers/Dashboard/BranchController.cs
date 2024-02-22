@@ -101,9 +101,16 @@ public class BranchController : BaseApiController
 
         var spec = new BranchWithAddressSpecification();
         var branches = await _unitOfWork.Repository<Branch>().ListWithSpecAsync(spec);
-        branches = branches.OrderBy(branch =>
-            _distanceService.GetDrivingDistanceAsync(branch.Address.Latitude, branch.Address.Longitude, latitude,
-                longitude)).ToList();
+       
+        var branchDistances = await Task.WhenAll(branches.Select(async branch =>
+        {
+            var distance = await _distanceService.GetDrivingDistanceAsync(branch.Address.Latitude, branch.Address.Longitude, latitude, longitude);
+            Console.WriteLine(branch.Id);
+            Console.WriteLine(distance);
+            return new { Branch = branch, Distance = distance };
+        }));
+
+        var sortedBranches = branchDistances.OrderBy(x => x.Distance).Select(x => x.Branch).ToList();
 
         return Ok(new ApiOkResponse<List<BranchDto>>(_mapper.Map<List<BranchDto>>(branches)));
     }

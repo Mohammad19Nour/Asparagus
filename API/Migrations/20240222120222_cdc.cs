@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AsparagusN.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class cdc : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -216,8 +216,8 @@ namespace AsparagusN.Migrations
                     UserEmail = table.Column<string>(type: "TEXT", nullable: false),
                     ArabicContent = table.Column<string>(type: "TEXT", nullable: false),
                     EnglishContent = table.Column<string>(type: "TEXT", nullable: false),
-                    IsSent = table.Column<bool>(type: "INTEGER", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    IsSent = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -834,6 +834,7 @@ namespace AsparagusN.Migrations
                     Day = table.Column<DateTime>(type: "TEXT", nullable: false),
                     DeliveryLocationId = table.Column<int>(type: "INTEGER", nullable: false),
                     DeliveryPeriod = table.Column<string>(type: "TEXT", nullable: false),
+                    IsHomeAddress = table.Column<bool>(type: "INTEGER", nullable: false),
                     DayOrderStatus = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -864,6 +865,13 @@ namespace AsparagusN.Migrations
                     OrderedMeal_DescriptionEN = table.Column<string>(type: "TEXT", nullable: false),
                     OrderedMeal_DescriptionAR = table.Column<string>(type: "TEXT", nullable: false),
                     OrderedMeal_PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    OrderedMeal_PricePerProtein = table.Column<double>(type: "REAL", nullable: false),
+                    OrderedMeal_PricePerCarb = table.Column<double>(type: "REAL", nullable: false),
+                    OrderedMeal_Calories = table.Column<double>(type: "REAL", nullable: false),
+                    OrderedMeal_Fibers = table.Column<double>(type: "REAL", nullable: false),
+                    OrderedMeal_Fats = table.Column<double>(type: "REAL", nullable: false),
+                    OrderedMeal_Carbs = table.Column<double>(type: "REAL", nullable: false),
+                    OrderedMeal_Protein = table.Column<double>(type: "REAL", nullable: false),
                     OrderedMeal_AddedCarb = table.Column<int>(type: "INTEGER", nullable: false),
                     OrderedMeal_AddedProtein = table.Column<int>(type: "INTEGER", nullable: false),
                     Price = table.Column<double>(type: "decimal(18,2)", nullable: false),

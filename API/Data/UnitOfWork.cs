@@ -13,6 +13,7 @@ public class UnitOfWork : IUnitOfWork
     public UnitOfWork(DataContext context)
     {
         _context = context;
+        _repositories = null;
     }
 
 

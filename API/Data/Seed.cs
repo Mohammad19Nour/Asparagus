@@ -6,14 +6,16 @@ using AsparagusN.Enums;
 using AsparagusN.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
 
 namespace AsparagusN.Data;
 
 public static class Seed
 {
-    public static async Task SeedData(DataContext context, RoleManager<AppRole> roleManager)
+    public static async Task SeedData(DataContext context, RoleManager<AppRole> roleManager,UserManager<AppUser>userManager)
     {
         await SeedRoles(roleManager);
+        await SeedUsers(userManager);
         await SeedAdminPlans(context);
         await SeedAllergies(context);
         await SeedCategories(context);
@@ -49,10 +51,10 @@ public static class Seed
 
         var roles = new List<AppRole>
         {
-            new() { Name = "Admin" },
-            new() { Name = "Driver" },
-            new() { Name = "User" },
-            new() { Name = "Cashier" },
+            new() { Name = Roles.Admin.GetDisplayName()},
+            new() { Name = Roles.Driver.GetDisplayName() },
+            new() { Name = Roles.User.GetDisplayName() },
+            new() { Name = Roles.Cashier.GetDisplayName() },
         };
 
         foreach (var role in roles)
@@ -60,7 +62,19 @@ public static class Seed
             await roleManager.CreateAsync(role);
         }
     }
+    private static async Task SeedUsers(UserManager<AppUser> userManager)
+    {
+        if (await userManager.Users.AnyAsync()) return;
 
+        var user = new AppUser
+        {
+            Email = "admin",
+            UserName = "admin",
+            FullName = "admin",
+        };
+       await userManager.CreateAsync(user,"string");
+       await userManager.AddToRoleAsync(user,Roles.Admin.GetDisplayName());
+    }
     private static async Task SeedPrices(DataContext context)
     {
         return;

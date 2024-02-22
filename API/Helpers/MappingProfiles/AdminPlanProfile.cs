@@ -36,7 +36,6 @@ public class AdminPlanProfile : Profile
             .ForMember(dest => dest.DescriptionAR, opt => opt.MapFrom(src => src.Meal.DescriptionAR))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Meal.Price))
             .ForMember(dest => dest.Points, opt => opt.MapFrom(src => src.Meal.Points))
-            .ForMember(dest => dest.PictureUrl, opt => opt.MapFrom(src => src.Meal.PictureUrl))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Meal.CreatedAt))
             .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Meal.CategoryId))
             .ForMember(dest => dest.Allergies, opt => opt.MapFrom(src => src.Meal.Allergies))

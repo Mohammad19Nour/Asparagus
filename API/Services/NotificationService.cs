@@ -76,7 +76,7 @@ public class NotificationService : INotificationService
 
     public async Task<bool> NotifyAllNormalUsers(string arabicContent, string englishContent)
     {
-        List<string> userEmails = await _unitOfWork.Repository<AppUser>().GetQueryable().Where(x => x.IsNormalUser)
+        List<string> userEmails = await _unitOfWork.Repository<AppUser>().GetQueryable().Where(x => x.IsNormalUser && !x.IsMealPlanMember)
             .Select(x => x.Email.ToLower()).ToListAsync();
         foreach (var email in userEmails)
         {

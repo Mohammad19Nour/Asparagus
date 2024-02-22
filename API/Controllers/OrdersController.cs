@@ -1,8 +1,6 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
-using AsparagusN.DTOs;
 using AsparagusN.DTOs.AddressDtos;
-using AsparagusN.DTOs.BranchDtos;
 using AsparagusN.DTOs.OrderDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
@@ -13,7 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace AsparagusN.Controllers.User;
+namespace AsparagusN.Controllers;
 
 public class OrdersController : BaseApiController
 {
@@ -64,6 +62,14 @@ public class OrdersController : BaseApiController
         if (order == null) return Ok(new ApiResponse(404, "Order not found"));
 
         return Ok(new ApiOkResponse<OrderDto>(_mapper.Map<OrderDto>(order)));
+    }
+
+    [HttpPost("assign")]
+    public async Task<ActionResult> AssignOrder([FromQuery] int orderId, [FromQuery] int driverId)
+    {
+        var result = await _orderService.AssignOrderToDriver(orderId, driverId);
+        if (result.Success) return Ok(new ApiResponse(200));
+        return Ok(new ApiResponse(400, result.Message));
     }
 
     private async Task<AppUser?> _getUser()

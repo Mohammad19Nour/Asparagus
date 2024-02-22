@@ -11,13 +11,13 @@ public class MealItemOrdered
     public string DescriptionEN { get; set; }
     public string DescriptionAR { get; set; }
     public string PictureUrl { get; set; }
-    public decimal PricePerProtein;
-    public decimal PricePerCarb;
-    public decimal Calories;
-    public decimal Fibers;
-    public decimal Fats;
-    public decimal Carbs;
-    public decimal Protein;
+    public double PricePerProtein { get; set; } = 0; 
+    public double PricePerCarb { get; set; } = 0; 
+    public double Calories { get; set; } = 0; 
+    public double Fibers { get; set; } = 0; 
+    public double Fats { get; set; } = 0; 
+    public double Carbs { get; set; } = 0; 
+    public double Protein { get; set; } = 0; 
     public int AddedCarb { get; set; }
     public int AddedProtein { get; set; }
 

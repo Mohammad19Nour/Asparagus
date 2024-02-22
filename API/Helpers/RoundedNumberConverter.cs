@@ -9,7 +9,6 @@ public class RoundedNumberConverter : JsonConverter<decimal>
     public RoundedNumberConverter(int decimalPlaces)
     {
         _decimalPlaces = decimalPlaces;
-        Console.WriteLine(decimalPlaces);
     }
 
     public override void WriteJson(JsonWriter writer, decimal value, JsonSerializer serializer)
