@@ -34,6 +34,7 @@ public class SubscriptionService : ISubscriptionService
     {
         try
         {
+            Console.WriteLine("FFF\n\n");
             var spec = new UserPlanWithMealsDrinksAndExtrasSpecification(user.Id, planType);
             return await _unitOfWork.Repository<UserPlan>().GetEntityWithSpec(spec);
         }
@@ -112,6 +113,8 @@ public class SubscriptionService : ISubscriptionService
     {
         try
         {
+            user = await _unitOfWork.Repository<AppUser>()
+                .GetEntityWithSpec(new UserWithAddressSpecification(user!.Email));
             var plan = await GetUserSubscriptionAsync(user, subscriptionDto.PlanType);
 
             if (plan != null)
@@ -289,13 +292,13 @@ public class SubscriptionService : ISubscriptionService
             while (duration > 0)
             {
                 duration--;
-                var day = startDate.AddDays(1);
+                var day = startDate;
 
                 days.Add(new UserPlanDay
                 {
                     Day = day,
                 });
-                startDate = day;
+                startDate = day.AddDays(1).Date;
             }
 
 
@@ -496,6 +499,9 @@ public class SubscriptionService : ISubscriptionService
                 return (false, validate.Message);
 
             subscriptionDto.StartDate = subscriptionDto.StartDate.Date;
+            if (DateTime.Today.AddDays(2).Date >= subscriptionDto.StartDate.Date)
+                subscriptionDto.StartDate = DateTime.Today.AddDays(3).Date;
+            
             _mapper.Map(subscriptionDto, plan);
 
             plan.User = user;
@@ -506,7 +512,9 @@ public class SubscriptionService : ISubscriptionService
 
             foreach (var day in days)
             {
-                day.DeliveryLocationId = user.HomeAddressId;
+                day.DeliveryLocationId = HelperFunctions.CheckExistAddress(user.HomeAddress)
+                    ? user.HomeAddressId
+                    : user.WorkAddressId;
             }
 
             plan.Days = days;

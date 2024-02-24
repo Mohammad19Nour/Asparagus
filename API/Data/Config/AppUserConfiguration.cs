@@ -9,6 +9,7 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
 {
     public void Configure(EntityTypeBuilder<AppUser> builder)
     {
+        builder.HasOne(y => y.HomeAddress).WithMany().OnDelete(DeleteBehavior.NoAction);
         builder.HasMany(ur => ur.UserRoles)
             .WithOne(u => u.User)
             .HasForeignKey(ur => ur.UserId)

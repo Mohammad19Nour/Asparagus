@@ -74,7 +74,10 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
 
 
         builder.Entity<BasketItem>().HasKey(x => new { x.CustomerBasketId, x.MealId });
-        builder.Entity<CustomerBasket>().HasMany(x => x.Items).WithOne(c => c.CustomerBasket)
+        builder.Entity<CustomerBasket>()
+            .Property(x => x.Id).ValueGeneratedNever();
+        builder.Entity<CustomerBasket>().HasMany(x => x.Items)
+            .WithOne(c => c.CustomerBasket)
             .HasForeignKey(g => g.CustomerBasketId).OnDelete(DeleteBehavior.Cascade);
 
         builder.ApplyConfiguration(new AppCouponConfiguration());
@@ -107,7 +110,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
                         .HasConversion<double>();
                 else
                     builder.Entity(entityType.Name).Property(property.Name)
-                        .HasPrecision(38, 12);
+                        .HasPrecision(38, 3);
             }
         }
     }

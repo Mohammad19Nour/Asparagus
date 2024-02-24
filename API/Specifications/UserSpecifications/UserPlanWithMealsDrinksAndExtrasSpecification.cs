@@ -10,8 +10,10 @@ public class UserPlanWithMealsDrinksAndExtrasSpecification : BaseSpecification<U
 {
     public UserPlanWithMealsDrinksAndExtrasSpecification(int userId, PlanTypeEnum planType)
         : base(x => x.PlanType == planType && userId == x.AppUserId 
-                                           && x.StartDate.Date >= HelperFunctions.WeekStartDay() && x.StartDate <= HelperFunctions.WeekEndDay())
+                                           && x.StartDate.Date <= HelperFunctions.WeekEndDay() && x.StartDate.Date.AddDays(x.Duration) > HelperFunctions.WeekStartDay())
     {
+        Console.WriteLine(HelperFunctions.WeekEndDay());
+        Console.WriteLine("\n*\n");
         AddInclude(x => x.Include(y => y.Allergies));
         AddInclude(x => x.Include(y => y.Days).ThenInclude(
             d => d.SelectedDrinks));

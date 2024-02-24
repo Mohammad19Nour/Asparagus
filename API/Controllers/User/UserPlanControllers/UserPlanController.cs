@@ -46,6 +46,7 @@ public partial class UserPlanController : BaseApiController
 
         if (plan == null) return Ok(new ApiResponse(404, "No plan found"));
 
+        Console.WriteLine("RR\n\n");
         plan.Days = plan.Days.Where(x => HelperFunctions.InThisWeek(x.Day.Date)).ToList();
         var result = _mapper.Map<UserPlanDto>(plan);
         foreach (var day in result.Days)

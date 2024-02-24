@@ -15,7 +15,6 @@ public static class Seed
     public static async Task SeedData(DataContext context, RoleManager<AppRole> roleManager,UserManager<AppUser>userManager)
     {
         await SeedRoles(roleManager);
-        await SeedUsers(userManager);
         await SeedAdminPlans(context);
         await SeedAllergies(context);
         await SeedCategories(context);
@@ -31,6 +30,7 @@ public static class Seed
         await SeedAdminSelectedSnacks(context);
         await SeedPlanTypes(context);
         await SeedAdminSelectedCarbs(context);
+        await SeedUsers(userManager);
     }
 
     private static decimal CalculatePrice(SubscriptionDuration duration, int numberOfMeals)
@@ -71,6 +71,7 @@ public static class Seed
             Email = "admin",
             UserName = "admin",
             FullName = "admin",
+            EmailConfirmed = true
         };
        await userManager.CreateAsync(user,"string");
        await userManager.AddToRoleAsync(user,Roles.Admin.GetDisplayName());
@@ -96,16 +97,16 @@ public static class Seed
 
         var allergies = new List<Allergy>
         {
-            new Allergy("عدس", "Lentil", "lentil.jpg"),
-            new Allergy("قمح", "Wheat", "wheat.jpg"),
-            new Allergy("بيض", "Egg", "egg.jpg"),
-            new Allergy("مكسرات", "Nuts", "nuts.jpg"),
-            new Allergy("سمك", "Fish", "fish.jpg"),
-            new Allergy("فول الصويا", "Soy", "soy.jpg"),
-            new Allergy("حليب", "Milk", "milk.jpg"),
-            new Allergy("جلوتين", "Gluten", "gluten.jpg"),
-            new Allergy("جوز الهند", "Coconut", "coconut.jpg"),
-            new Allergy("فستق", "Peanut", "peanut.jpg")
+            new Allergy("عدس", "Lentil", "images/lentil.jpg"),
+            new Allergy("قمح", "Wheat", "images/wheat.jpg"),
+            new Allergy("بيض", "Egg", "images/egg.jpg"),
+            new Allergy("مكسرات", "Nuts", "images/nuts.jpg"),
+            new Allergy("سمك", "Fish", "images/fish.jpg"),
+            new Allergy("فول الصويا", "Soy", "images/soy.jpg"),
+            new Allergy("حليب", "Milk", "images/milk.jpg"),
+            new Allergy("جلوتين", "Gluten", "images/gluten.jpg"),
+            new Allergy("جوز الهند", "Coconut", "images/coconut.jpg"),
+            new Allergy("فستق", "Peanut", "images/peanut.jpg")
         };
 
         await context.Allergies.AddRangeAsync(allergies);
@@ -282,50 +283,50 @@ public static class Seed
             new ExtraOption
             {
                 NameEnglish = "Peanuts", NameArabic = "فول سوداني", Price = 3.99m, Weight = 30,
-                PictureUrl = "peanuts.jpg", OptionType = ExtraOptionType.Nuts
+                PictureUrl = "images/peanuts.jpg", OptionType = ExtraOptionType.Nuts
             },
             new ExtraOption
             {
-                NameEnglish = "Almonds", NameArabic = "لوز", Price = 4.99m, Weight = 40, PictureUrl = "almonds.jpg",
+                NameEnglish = "Almonds", NameArabic = "لوز", Price = 4.99m, Weight = 40, PictureUrl = "images/almonds.jpg",
                 OptionType = ExtraOptionType.Nuts
             },
             new ExtraOption
             {
-                NameEnglish = "Cashews", NameArabic = "كاجو", Price = 5.99m, Weight = 50, PictureUrl = "cashews.jpg",
+                NameEnglish = "Cashews", NameArabic = "كاجو", Price = 5.99m, Weight = 50, PictureUrl = "images/cashews.jpg",
                 OptionType = ExtraOptionType.Nuts
             },
             // Sauces
             new ExtraOption
             {
                 NameEnglish = "Barbecue Sauce", NameArabic = "صوص الشواء", Price = 2.49m, Weight = 25,
-                PictureUrl = "bbq_sauce.jpg", OptionType = ExtraOptionType.Sauce
+                PictureUrl = "images/bbq_sauce.jpg", OptionType = ExtraOptionType.Sauce
             },
             new ExtraOption
             {
                 NameEnglish = "Soy Sauce", NameArabic = "صوص الصويا", Price = 1.99m, Weight = 20,
-                PictureUrl = "soy_sauce.jpg", OptionType = ExtraOptionType.Sauce
+                PictureUrl = "images/soy_sauce.jpg", OptionType = ExtraOptionType.Sauce
             },
             // Salads
             new ExtraOption
             {
                 NameEnglish = "Caesar Salad", NameArabic = "سلطة السيزار", Price = 6.49m, Weight = 60,
-                PictureUrl = "caesar_salad.jpg", OptionType = ExtraOptionType.Salad
+                PictureUrl = "images/caesar_salad.jpg", OptionType = ExtraOptionType.Salad
             },
             new ExtraOption
             {
                 NameEnglish = "Greek Salad", NameArabic = "سلطة يونانية", Price = 5.49m, Weight = 55,
-                PictureUrl = "greek_salad.jpg", OptionType = ExtraOptionType.Salad
+                PictureUrl = "images/greek_salad.jpg", OptionType = ExtraOptionType.Salad
             },
             // Mixed
             new ExtraOption
             {
                 NameEnglish = "Mixed Nuts", NameArabic = "مكسرات مشكلة", Price = 12.99m, Weight = 120,
-                PictureUrl = "mixed_nuts.jpg", OptionType = ExtraOptionType.Nuts
+                PictureUrl = "images/mixed_nuts.jpg", OptionType = ExtraOptionType.Nuts
             },
             new ExtraOption
             {
                 NameEnglish = "Spicy Sauce", NameArabic = "صوص حار", Price = 3.99m, Weight = 35,
-                PictureUrl = "spicy_sauce.jpg", OptionType = ExtraOptionType.Sauce
+                PictureUrl = "images/spicy_sauce.jpg", OptionType = ExtraOptionType.Sauce
             }
         };
 
@@ -339,44 +340,43 @@ public static class Seed
         if (await _context.Drinks.AnyAsync()) return;
 
         var random = new Random();
-        var defaultPictureUrl = "default_picture.jpg"; // Provide a default picture URL here
 
         var drinks = new List<Drink>
         {
             new Drink
             {
                 NameEnglish = "Water", NameArabic = "ماء", Price = (decimal)random.NextDouble() * 5,
-                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = "images/water.jpg"
             },
             new Drink
             {
                 NameEnglish = "Orange Juice", NameArabic = "عصير البرتقال", Price = (decimal)random.NextDouble() * 10,
-                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = "images/orange_juice.jpg"
             },
             new Drink
             {
                 NameEnglish = "Cola", NameArabic = "كولا", Price = (decimal)random.NextDouble() * 5,
-                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = "images/cola.jpg"
             },
             new Drink
             {
                 NameEnglish = "Coffee", NameArabic = "قهوة", Price = (decimal)random.NextDouble() * 10,
-                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = "images/coffee.jpg"
             },
             new Drink
             {
                 NameEnglish = "Tea", NameArabic = "شاي", Price = (decimal)random.NextDouble() * 5,
-                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = "images/tea.jpg"
             },
             new Drink
             {
                 NameEnglish = "Mango Shake", NameArabic = "شيك المانجو", Price = (decimal)random.NextDouble() * 10,
-                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = "images/mango_shake.jpg"
             },
             new Drink
             {
                 NameEnglish = "Lemonade", NameArabic = "عصير الليمون", Price = (decimal)random.NextDouble() * 5,
-                Volume = (CapacityLevel)random.Next(3), PictureUrl = defaultPictureUrl
+                Volume = (CapacityLevel)random.Next(3), PictureUrl = "images/lemonade.jpg"
             }
         };
 
@@ -459,7 +459,7 @@ public static class Seed
                 DescriptionAR = "كاري دجاج هندي شهي مقدم مع أرز بسمتي.",
                 Price = 25,
                 Points = 8,
-                PictureUrl = "chicken_curry.jpg",
+                PictureUrl = "images/chicken_curry.jpg",
                 IsMealPlan = false,
                 IsMainMenu = true,
                 CategoryId = 1,
@@ -483,7 +483,7 @@ public static class Seed
                 DescriptionAR = "سلطة طازجة مع سلمون مشوي وسبانخ وطماطم وصلصة زيتون.",
                 Price = 18,
                 Points = 6,
-                PictureUrl = "salmon_salad.jpg",
+                PictureUrl = "images/salmon_salad.jpg",
                 IsMealPlan = true,
                 IsMainMenu = false,
                 CategoryId = 2,
@@ -508,7 +508,7 @@ public static class Seed
                 DescriptionAR = "سلطة السيزار الكلاسيكية مع صدر دجاج مشوي وخس رومين وكروتون وصلصة السيزار.",
                 Price = 12.99m,
                 Points = 5,
-                PictureUrl = "chicken_caesar_salad.jpg",
+                PictureUrl = "images/chicken_caesar_salad.jpg",
                 IsMealPlan = true,
                 IsMainMenu = false,
                 CategoryId = 2,
@@ -532,7 +532,7 @@ public static class Seed
                 DescriptionAR = "خضروات متنوعة مقلية بصلصة لذيذة، مقدمة مع أرز أو معكرونة.",
                 Price = 10.49m,
                 Points = 4,
-                PictureUrl = "vegetable_stir_fry.jpg",
+                PictureUrl = "images/vegetable_stir_fry.jpg",
                 IsMealPlan = false,
                 IsMainMenu = true,
                 CategoryId = 2,
@@ -555,7 +555,7 @@ public static class Seed
                 DescriptionAR = "سلطة طازجة مع سلمون مشوي وسبانخ وطماطم وصلصة زيتون.",
                 Price = 18,
                 Points = 6,
-                PictureUrl = "salmon_salad.jpg",
+                PictureUrl = "images/salmon_salad.jpg",
                 IsMealPlan = true,
                 IsMainMenu = false,
                 CategoryId = 2,

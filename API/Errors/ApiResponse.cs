@@ -6,6 +6,7 @@ public class ApiResponse
     {
         StatusCode = statusCode;
         MessageEN = messageEN ?? GetDefaultMessageForStatusCode(statusCode);
+        MessageAR = messageAR;
 
         if (StatusCode == 200) Status = true;
     }

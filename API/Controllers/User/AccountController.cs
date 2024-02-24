@@ -60,9 +60,9 @@ public class AccountController : BaseApiController
             if (!response)
                 return Ok(new ApiResponse(400, messageEN: "Failed to send email.", messageAR: "فشل ارسال الايميل"));
 
-            return Ok(new ApiResponse(200, messageEN: "You have confirm your account first," +
+            return Ok(new ApiResponse(200, messageEN: "You have to confirm your account first," +
                                                       "The confirmation link will be resent to your email," +
-                                                      " please check your email and confirm your account.",
+                                                      " please check it and confirm your account.",
                 messageAR:
                 "يجب عليك تاكيد الحساب اولا, سيتم إعادة إرسال رابط التأكيد إليك... الرجاء التأكد من صندوق الوارد لديك من اجل تاكيد حسابك"));
         }
@@ -92,7 +92,7 @@ public class AccountController : BaseApiController
 
                 return Ok(new ApiResponse(200, messageEN: "You have already registered with this Email," +
                                                           "The confirmation link will be resent to your email," +
-                                                          " please check your email and confirm your account.",
+                                                          " please check it and confirm your account.",
                     messageAR:
                     "انت مسجل مسبقا بهذا الحساب, سيتم إعادة إرسال رابط التأكيد إليك... الرجاء التأكد من صندوق الوارد لديك من اجل تاكيد حسابك"));
             }

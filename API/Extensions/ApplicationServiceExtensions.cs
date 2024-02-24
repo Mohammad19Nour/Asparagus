@@ -19,6 +19,7 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
+        services.AddScoped<IPlanRecommendationService, PlanRecommendationService>();
         services.AddScoped<IValidationService, ValidationService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddHostedService<BackgroundTask>();
@@ -39,7 +40,9 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IOrderService, OrderService>();
         //services.AddScoped<IBasketRepository, BasketRepository>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        services.AddDbContext<DataContext>(opt => { opt.UseSqlite(config.GetConnectionString("DefaultConnection")); });
+        services.AddDbContext<DataContext>(opt => { opt.UseSqlServer(config.GetConnectionString("DefaultConnection")); });
+
+      //  services.AddDbContext<DataContext>(opt => { opt.UseSqlite(config.GetConnectionString("DefaultConnection")); });
         services.AddSingleton<IConnectionMultiplexer>(c =>
         {
             var configuration = ConfigurationOptions.Parse(config.GetConnectionString("Redis"), true);
