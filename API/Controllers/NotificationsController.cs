@@ -1,4 +1,5 @@
-﻿using AsparagusN.DTOs;
+﻿using AsparagusN.Data.Entities.Identity;
+using AsparagusN.DTOs;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
@@ -6,6 +7,7 @@ using AsparagusN.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers;
 
@@ -40,6 +42,12 @@ public class NotificationsController : BaseApiController
         if (type == NotificationType.SingleUser)
         {
             if (dto.UserEmail == null) return Ok(new ApiResponse(404, "Email should be specified"));
+
+            var user = await _unitOfWork.Repository<AppUser>().GetQueryable()
+                .Where(c => c.Email.ToLower() == dto.UserEmail.ToLower()).FirstOrDefaultAsync();
+
+            if (user == null)
+                return Ok(new ApiResponse(400, "user not found"));
             result = await _notificationService.NotifyUserByEmail(dto.UserEmail, dto.ArabicContent, dto.EnglishContent);
         }
         else
@@ -48,6 +56,8 @@ public class NotificationsController : BaseApiController
                 result = await _notificationService.NotifyAllNormalUsers(dto.ArabicContent, dto.EnglishContent);
             else result = await _notificationService.NotifyAllMealPlanUsers(dto.ArabicContent, dto.EnglishContent);
         }
+
+        if (result) return Ok(new ApiResponse(400, ""));
 
         return Ok(new ApiOkResponse<bool>(result));
     }

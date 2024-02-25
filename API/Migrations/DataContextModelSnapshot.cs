@@ -298,6 +298,9 @@ namespace AsparagusN.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1332,6 +1335,9 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PointsPrice")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Priority")
                         .HasColumnType("int");
 
                     b.Property<int>("ShipToAddressId")

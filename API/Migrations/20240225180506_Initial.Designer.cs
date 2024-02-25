@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240225075817_Initial")]
+    [Migration("20240225180506_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -300,6 +300,9 @@ namespace AsparagusN.Migrations
                     b.Property<string>("PictureUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -1335,6 +1338,9 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PointsPrice")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Priority")
                         .HasColumnType("int");
 
                     b.Property<int>("ShipToAddressId")

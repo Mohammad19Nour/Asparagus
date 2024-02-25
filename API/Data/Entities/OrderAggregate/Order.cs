@@ -21,6 +21,7 @@ public class Order
     public int? DriverId { get; set; }
     public int  GainedPoints { get; set; }
     public decimal CouponValue { get; set; } = 0;
+    public int? Priority { get; set; }
 
     public decimal GetTotal()
     {

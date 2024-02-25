@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.User;
+
 [Authorize]
 public class SubscriptionsController : BaseApiController
 {
@@ -30,15 +31,28 @@ public class SubscriptionsController : BaseApiController
         _userManager = userManager;
     }
 
+    [HttpGet("id")]
+    public async Task<ActionResult> Subscriptions()
+    {
+        var user = await _getUser();
+        if (user == null) return Ok(new ApiResponse(404, "user not found"));
+
+        var subs = await _subscriptionService.GetAllUserSubscriptionsAsync(user);
+
+        if (subs.Count == 0) return Ok(new ApiOkResponse<int?>(null));
+        int id = (int)subs.First().PlanType;
+        return Ok(new ApiOkResponse<int>(id));
+    }
+
     [HttpGet]
     public async Task<ActionResult<SubscriptionDto>> Subscription(PlanTypeEnum planType)
     {
         var user = await _getUser();
         if (user == null) return Ok(new ApiResponse(404, "user not found"));
 
-        var subs = await _subscriptionService.GetUserSubscriptionAsync(user,planType);
+        var subs = await _subscriptionService.GetUserSubscriptionAsync(user, planType);
 
-        if (subs == null) return Ok(new ApiResponse(404,"You dont have subscription"));
+        if (subs == null) return Ok(new ApiResponse(404, "You dont have subscription"));
         return Ok(new ApiOkResponse<SubscriptionDto>(_mapper.Map<SubscriptionDto>(subs)));
     }
 

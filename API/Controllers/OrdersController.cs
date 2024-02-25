@@ -65,9 +65,10 @@ public class OrdersController : BaseApiController
     }
 
     [HttpPost("assign")]
-    public async Task<ActionResult> AssignOrder([FromQuery] int orderId, [FromQuery] int driverId)
+    public async Task<ActionResult> AssignOrder([FromQuery] int orderId, [FromQuery] int driverId,
+        [FromQuery] int priority)
     {
-        var result = await _orderService.AssignOrderToDriver(orderId, driverId);
+        var result = await _orderService.AssignOrderToDriver(orderId, driverId, priority);
         if (result.Success) return Ok(new ApiResponse(200));
         return Ok(new ApiResponse(400, result.Message));
     }

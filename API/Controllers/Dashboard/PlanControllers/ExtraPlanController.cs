@@ -9,9 +9,9 @@ namespace AsparagusN.Controllers.Dashboard.PlanControllers;
 public partial class PlanController
 {
     [HttpPost("extras")]
-    public async Task<ActionResult> AddExtra(ExtraIdsDto ids, PlanTypeEnum planTypeEnum)
+    public async Task<ActionResult> AddExtra(ExtraIdsDto ids, PlanTypeEnum planType)
     {
-        if (planTypeEnum == PlanTypeEnum.CustomMealPlan) return Ok(new ApiResponse(404, "Plan type not found"));
+        if (planType == PlanTypeEnum.CustomMealPlan) return Ok(new ApiResponse(404, "Plan type not found"));
 
         var (ok, message) = await _check(ids.ExtraIds, false);
         if (!ok)
@@ -19,7 +19,7 @@ public partial class PlanController
             return Ok(new ApiResponse(404, message));
         }
 
-        await _addExtraOption(ids.ExtraIds, planTypeEnum);
+        await _addExtraOption(ids.ExtraIds, planType);
         if (_unitOfWork.HasChanges())
         {
             if (await _unitOfWork.SaveChanges())
@@ -31,17 +31,17 @@ public partial class PlanController
     }
 
     [HttpGet("extras")]
-    public async Task<ActionResult<List<ExtraOptionDto>>> GetExtras(PlanTypeEnum planTypeEnum)
+    public async Task<ActionResult<List<ExtraOptionDto>>> GetExtras(PlanTypeEnum planType)
     {
-        return Ok(new ApiOkResponse<List<ExtraOptionDto>>(await _getExtraOptions(planTypeEnum, null)));
+        return Ok(new ApiOkResponse<List<ExtraOptionDto>>(await _getExtraOptions(planType, null)));
     }
 
     [HttpGet("extras/{typeId:int}")]
-    public async Task<ActionResult<List<ExtraOptionDto>>> GetSpecific(PlanTypeEnum planTypeEnum, int typeId)
+    public async Task<ActionResult<List<ExtraOptionDto>>> GetSpecific(PlanTypeEnum planType, int typeId)
     {
         var optionType = ExtraOptionType.Nuts;
         if (typeId == 1) optionType = ExtraOptionType.Salad;
-        return Ok(new ApiOkResponse<List<ExtraOptionDto>>(await _getExtraOptions(planTypeEnum, optionType)));
+        return Ok(new ApiOkResponse<List<ExtraOptionDto>>(await _getExtraOptions(planType, optionType)));
     }
 
 

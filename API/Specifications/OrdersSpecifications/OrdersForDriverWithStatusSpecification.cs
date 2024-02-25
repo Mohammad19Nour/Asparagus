@@ -1,10 +1,8 @@
-﻿using System.Linq.Expressions;
-using AsparagusN.Data.Entities;
-using AsparagusN.Data.Entities.OrderAggregate;
+﻿using AsparagusN.Data.Entities.OrderAggregate;
 using AsparagusN.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace AsparagusN.Specifications;
+namespace AsparagusN.Specifications.OrdersSpecifications;
 
 public class OrdersForDriverWithStatusSpecification : BaseSpecification<Order>
 {

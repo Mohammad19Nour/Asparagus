@@ -1,4 +1,5 @@
 ﻿using AsparagusN.DTOs.AddressDtos;
+using AsparagusN.DTOs.DriverDtos;
 using AsparagusN.Enums;
 
 namespace AsparagusN.DTOs.OrderDtos;
@@ -17,4 +18,10 @@ public class OrderDto
     public string BranchNameAR { get; set; }
     public string BranchNameEN { get; set; }
     public int PointsPrice { get; set; }
+    public int? Priority { get; set; }
+    public OrderDriverDto Driver { get; set; }
+    public int  GainedPoints { get; set; }
+    public decimal CouponValue { get; set; } = 0;
+    public string? BillId { get; set; }
+    public decimal Total { get; set; }
 }

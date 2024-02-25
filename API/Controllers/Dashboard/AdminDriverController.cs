@@ -164,7 +164,7 @@ public class AdminDriverController : BaseApiController
                     driver.PictureUrl = img.Url;
                 }
 
-                if (updateDriverDto.Password != null && !string.IsNullOrEmpty(updateDriverDto.Password.Trim()))
+                if (updateDriverDto.Password != null && !string.IsNullOrEmpty(updateDriverDto.Password.Trim()) &&updateDriverDto.Password != driver.Password)
                 {
                     var token = await _userManager.GeneratePasswordResetTokenAsync(driverUser);
                     var result = await _userManager.ResetPasswordAsync(driverUser, token, updateDriverDto.Password);
@@ -181,7 +181,7 @@ public class AdminDriverController : BaseApiController
 
                     driver.Password = updateDriverDto.Password;
                 }
-                if (updateDriverDto.Email != null)
+                if (updateDriverDto.Email != null && updateDriverDto.Email.ToLower()!= driver.Email.ToLower())
                 {
                     var exist = await _userManager.Users.FirstOrDefaultAsync(x =>
                         x.Email.ToLower() == updateDriverDto.Email.ToLower());

@@ -17,7 +17,7 @@ public class NotificationService : INotificationService
     private readonly PresenceTracker _tracker;
     private readonly IUnitOfWork _unitOfWork;
 
-    public NotificationService(IMapper mapper,IHubContext<NotificationHub> notificationHub, PresenceTracker tracker,
+    public NotificationService(IMapper mapper, IHubContext<NotificationHub> notificationHub, PresenceTracker tracker,
         IUnitOfWork unitOfWork)
     {
         _mapper = mapper;
@@ -42,7 +42,7 @@ public class NotificationService : INotificationService
             if (connections.Count > 0)
             {
                 var result = _mapper.Map<NotificationDto>(notification);
-               
+
                 await _notificationHub.Clients.Clients(connections)
                     .SendAsync(Constants.NewNotificationEventName, new List<NotificationDto> { result });
                 notification.IsSent = true;
@@ -76,7 +76,8 @@ public class NotificationService : INotificationService
 
     public async Task<bool> NotifyAllNormalUsers(string arabicContent, string englishContent)
     {
-        List<string> userEmails = await _unitOfWork.Repository<AppUser>().GetQueryable().Where(x => x.IsNormalUser && !x.IsMealPlanMember)
+        List<string> userEmails = await _unitOfWork.Repository<AppUser>().GetQueryable()
+            .Where(x => x.IsNormalUser && !x.IsMealPlanMember)
             .Select(x => x.Email.ToLower()).ToListAsync();
         foreach (var email in userEmails)
         {

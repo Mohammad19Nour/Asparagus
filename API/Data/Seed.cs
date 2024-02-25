@@ -33,7 +33,62 @@ public static class Seed
         await SeedPlanTypes(context);
         await SeedAdminSelectedCarbs(context);
         await SeedUsers(userManager);
+        await SeedDrivers(context);
         await SeedOrders(context);
+        
+    }
+
+    private static async Task SeedDrivers(DataContext context)
+    {
+       if (await context.Drivers.AnyAsync())return;
+       var drivers = new List<Driver>
+       {
+           new Driver
+           {
+               Name = "John Doe",
+               PhoneNumber = "1234567890",
+               Email = "john@example.com",
+               Password = "password123",
+               IsActive = true,
+               ZoneId = 3, // Example zone ID
+               PictureUrl = "https://example.com/picture.jpg",
+               Period = Period.Day
+           },
+           new Driver
+           {
+               Name = "Jane Smith",
+               PhoneNumber = "0987654321",
+               Email = "jane@example.com",
+               Password = "pass321word",
+               IsActive = true,
+               ZoneId = 5, // Example zone ID
+               PictureUrl = "https://example.com/picture2.jpg",
+               Period = Period.Night
+           },
+           new Driver
+           {
+               Name = "Alice Johnson",
+               PhoneNumber = "5551234567",
+               Email = "alice@example.com",
+               Password = "alicepassword",
+               IsActive = true,
+               ZoneId = 2, // Example zone ID
+               PictureUrl = "https://example.com/alice.jpg",
+               Period = Period.Day
+           },
+           new Driver
+           {
+               Name = "Bob Smith",
+               PhoneNumber = "5559876543",
+               Email = "bob@example.com",
+               Password = "bobpassword",
+               IsActive = true,
+               ZoneId = 4, // Example zone ID
+               PictureUrl = "https://example.com/bob.jpg",
+               Period = Period.Night
+           }
+       };
+       await context.Drivers.AddRangeAsync(drivers);
     }
 
     private static decimal CalculatePrice(SubscriptionDuration duration, int numberOfMeals)
@@ -147,11 +202,11 @@ public static class Seed
         var categories = new List<Category>
         {
             new Category("Main Course", "الطبق الرئيسي", "Description for main courses"),
-            new Category("Salads", "السلطات", "Description for salads"),
             new Category("Appetizers", "المقبلات", "Description for appetizers"),
+            new Category("Salads", "السلطات", "Description for salads"),
             new Category("Desserts", "الحلويات", "Description for desserts"),
             new Category("Drinks", "المشروبات", "Description for drinks"),
-            new Category("Sides", "المقبلات", "Description for sides")
+            new Category("Snacks", "المقبلات", "Description for sides")
         };
 
         await _context.Categories.AddRangeAsync(categories);
@@ -563,7 +618,7 @@ public static class Seed
                 PictureUrl = "images/vegetable_stir_fry.jpg",
                 IsMealPlan = false,
                 IsMainMenu = true,
-                CategoryId = 2,
+                CategoryId = 6,
                 Ingredients = new List<MealIngredient>
                 {
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
@@ -587,7 +642,7 @@ public static class Seed
                 PictureUrl = "images/salmon_salad.jpg",
                 IsMealPlan = true,
                 IsMainMenu = false,
-                CategoryId = 2,
+                CategoryId = 3,
                 Ingredients = new List<MealIngredient>
                 {
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
@@ -673,19 +728,19 @@ public static class Seed
         var adminSelectedExtraOptions = new List<AdminSelectedExtraOption>
         {
             new AdminSelectedExtraOption
-                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.LossWeight },
+                { ExtraOptionId = 1, PlanTypeEnum = PlanTypeEnum.LossWeight },
             new AdminSelectedExtraOption
-                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.LossWeight },
+                { ExtraOptionId = 2, PlanTypeEnum = PlanTypeEnum.LossWeight },
             new AdminSelectedExtraOption
-                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.FutureLeader },
+                { ExtraOptionId = 3, PlanTypeEnum = PlanTypeEnum.FutureLeader },
             new AdminSelectedExtraOption
-                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.MaintainWeight },
+                { ExtraOptionId = 4, PlanTypeEnum = PlanTypeEnum.MaintainWeight },
             new AdminSelectedExtraOption
-                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.FutureLeader },
+                { ExtraOptionId = 1, PlanTypeEnum = PlanTypeEnum.FutureLeader },
             new AdminSelectedExtraOption
-                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.FutureLeader },
+                { ExtraOptionId = 5, PlanTypeEnum = PlanTypeEnum.FutureLeader },
             new AdminSelectedExtraOption
-                { ExtraOptionId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.MaintainWeight }
+                { ExtraOptionId = 7, PlanTypeEnum = PlanTypeEnum.MaintainWeight }
         };
 
         await _context.AdminSelectedExtraOptions.AddRangeAsync(adminSelectedExtraOptions);

@@ -9,9 +9,9 @@ namespace AsparagusN.Controllers.Dashboard.PlanControllers;
 public partial class PlanController
 {
     [HttpPost("drinks")]
-    public async Task<ActionResult> AddDrink(DrinkIdsDto ids, PlanTypeEnum planTypeEnum)
+    public async Task<ActionResult> AddDrink(DrinkIdsDto ids, PlanTypeEnum planType)
     {
-        if (planTypeEnum == PlanTypeEnum.CustomMealPlan) return Ok(new ApiResponse(404, "Plan type not found"));
+        if (planType == PlanTypeEnum.CustomMealPlan) return Ok(new ApiResponse(404, "Plan type not found"));
 
         var (ok, message) = await _check(ids.DrinkIds, true);
         if (!ok)
@@ -19,7 +19,7 @@ public partial class PlanController
             return Ok(new ApiResponse(404, message));
         }
 
-        await _addDrinks(ids.DrinkIds, planTypeEnum);
+        await _addDrinks(ids.DrinkIds, planType);
         if (_unitOfWork.HasChanges())
         {
             if (await _unitOfWork.SaveChanges())
@@ -31,9 +31,9 @@ public partial class PlanController
     }
 
     [HttpGet("drinks")]
-    public async Task<ActionResult<List<DrinkDto>>> GetDrinks(PlanTypeEnum planTypeEnum)
+    public async Task<ActionResult<List<DrinkDto>>> GetDrinks(PlanTypeEnum planType)
     {
-        return Ok(new ApiOkResponse<List<DrinkDto>>(await _getDrinks(planTypeEnum)));
+        return Ok(new ApiOkResponse<List<DrinkDto>>(await _getDrinks(planType)));
     }
 
     [HttpDelete("drinks/{id:int}")]

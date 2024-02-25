@@ -19,13 +19,14 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
+        services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IStatisticService, StatisticService>();
         services.AddScoped<IPlanRecommendationService, PlanRecommendationService>();
         services.AddScoped<IValidationService, ValidationService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddHostedService<BackgroundTask>();
         services.Configure<KestrelServerOptions>(options => { options.Limits.MaxRequestBodySize = null; });
-        services.AddAutoMapper(typeof(CashierProfile),typeof(AppCouponProfile),typeof(BasketProfile),typeof(SnackProfile), typeof(UserPlanProfile), typeof(OrderProfile),
+        services.AddAutoMapper(typeof(ReportProfile),typeof(CashierProfile),typeof(AppCouponProfile),typeof(BasketProfile),typeof(SnackProfile), typeof(UserPlanProfile), typeof(OrderProfile),
             typeof(DrinkProfile), typeof(DriverProfile), typeof(AdminPlanProfile), typeof(ExtraOptionsProfile),
             typeof(AddressProfile), typeof(BranchProfile), typeof(CategoryProfile), typeof(SomeProfile),
             typeof(UserProfile), typeof(MealProfile),

@@ -6,6 +6,7 @@ using AsparagusN.DTOs.OrderDtos;
 using AsparagusN.Enums;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
+using AsparagusN.Specifications.OrdersSpecifications;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +36,7 @@ public class OrderService : IOrderService
         return order;
     }
 
-    public async Task<(bool Success, string Message)> AssignOrderToDriver(int orderId, int driverId)
+    public async Task<(bool Success, string Message)> AssignOrderToDriver(int orderId, int driverId,int priority)
     {
         var spec = new OrderWithItemsSpecification(orderId);
         var order = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
@@ -51,7 +52,22 @@ public class OrderService : IOrderService
         if (driver.Status != DriverStatus.Idle)
             return (false, $" Can't assign to this driver because he is {driver.Status}");
 
+        var allSpec = new OrdersForDriverWithStatusSpecification(driverId, OrderStatus.Pending);
+        var driverOrders = await _unitOfWork.Repository<Order>().ListWithSpecAsync(allSpec);
+
+        var priorities = driverOrders.Select(x => x.Priority).ToList();
+        if (priorities.Contains(priority))
+        {
+            var available = 1;
+            foreach (var p in priorities.TakeWhile(p => p == available))
+            {
+                available++;
+            }
+
+            return (false, $"Priority is already chosen,you can choose {available} priority");
+        }
         order.Driver = driver;
+        order.Priority = priority;
         _unitOfWork.Repository<Order>().Update(order);
 
         if (await _unitOfWork.SaveChanges())

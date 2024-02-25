@@ -1,5 +1,6 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.DTOs.DriverDtos;
+using AsparagusN.DTOs.OrderDtos;
 using AsparagusN.DTOs.ZoneDtos;
 using AsparagusN.Enums;
 using AutoMapper;
@@ -11,6 +12,7 @@ public class DriverProfile : Profile
 {
     public DriverProfile()
     {
+        CreateMap<Driver, OrderDriverDto>();
         CreateMap<Zone, ZoneDto>();
         CreateMap<NewZoneDto, Zone>();
         CreateMap<UpdateZoneDto, Zone>()

@@ -13,12 +13,12 @@ namespace AsparagusN.Controllers.Dashboard.PlanControllers;
 public partial class PlanController
 {
     [HttpPost("snacks")]
-    public async Task<ActionResult> AddSnack(SnackIdsDto ids, PlanTypeEnum planTypeEnum)
+    public async Task<ActionResult> AddSnack(SnackIdsDto ids, PlanTypeEnum planType)
     {
-        if (planTypeEnum == PlanTypeEnum.CustomMealPlan)
+        if (planType == PlanTypeEnum.CustomMealPlan)
             return Ok(new ApiResponse(400, "Can't add to this plan type"));
 
-        var adminSpec = new AdminSelectedSnacksSpecification(planTypeEnum);
+        var adminSpec = new AdminSelectedSnacksSpecification(planType);
         var selectedSnackIds =
             (await _unitOfWork.Repository<AdminSelectedSnack>().ListWithSpecAsync(adminSpec)).Select(x => x.SnackId);
         ids.SnackIds = ids.SnackIds.Where(x => !selectedSnackIds.Contains(x)).ToList();
@@ -37,7 +37,7 @@ public partial class PlanController
         foreach (var toAdd in ids.SnackIds)
         {
             var snk = snacks.First(x => x.Id == toAdd);
-            var a = new AdminSelectedSnack { SnackId = toAdd, PlanTypeEnum = planTypeEnum, Snack = snk };
+            var a = new AdminSelectedSnack { SnackId = toAdd, PlanTypeEnum = planType, Snack = snk };
             _unitOfWork.Repository<AdminSelectedSnack>().Add(a);
 
             res.Add(a);
@@ -51,10 +51,10 @@ public partial class PlanController
     }
 
     [HttpGet("snacks")]
-    public async Task<ActionResult<List<SnackDto>>> GetSnacks(PlanTypeEnum planTypeEnum)
+    public async Task<ActionResult<List<SnackDto>>> GetSnacks(PlanTypeEnum planType)
     {
         var snacks = (await _unitOfWork.Repository<AdminSelectedSnack>().GetQueryable()
-            .Where(x => x.PlanTypeEnum == planTypeEnum).Include(x => x.Snack)
+            .Where(x => x.PlanTypeEnum == planType).Include(x => x.Snack)
             .ToListAsync());
 
         return Ok(new ApiOkResponse<List<SnackDto>>(_mapper.Map<List<SnackDto>>(snacks)));

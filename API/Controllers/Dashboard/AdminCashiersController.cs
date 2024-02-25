@@ -165,7 +165,7 @@ public class AdminCashiersController : BaseApiController
                     cashier.PictureUrl = img.Url;
                 }
 
-                if (updateCashierDto.Password != null && !string.IsNullOrEmpty(updateCashierDto.Password.Trim()))
+                if (updateCashierDto.Password != null && !string.IsNullOrEmpty(updateCashierDto.Password.Trim()) && cashier.Password != updateCashierDto.Password)
                 {
 
                     var token = await _userManager.GeneratePasswordResetTokenAsync(cashierUser);
@@ -185,7 +185,7 @@ public class AdminCashiersController : BaseApiController
                 }
 
                 
-                if (updateCashierDto.Email != null)
+                if (updateCashierDto.Email != null && updateCashierDto.Email.ToLower( )!= cashier.Email.ToLower())
                 {
                     var exist = await _userManager.Users.FirstOrDefaultAsync(x =>
                         x.Email.ToLower() == updateCashierDto.Email.ToLower());

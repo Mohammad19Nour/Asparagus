@@ -63,7 +63,7 @@ public partial class UserPlanController : BaseApiController
                 while (result.Days.Count < 7)
                 {
                     var tmp = new UserPlanDayDto();
-                    tmp.IsSubscribeDay = false;
+                    tmp.IsSubscriptionDay = false;
                     tmp.Day = day.AddDays(x);
                     result.Days.Add(tmp);
                     x++;
@@ -77,7 +77,7 @@ public partial class UserPlanController : BaseApiController
                 while (result.Days.Count < 7)
                 {
                     var tmp = new UserPlanDayDto();
-                    tmp.IsSubscribeDay = false;
+                    tmp.IsSubscriptionDay = false;
                     tmp.Day = day.AddDays(x);
                     result.Days.Insert(0, tmp);
                     x--;

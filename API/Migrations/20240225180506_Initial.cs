@@ -482,6 +482,7 @@ namespace AsparagusN.Migrations
                     ZoneId = table.Column<int>(type: "int", nullable: false),
                     PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Period = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -778,7 +779,8 @@ namespace AsparagusN.Migrations
                     BillId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DriverId = table.Column<int>(type: "int", nullable: true),
                     GainedPoints = table.Column<int>(type: "int", nullable: false),
-                    CouponValue = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
+                    CouponValue = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Priority = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {

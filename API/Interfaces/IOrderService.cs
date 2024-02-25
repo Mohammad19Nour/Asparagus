@@ -9,7 +9,7 @@ namespace AsparagusN.Interfaces;
 public interface IOrderService
 {
     Task<Order?> GetOrderByIdAsync(int orderId, string buyerEmail);
-    Task<(bool Success,string Message)> AssignOrderToDriver(int orderId, int driverId);
+    Task<(bool Success,string Message)> AssignOrderToDriver(int orderId, int driverId,int priority);
     Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string buyerEmail);
 
     Task<(Order? Order, string Message)> CreateOrderAsync(string buyerEmail, int basketId,

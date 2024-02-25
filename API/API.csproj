@@ -30,7 +30,6 @@
 
     <ItemGroup>
       <Folder Include="Specifications\StatisticSpecifications\" />
-      <Folder Include="wwwroot\images\" />
       <Folder Include="wwwroot\videos\" />
     </ItemGroup>
 
