@@ -20,7 +20,7 @@ public class AppUser : IdentityUser<int>
     public int HomeAddressId { get; set; }
     public int WorkAddressId { get; set; }
     public ICollection<AppUserRole> UserRoles { get; set; }
-    public bool IsNormalUser { get; set; } = true;
+    public bool IsNormalUser { get; set; } = false;
 
     public int GetAge()
     {

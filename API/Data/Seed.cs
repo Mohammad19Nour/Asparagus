@@ -2,6 +2,7 @@
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
+using AsparagusN.Data.Entities.OrderAggregate;
 using AsparagusN.Enums;
 using AsparagusN.Helpers;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +13,8 @@ namespace AsparagusN.Data;
 
 public static class Seed
 {
-    public static async Task SeedData(DataContext context, RoleManager<AppRole> roleManager,UserManager<AppUser>userManager)
+    public static async Task SeedData(DataContext context, RoleManager<AppRole> roleManager,
+        UserManager<AppUser> userManager)
     {
         await SeedRoles(roleManager);
         await SeedAdminPlans(context);
@@ -31,6 +33,7 @@ public static class Seed
         await SeedPlanTypes(context);
         await SeedAdminSelectedCarbs(context);
         await SeedUsers(userManager);
+        await SeedOrders(context);
     }
 
     private static decimal CalculatePrice(SubscriptionDuration duration, int numberOfMeals)
@@ -51,7 +54,7 @@ public static class Seed
 
         var roles = new List<AppRole>
         {
-            new() { Name = Roles.Admin.GetDisplayName()},
+            new() { Name = Roles.Admin.GetDisplayName() },
             new() { Name = Roles.Driver.GetDisplayName() },
             new() { Name = Roles.User.GetDisplayName() },
             new() { Name = Roles.Cashier.GetDisplayName() },
@@ -62,6 +65,7 @@ public static class Seed
             await roleManager.CreateAsync(role);
         }
     }
+
     private static async Task SeedUsers(UserManager<AppUser> userManager)
     {
         if (await userManager.Users.AnyAsync()) return;
@@ -71,11 +75,33 @@ public static class Seed
             Email = "admin",
             UserName = "admin",
             FullName = "admin",
-            EmailConfirmed = true
+            EmailConfirmed = true,
+           
         };
-       await userManager.CreateAsync(user,"string");
-       await userManager.AddToRoleAsync(user,Roles.Admin.GetDisplayName());
+        await userManager.CreateAsync(user, "string");
+        await userManager.AddToRoleAsync(user, Roles.Admin.GetDisplayName());
+        user = new AppUser
+        {
+            Email = "u@u.u",
+            UserName = "u@u.u",
+            FullName = "user",
+            EmailConfirmed = true,
+            LoyaltyPoints = 152362
+        };
+        await userManager.CreateAsync(user, "string");
+        await userManager.AddToRoleAsync(user, Roles.User.GetDisplayName());
+        user = new AppUser
+        {
+            Email = "ud@u.u",
+            UserName = "du@u.u",
+            FullName = "duser",
+            EmailConfirmed = true,
+            LoyaltyPoints = 152362
+        };
+        await userManager.CreateAsync(user, "string");
+        await userManager.AddToRoleAsync(user, Roles.User.GetDisplayName());
     }
+
     private static async Task SeedPrices(DataContext context)
     {
         return;
@@ -287,12 +313,14 @@ public static class Seed
             },
             new ExtraOption
             {
-                NameEnglish = "Almonds", NameArabic = "لوز", Price = 4.99m, Weight = 40, PictureUrl = "images/almonds.jpg",
+                NameEnglish = "Almonds", NameArabic = "لوز", Price = 4.99m, Weight = 40,
+                PictureUrl = "images/almonds.jpg",
                 OptionType = ExtraOptionType.Nuts
             },
             new ExtraOption
             {
-                NameEnglish = "Cashews", NameArabic = "كاجو", Price = 5.99m, Weight = 50, PictureUrl = "images/cashews.jpg",
+                NameEnglish = "Cashews", NameArabic = "كاجو", Price = 5.99m, Weight = 50,
+                PictureUrl = "images/cashews.jpg",
                 OptionType = ExtraOptionType.Nuts
             },
             // Sauces
@@ -547,7 +575,8 @@ public static class Seed
                 {
                     new MealAllergy { AllergyId = 6 } // Soy
                 }
-            },new Meal
+            },
+            new Meal
             {
                 NameEN = "Salmon Salad",
                 NameAR = "سلطة السلمون",
@@ -623,13 +652,13 @@ public static class Seed
         var random = new Random();
         var adminSelectedDrinks = new List<AdminSelectedDrink>
         {
-            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.FutureLeader },
-            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.FutureLeader },
-            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.LossWeight },
-            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.LossWeight },
-            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.MaintainWeight },
-            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.MaintainWeight },
-            new AdminSelectedDrink { DrinkId = random.Next(1, 7), PlanTypeEnum = PlanTypeEnum.LossWeight }
+            new AdminSelectedDrink { DrinkId = 1, PlanTypeEnum = PlanTypeEnum.FutureLeader },
+            new AdminSelectedDrink { DrinkId = 2, PlanTypeEnum = PlanTypeEnum.FutureLeader },
+            new AdminSelectedDrink { DrinkId = 3, PlanTypeEnum = PlanTypeEnum.LossWeight },
+            new AdminSelectedDrink { DrinkId = 4, PlanTypeEnum = PlanTypeEnum.LossWeight },
+            new AdminSelectedDrink { DrinkId = 5, PlanTypeEnum = PlanTypeEnum.MaintainWeight },
+            new AdminSelectedDrink { DrinkId = 6, PlanTypeEnum = PlanTypeEnum.MaintainWeight },
+            new AdminSelectedDrink { DrinkId = 7, PlanTypeEnum = PlanTypeEnum.LossWeight }
         };
 
         await _context.AdminSelectedDrinks.AddRangeAsync(adminSelectedDrinks);
@@ -672,7 +701,7 @@ public static class Seed
         var days = await _context.AdminPlans.ToListAsync();
 
         int cnt = 1;
-        
+
         foreach (var day in days)
         {
             day.Meals.Add(new AdminSelectedMeal { MealId = cnt++ });
@@ -686,5 +715,33 @@ public static class Seed
 
         await _context.AdminSelectedMeals.AddRangeAsync(adminSelectedMeals);
         await _context.SaveChangesAsync();
+    }
+
+    private static async Task SeedOrders(DataContext context)
+    {
+        if (await context.Orders.AnyAsync()) return;
+        var users = await context.Users.Where(x => x.IsNormalUser).ToListAsync();
+
+        foreach (var user in users)
+        {
+            var order = new Order
+            {
+                BuyerEmail = user.Email,
+                BuyerPhoneNumber = user.PhoneNumber,
+                Items = new List<OrderItem>(),
+
+                OrderDate = DateTime.Now,
+                ShipToAddress = new Address(),
+                BranchId = 1,
+                Subtotal = 506.3m,
+                Status = OrderStatus.Pending,
+                PaymentType = PaymentType.Cash,
+                PointsPrice = 0,
+                GainedPoints = 0
+            };
+            context.Orders.Add(order);
+        }
+
+        await context.SaveChangesAsync();
     }
 }

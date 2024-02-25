@@ -90,6 +90,14 @@ public class MealController : BaseApiController
             meal.PictureUrl = res.Url;
         }
 
+        if (updateMealDto.CategoryId != null)
+        {
+            var category = await _unitOfWork.Repository<Category>().GetByIdAsync(updateMealDto.CategoryId.Value);
+            if (category == null) return Ok(new ApiResponse(404, "Category not found"));
+
+            meal.Category = category;
+        }
+
         _unitOfWork.Repository<Meal>().Update(meal);
 
         if (await _unitOfWork.SaveChanges())

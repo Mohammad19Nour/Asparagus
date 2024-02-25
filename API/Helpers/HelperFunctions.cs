@@ -115,7 +115,8 @@ public static class HelperFunctions
 
     public static bool CanUpdate(DateTime day)
     {
-        return (day.Date - DateTime.Now.Date).Days > 2;
+        Console.WriteLine((day.Date - DateTime.Now.Date).Days);
+        return (day.Date - DateTime.Now.Date).Days >= 2;
     }
 
     public static bool InThisWeek(DateTime day)

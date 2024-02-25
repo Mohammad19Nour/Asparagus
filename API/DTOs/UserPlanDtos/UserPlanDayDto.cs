@@ -22,6 +22,7 @@ public class UserPlanDayDto
     public decimal Fat { get; set; }
     public decimal Carb { get; set; }
     public decimal Protein { get; set; }
+    public bool IsSubscribeDay { get; set; } = true;
 
     public decimal Calories
     {

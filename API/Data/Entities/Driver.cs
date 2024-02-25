@@ -17,4 +17,5 @@ public class Driver
     public Period Period { get; set; }
     
     public List<Order> Orders{ get; set; }
+    public DriverStatus Status { get; set; } = DriverStatus.Idle;
 }

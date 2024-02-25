@@ -45,9 +45,11 @@ public class OrderService : IOrderService
         var driver = await _unitOfWork.Repository<Driver>().GetByIdAsync(driverId);
         if (driver == null) return (false, "Driver not found");
 
-        if (order.Driver != null) return (false, $"Order assigned to driver {order.Driver.Email}");
 
         if (order.Status != OrderStatus.Pending) return (false, "Order isn't pending");
+
+        if (driver.Status != DriverStatus.Idle)
+            return (false, $" Can't assign to this driver because he is {driver.Status}");
 
         order.Driver = driver;
         _unitOfWork.Repository<Order>().Update(order);
@@ -84,13 +86,6 @@ public class OrderService : IOrderService
                 if (!await _locationService.CanDeliver(newOrderInfoDto.ShipToAddress))
                     return (null, "Can't deliver to this location");
 
-                AppCoupon? coupon = null;
-                if (newOrderInfoDto.CouponCode != null)
-                {
-                    coupon = await _unitOfWork.Repository<AppCoupon>().GetQueryable()
-                        .Where(x => x.Code == newOrderInfoDto.CouponCode).FirstOrDefaultAsync();
-                    if (coupon == null) return (null, "coupon not valid");
-                }
 
                 if (order.PaymentType == PaymentType.Card)
                 {
@@ -103,6 +98,9 @@ public class OrderService : IOrderService
                         return (null, "You don't enough points");
                     user.LoyaltyPoints -= order.PointsPrice;
                 }
+
+                if (order.PaymentType != PaymentType.Points)
+                    user.LoyaltyPoints += order.GainedPoints;
 
                 order.BuyerPhoneNumber = user!.PhoneNumber;
                 _unitOfWork.Repository<Order>().Add(order);
@@ -151,13 +149,14 @@ public class OrderService : IOrderService
             itemOrdered.AddedProtein = item.AddedProtein;
             itemOrdered.AddedCarb = item.AddedCarb;
             var price = meal.Price + (decimal)itemOrdered.PricePerCarb * (decimal)itemOrdered.AddedCarb
-                                   +  (decimal)itemOrdered.PricePerProtein * itemOrdered.AddedProtein;
+                                   + (decimal)itemOrdered.PricePerProtein * itemOrdered.AddedProtein;
 
             var orderItem = new OrderItem
             {
                 OrderedMeal = itemOrdered,
                 Price = price,
-                Quantity = item.Quantity
+                Quantity = item.Quantity,
+                GainedPoint = (newOrderInfoDto.PaymentType != PaymentType.Points) ? meal.Points : 0
             };
             if (newOrderInfoDto.PaymentType == PaymentType.Points)
             {
@@ -170,6 +169,7 @@ public class OrderService : IOrderService
 
         var subtotal = items.Sum(x => x.Price * x.Quantity);
         var pointsPrice = items.Sum(x => x.PointsPrice * x.Quantity);
+        var gainedPoints = items.Sum(x => x.GainedPoint * x.Quantity);
 
         var order = new Order
         {
@@ -179,8 +179,25 @@ public class OrderService : IOrderService
             Subtotal = subtotal,
             PaymentType = newOrderInfoDto.PaymentType,
             BranchId = newOrderInfoDto.BranchId,
-            PointsPrice = pointsPrice
+            PointsPrice = pointsPrice,
+            GainedPoints = gainedPoints
         };
+        AppCoupon? coupon = null;
+        if (newOrderInfoDto.CouponCode != null)
+        {
+            coupon = await _unitOfWork.Repository<AppCoupon>().GetQueryable()
+                .Where(x => x.Code == newOrderInfoDto.CouponCode).FirstOrDefaultAsync();
+            if (coupon == null) return (null, "coupon not valid");
+        }
+
+        if (coupon != null)
+        {
+            if (newOrderInfoDto.PaymentType != PaymentType.Points)
+            {
+                if (coupon.Type == AppCouponType.FixedAmount) order.CouponValue = coupon.Value;
+                else order.CouponValue = order.Subtotal * coupon.Value;
+            }
+        }
 
         basket.Items.Clear();
         return (order, "Done");

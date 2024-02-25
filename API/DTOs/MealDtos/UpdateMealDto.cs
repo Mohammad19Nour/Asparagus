@@ -12,4 +12,5 @@ public class UpdateMealDto
     public List<MealIngredientDto>? Ingredients { get; set; }
     
     public IFormFile? ImageFile { get; set; }
+    public int? CategoryId { get; set; }
 }

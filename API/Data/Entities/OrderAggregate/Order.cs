@@ -19,10 +19,13 @@ public class Order
     public string? BillId { get; set; }
     public Driver? Driver { get; set; }
     public int? DriverId { get; set; }
+    public int  GainedPoints { get; set; }
+    public decimal CouponValue { get; set; } = 0;
 
     public decimal GetTotal()
     {
-        return Subtotal;
+        return decimal.Max(0 , Subtotal - CouponValue);
     }
+    
 
 }

@@ -40,6 +40,7 @@ public class AdminPlanProfile : Profile
             .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Meal.CategoryId))
             .ForMember(dest => dest.Allergies, opt => opt.MapFrom(src => src.Meal.Allergies))
             .ForMember(x => x.Protein, o => o.MapFrom(src => src.Meal.Protein))
+            .ForMember(x => x.PictureUrl, o => o.MapFrom(src => src.Meal.PictureUrl))
             .ForMember(x => x.Carbs, o => o.MapFrom(src => src.Meal.Carbs))
             .ForMember(x => x.Calories, o => o.MapFrom(src => src.Meal.Calories()))
             .ForMember(x => x.Fats, o => o.MapFrom(src => src.Meal.Fats))

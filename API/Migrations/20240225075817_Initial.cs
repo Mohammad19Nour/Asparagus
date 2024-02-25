@@ -21,8 +21,8 @@ namespace AsparagusN.Migrations
                     StreetName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BuildingName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApartmentNumber = table.Column<int>(type: "int", nullable: false),
-                    Longitude = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Latitude = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false)
+                    Longitude = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Latitude = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,7 +66,7 @@ namespace AsparagusN.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -123,7 +123,7 @@ namespace AsparagusN.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NameArabic = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NameEnglish = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
                     Volume = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -141,8 +141,8 @@ namespace AsparagusN.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NameArabic = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NameEnglish = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Weight = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Weight = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
                     PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     OptionType = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -161,12 +161,12 @@ namespace AsparagusN.Migrations
                     NameEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NameAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ExtraInfo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Weight = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Protein = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Carb = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Fat = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Fiber = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
+                    Weight = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carb = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fat = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fiber = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
                     TypeOfIngredient = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -184,8 +184,8 @@ namespace AsparagusN.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StreetName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Longitude = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Latitude = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false)
+                    Longitude = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Latitude = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -231,7 +231,7 @@ namespace AsparagusN.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Duration = table.Column<int>(type: "int", nullable: false),
                     NumberOfMealsPerDay = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false)
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -258,10 +258,10 @@ namespace AsparagusN.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NameEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NameAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Protein = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Carb = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Fat = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Fiber = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false)
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carb = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fat = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fiber = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -360,7 +360,7 @@ namespace AsparagusN.Migrations
                     NameAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DescriptionEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DescriptionAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
                     Points = table.Column<int>(type: "int", nullable: false),
                     PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -368,12 +368,12 @@ namespace AsparagusN.Migrations
                     IsMainMenu = table.Column<bool>(type: "bit", nullable: false),
                     LoyaltyPoints = table.Column<int>(type: "int", nullable: true),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
-                    Protein = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Carbs = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Fats = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Fibers = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    PricePerProtein = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    PricePerCarb = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carbs = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fats = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fibers = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    PricePerProtein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    PricePerCarb = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -481,7 +481,8 @@ namespace AsparagusN.Migrations
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     ZoneId = table.Column<int>(type: "int", nullable: false),
                     PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Period = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Period = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -586,7 +587,7 @@ namespace AsparagusN.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AppUserId = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Duration = table.Column<int>(type: "int", nullable: false),
@@ -713,7 +714,7 @@ namespace AsparagusN.Migrations
                 {
                     MealId = table.Column<int>(type: "int", nullable: false),
                     IngredientId = table.Column<int>(type: "int", nullable: false),
-                    Weight = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false)
+                    Weight = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -770,12 +771,14 @@ namespace AsparagusN.Migrations
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ShipToAddressId = table.Column<int>(type: "int", nullable: false),
                     BranchId = table.Column<int>(type: "int", nullable: false),
-                    Subtotal = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
+                    Subtotal = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PaymentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PointsPrice = table.Column<int>(type: "int", nullable: false),
                     BillId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DriverId = table.Column<int>(type: "int", nullable: true)
+                    DriverId = table.Column<int>(type: "int", nullable: true),
+                    GainedPoints = table.Column<int>(type: "int", nullable: false),
+                    CouponValue = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -872,9 +875,10 @@ namespace AsparagusN.Migrations
                     OrderedMeal_Protein = table.Column<double>(type: "float", nullable: false),
                     OrderedMeal_AddedCarb = table.Column<int>(type: "int", nullable: false),
                     OrderedMeal_AddedProtein = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     PointsPrice = table.Column<int>(type: "int", nullable: false),
+                    GainedPoint = table.Column<int>(type: "int", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -899,7 +903,7 @@ namespace AsparagusN.Migrations
                     NameEnglish = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Volume = table.Column<int>(type: "int", nullable: false),
                     PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false)
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -921,10 +925,10 @@ namespace AsparagusN.Migrations
                     UserPlanDayId = table.Column<int>(type: "int", nullable: false),
                     NameArabic = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NameEnglish = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Weight = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
+                    Weight = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
                     PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OptionType = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false)
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -949,13 +953,13 @@ namespace AsparagusN.Migrations
                     DescriptionEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DescriptionAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PricePerProtein = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    PricePerCarb = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Calories = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Fibers = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Fats = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Carbs = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Protein = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
+                    PricePerProtein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    PricePerCarb = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Calories = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fibers = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fats = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carbs = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
                     ChangedCarbId = table.Column<int>(type: "int", nullable: false),
                     OriginalMealId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -987,11 +991,11 @@ namespace AsparagusN.Migrations
                     DescriptionEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DescriptionAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Protein = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Carbs = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Fats = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Fibers = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
-                    Calories = table.Column<decimal>(type: "decimal(38,12)", precision: 38, scale: 12, nullable: false),
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carbs = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fats = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fibers = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Calories = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     UserPlanDayId = table.Column<int>(type: "int", nullable: true)
                 },

@@ -1,4 +1,4 @@
-﻿namespace AsparagusN.Data.Entities;
+﻿namespace AsparagusN.Data.Entities.OrderAggregate;
 
 public class OrderAssignment
 {

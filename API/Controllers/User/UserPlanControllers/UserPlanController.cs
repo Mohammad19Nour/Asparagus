@@ -46,12 +46,43 @@ public partial class UserPlanController : BaseApiController
 
         if (plan == null) return Ok(new ApiResponse(404, "No plan found"));
 
-        Console.WriteLine("RR\n\n");
         plan.Days = plan.Days.Where(x => HelperFunctions.InThisWeek(x.Day.Date)).ToList();
         var result = _mapper.Map<UserPlanDto>(plan);
         foreach (var day in result.Days)
         {
             await AddAdminDayId(planType, day);
+        }
+
+        if (result.Days.Count > 0 && result.Days.Count != 7)
+        {
+            var day = result.Days.Last().Day.Date;
+            var lastDayOfWeek = HelperFunctions.WeekEndDay().Date;
+            if (day != lastDayOfWeek)
+            {
+                int x = 1;
+                while (result.Days.Count < 7)
+                {
+                    var tmp = new UserPlanDayDto();
+                    tmp.IsSubscribeDay = false;
+                    tmp.Day = day.AddDays(x);
+                    result.Days.Add(tmp);
+                    x++;
+                }
+            }
+            else
+            {
+                day = result.Days.First().Day.Date;
+                var firstDayOfTheWeek = HelperFunctions.WeekStartDay().Date;
+                int x = -1;
+                while (result.Days.Count < 7)
+                {
+                    var tmp = new UserPlanDayDto();
+                    tmp.IsSubscribeDay = false;
+                    tmp.Day = day.AddDays(x);
+                    result.Days.Insert(0, tmp);
+                    x--;
+                }
+            }
         }
 
         return Ok(new ApiOkResponse<UserPlanDto>(result));
@@ -125,11 +156,12 @@ public partial class UserPlanController : BaseApiController
 
         return Ok(new ApiResponse(400, "Failed to update period"));
     }
+
     [HttpPost("delivery")]
-    public async Task<ActionResult> UpdateDeliveryAddress(int dayId,[Range(1,2)] int addressType)
+    public async Task<ActionResult> UpdateDeliveryAddress(int dayId, [Range(1, 2)] int addressType)
     {
         var user = await _getUser();
-        
+
         var planDay = await _unitOfWork.Repository<UserPlanDay>().GetByIdAsync(dayId);
 
         if (planDay == null)

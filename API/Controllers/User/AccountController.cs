@@ -53,7 +53,7 @@ public class AccountController : BaseApiController
         var res = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
         if (!res.Succeeded)
             return Ok(new ApiResponse(400, messageEN: "Invalid password", messageAR: "كلمة السر خاطئة"));
-        if (!user.EmailConfirmed)
+     /*   if (!user.EmailConfirmed)
         {
             var response = await GenerateTokenAndSendEmailForUser(user);
 
@@ -65,7 +65,7 @@ public class AccountController : BaseApiController
                                                       " please check it and confirm your account.",
                 messageAR:
                 "يجب عليك تاكيد الحساب اولا, سيتم إعادة إرسال رابط التأكيد إليك... الرجاء التأكد من صندوق الوارد لديك من اجل تاكيد حسابك"));
-        }
+        }*/
 
         var userDto = _mapper.Map<AppUser, AccountDto>(user);
         userDto.Token = _tokenService.CreateToken(user);
@@ -109,6 +109,7 @@ public class AccountController : BaseApiController
             user.PictureUrl = photoRes.Url;
             _mapper.Map(registerDto, user);
             user.UserName = registerDto.Email;
+            user.IsNormalUser = true;
             var res = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (res.Succeeded == false) return Ok(res.Errors);

@@ -42,12 +42,12 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Latitude")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Longitude")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<string>("StreetName")
                         .IsRequired()
@@ -79,8 +79,8 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Value")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.HasKey("Id");
 
@@ -251,8 +251,8 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<string>("Volume")
                         .IsRequired()
@@ -298,6 +298,10 @@ namespace AsparagusN.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("ZoneId")
                         .HasColumnType("int");
 
@@ -336,12 +340,12 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Weight")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.HasKey("Id");
 
@@ -513,12 +517,12 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Latitude")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Longitude")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<string>("StreetName")
                         .IsRequired()
@@ -563,8 +567,8 @@ namespace AsparagusN.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Carb")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -574,12 +578,12 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Fat")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Fiber")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -593,20 +597,20 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Protein")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<string>("TypeOfIngredient")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Weight")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.HasKey("Id");
 
@@ -622,8 +626,8 @@ namespace AsparagusN.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Carbs")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
@@ -640,12 +644,12 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Fats")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Fibers")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -675,20 +679,20 @@ namespace AsparagusN.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(38, 12)
+                        .HasPrecision(38, 3)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("PricePerCarb")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("PricePerProtein")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Protein")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.HasKey("Id");
 
@@ -721,8 +725,8 @@ namespace AsparagusN.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Weight")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.HasKey("MealId", "IngredientId");
 
@@ -880,16 +884,16 @@ namespace AsparagusN.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Carb")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Fat")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Fiber")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -900,8 +904,8 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Protein")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.HasKey("Id");
 
@@ -945,8 +949,8 @@ namespace AsparagusN.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -1045,8 +1049,8 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<int>("UserPlanDayId")
                         .HasColumnType("int");
@@ -1085,15 +1089,15 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<int>("UserPlanDayId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Weight")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.HasKey("Id");
 
@@ -1111,12 +1115,12 @@ namespace AsparagusN.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Calories")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Carbs")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<int>("ChangedCarbId")
                         .HasColumnType("int");
@@ -1130,12 +1134,12 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Fats")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Fibers")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -1153,16 +1157,16 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("PricePerCarb")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("PricePerProtein")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Protein")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<int>("UserPlanDayId")
                         .HasColumnType("int");
@@ -1185,12 +1189,12 @@ namespace AsparagusN.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Calories")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Carbs")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<string>("DescriptionAR")
                         .IsRequired()
@@ -1201,12 +1205,12 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Fats")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<decimal>("Fibers")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<string>("NameAR")
                         .IsRequired()
@@ -1221,8 +1225,8 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Protein")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -1310,7 +1314,14 @@ namespace AsparagusN.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("CouponValue")
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
+
                     b.Property<int?>("DriverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GainedPoints")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("OrderDate")
@@ -1331,8 +1342,8 @@ namespace AsparagusN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Subtotal")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.HasKey("Id");
 
@@ -1353,6 +1364,9 @@ namespace AsparagusN.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("GainedPoint")
+                        .HasColumnType("int");
+
                     b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
@@ -1360,7 +1374,7 @@ namespace AsparagusN.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(38, 12)
+                        .HasPrecision(38, 3)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Quantity")
@@ -1409,8 +1423,8 @@ namespace AsparagusN.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(38, 12)
-                        .HasColumnType("decimal(38,12)");
+                        .HasPrecision(38, 3)
+                        .HasColumnType("decimal(38,3)");
 
                     b.HasKey("Id");
 

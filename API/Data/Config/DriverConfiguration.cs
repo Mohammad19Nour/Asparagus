@@ -12,12 +12,14 @@ public class DriverConfiguration : IEntityTypeConfiguration<Driver>
         builder.HasMany(x => x.Orders)
             .WithOne(o => o.Driver)
             .HasForeignKey(o => o.DriverId)
-            .OnDelete(DeleteBehavior.SetNull); 
+            .OnDelete(DeleteBehavior.SetNull);
         builder.HasOne(x => x.Zone)
             .WithMany(x => x.Drivers)
             .OnDelete(DeleteBehavior.Restrict);
         builder.Property(s => s.Period).HasConversion(o => o.ToString(),
-            o => (Period)Enum.Parse(typeof(Period), o)
-        );
+            o => (Period)Enum.Parse(typeof(Period), o));
+
+        builder.Property(s => s.Status).HasConversion(o => o.ToString(),
+            o => (DriverStatus)Enum.Parse(typeof(DriverStatus), o));
     }
 }
