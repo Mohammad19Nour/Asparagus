@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240225180506_Initial")]
+    [Migration("20240226120104_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1019,7 +1019,13 @@ namespace AsparagusN.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsCustomerInfoPrinted")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsHomeAddress")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMealsInfoPrinted")
                         .HasColumnType("bit");
 
                     b.Property<int>("UserPlanId")

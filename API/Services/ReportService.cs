@@ -49,19 +49,18 @@ public class ReportService : IReportService
     {
         var customerSpec = new CustomersSpecification(false);
         var users = await _unitOfWork.Repository<AppUser>().ListWithSpecAsync(customerSpec);
+        users = users.Where(c => c.RegistrationDate.Date >= startDate && c.RegistrationDate.Date <= endDate).ToList();
         var uList = _mapper.Map<List<UserReportDto>>(users);
 
-        var orderSpec = new DoneOrdersSpecification(startDate, endDate);
+        var orderSpec = new DoneOrdersSpecification(startDate, DateTime.Now);
         var orders = await _unitOfWork.Repository<Order>().ListWithSpecAsync(orderSpec);
 
 
-        var plansQuery = _unitOfWork.Repository<UserPlan>().GetQueryable();
-        plansQuery = plansQuery.Where(c => c.CreatedDate.Date >= startDate && c.CreatedDate.Date <= endDate);
-        var plans = await plansQuery.ToListAsync();
+        var plans = await _unitOfWork.Repository<UserPlan>().ListAllAsync();
+        
 
         foreach (var user in uList)
         {
-            Console.WriteLine(user.Email);
             var email = user.Email.ToLower();
             user.NumberOfOrders = orders.Count(x => x.BuyerEmail.ToLower() == email.ToLower());
             user.NumberOfPlans = plans.Count(c => c.AppUserId == user.Id);
@@ -129,7 +128,7 @@ public class ReportService : IReportService
         var orderSpec = new DoneOrderWithPointsPaymentOnlySpecification(startDate, endDate);
         var orders = await _unitOfWork.Repository<Order>().ListWithSpecAsync(orderSpec);
 
-        var result = _mapper.Map<List<OrderReportDto>>(orders);
+        var result = _mapper.Map<List<OrderReportDto>>(orders.ToList());
         return result;
     }
 }

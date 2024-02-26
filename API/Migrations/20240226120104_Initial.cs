@@ -838,7 +838,9 @@ namespace AsparagusN.Migrations
                     DeliveryLocationId = table.Column<int>(type: "int", nullable: false),
                     DeliveryPeriod = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsHomeAddress = table.Column<bool>(type: "bit", nullable: false),
-                    DayOrderStatus = table.Column<int>(type: "int", nullable: false)
+                    DayOrderStatus = table.Column<int>(type: "int", nullable: false),
+                    IsCustomerInfoPrinted = table.Column<bool>(type: "bit", nullable: false),
+                    IsMealsInfoPrinted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

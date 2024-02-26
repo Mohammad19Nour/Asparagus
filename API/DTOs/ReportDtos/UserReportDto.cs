@@ -9,5 +9,7 @@ public class UserReportDto
     public string Gender { get; set; }
     public int NumberOfPlans { get; set; }
     public int NumberOfOrders { get; set; }
+    public int Age { get; set; }
+    public DateTime RegistrationDate { get; set; }
     
 }

@@ -35,60 +35,72 @@ public static class Seed
         await SeedUsers(userManager);
         await SeedDrivers(context);
         await SeedOrders(context);
-        
+        await SeedGifts(context);
+    }
+
+    private static async Task SeedGifts(DataContext context)
+    {
+        if (await context.GiftSelections.AnyAsync()) return;
+        for (var j = 1; j <= 12; j++)
+        {
+            var newOne = new GiftSelection { Month = j };
+            context.GiftSelections.Add(newOne);
+        }
+
+        await context.SaveChangesAsync();
     }
 
     private static async Task SeedDrivers(DataContext context)
     {
-       if (await context.Drivers.AnyAsync())return;
-       var drivers = new List<Driver>
-       {
-           new Driver
-           {
-               Name = "John Doe",
-               PhoneNumber = "1234567890",
-               Email = "john@example.com",
-               Password = "password123",
-               IsActive = true,
-               ZoneId = 3, // Example zone ID
-               PictureUrl = "https://example.com/picture.jpg",
-               Period = Period.Day
-           },
-           new Driver
-           {
-               Name = "Jane Smith",
-               PhoneNumber = "0987654321",
-               Email = "jane@example.com",
-               Password = "pass321word",
-               IsActive = true,
-               ZoneId = 5, // Example zone ID
-               PictureUrl = "https://example.com/picture2.jpg",
-               Period = Period.Night
-           },
-           new Driver
-           {
-               Name = "Alice Johnson",
-               PhoneNumber = "5551234567",
-               Email = "alice@example.com",
-               Password = "alicepassword",
-               IsActive = true,
-               ZoneId = 2, // Example zone ID
-               PictureUrl = "https://example.com/alice.jpg",
-               Period = Period.Day
-           },
-           new Driver
-           {
-               Name = "Bob Smith",
-               PhoneNumber = "5559876543",
-               Email = "bob@example.com",
-               Password = "bobpassword",
-               IsActive = true,
-               ZoneId = 4, // Example zone ID
-               PictureUrl = "https://example.com/bob.jpg",
-               Period = Period.Night
-           }
-       };
-       await context.Drivers.AddRangeAsync(drivers);
+        if (await context.Drivers.AnyAsync()) return;
+        var drivers = new List<Driver>
+        {
+            new Driver
+            {
+                Name = "John Doe",
+                PhoneNumber = "1234567890",
+                Email = "john@example.com",
+                Password = "password123",
+                IsActive = true,
+                ZoneId = 3, // Example zone ID
+                PictureUrl = "https://example.com/picture.jpg",
+                Period = Period.Day
+            },
+            new Driver
+            {
+                Name = "Jane Smith",
+                PhoneNumber = "0987654321",
+                Email = "jane@example.com",
+                Password = "pass321word",
+                IsActive = true,
+                ZoneId = 5, // Example zone ID
+                PictureUrl = "https://example.com/picture2.jpg",
+                Period = Period.Night
+            },
+            new Driver
+            {
+                Name = "Alice Johnson",
+                PhoneNumber = "5551234567",
+                Email = "alice@example.com",
+                Password = "alicepassword",
+                IsActive = true,
+                ZoneId = 2, // Example zone ID
+                PictureUrl = "https://example.com/alice.jpg",
+                Period = Period.Day
+            },
+            new Driver
+            {
+                Name = "Bob Smith",
+                PhoneNumber = "5559876543",
+                Email = "bob@example.com",
+                Password = "bobpassword",
+                IsActive = true,
+                ZoneId = 4, // Example zone ID
+                PictureUrl = "https://example.com/bob.jpg",
+                Period = Period.Night
+            }
+        };
+        await context.Drivers.AddRangeAsync(drivers);
     }
 
     private static decimal CalculatePrice(SubscriptionDuration duration, int numberOfMeals)
@@ -131,7 +143,6 @@ public static class Seed
             UserName = "admin",
             FullName = "admin",
             EmailConfirmed = true,
-           
         };
         await userManager.CreateAsync(user, "string");
         await userManager.AddToRoleAsync(user, Roles.Admin.GetDisplayName());

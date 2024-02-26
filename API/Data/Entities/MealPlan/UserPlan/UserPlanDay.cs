@@ -22,4 +22,6 @@ public class UserPlanDay
 
     public ICollection<UserSelectedMeal> SelectedMeals { get; set; } = new List<UserSelectedMeal>();
     public PlanOrderStatus DayOrderStatus { get; set; }
+    public bool IsCustomerInfoPrinted { get; set; } = false;
+    public bool IsMealsInfoPrinted { get; set; } = false;
 }

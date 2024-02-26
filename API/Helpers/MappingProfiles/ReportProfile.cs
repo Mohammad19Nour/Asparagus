@@ -5,6 +5,7 @@ using AsparagusN.DTOs.OrderDtos;
 using AsparagusN.DTOs.ReportDtos;
 using AutoMapper;
 using Stripe.Climate;
+using Order = AsparagusN.Data.Entities.OrderAggregate.Order;
 
 namespace AsparagusN.Helpers.MappingProfiles;
 

@@ -15,7 +15,7 @@ public class Driver
         public int ZoneId { get; set; }
         public string PictureUrl { get; set; }
         public Period Period { get; set; }
-        public DateTime RegistrationDate { get; set; }
+        public DateTime RegistrationDate { get; set; } = DateTime.Now;
     
     public List<Order> Orders{ get; set; }
     public DriverStatus Status { get; set; } = DriverStatus.Idle;

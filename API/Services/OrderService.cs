@@ -36,7 +36,7 @@ public class OrderService : IOrderService
         return order;
     }
 
-    public async Task<(bool Success, string Message)> AssignOrderToDriver(int orderId, int driverId,int priority)
+    public async Task<(bool Success, string Message)> AssignOrderToDriver(int orderId, int driverId, int priority)
     {
         var spec = new OrderWithItemsSpecification(orderId);
         var order = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
@@ -66,6 +66,7 @@ public class OrderService : IOrderService
 
             return (false, $"Priority is already chosen,you can choose {available} priority");
         }
+
         order.Driver = driver;
         order.Priority = priority;
         _unitOfWork.Repository<Order>().Update(order);
@@ -95,12 +96,18 @@ public class OrderService : IOrderService
             using (var transaction = _unitOfWork.BeginTransaction())
             {
                 var user = await _unitOfWork.Repository<AppUser>().GetByIdAsync(basketId);
+
                 Order? order;
                 (order, var message) = await CalcPriceOfOrder(buyerEmail, basketId, newOrderInfoDto);
 
+                //var branch = await _unitOfWork.Repository<Branch>().GetByIdAsync(newOrderInfoDto.BranchId);
+                //if (branch == null)
+                // return (null, "Branch not found");
                 if (order == null) return (order, Message: message);
                 if (!await _locationService.CanDeliver(newOrderInfoDto.ShipToAddress))
                     return (null, "Can't deliver to this location");
+
+                //  order.Branch = branch;
 
 
                 if (order.PaymentType == PaymentType.Card)

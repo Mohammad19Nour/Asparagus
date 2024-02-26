@@ -1,4 +1,5 @@
-﻿using AsparagusN.Data.Entities;
+﻿using System.Runtime.Serialization;
+using AsparagusN.Data.Entities;
 using AsparagusN.DTOs.AddressDtos;
 using AsparagusN.Enums;
 
