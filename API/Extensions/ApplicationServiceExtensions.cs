@@ -44,9 +44,9 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IOrderService, OrderService>();
         //services.AddScoped<IBasketRepository, BasketRepository>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        services.AddDbContext<DataContext>(opt => { opt.UseSqlServer(config.GetConnectionString("DefaultConnection")); });
+      //  services.AddDbContext<DataContext>(opt => { opt.UseSqlServer(config.GetConnectionString("DefaultConnection")); });
 
-      //  services.AddDbContext<DataContext>(opt => { opt.UseSqlite(config.GetConnectionString("DefaultConnection")); });
+       services.AddDbContext<DataContext>(opt => { opt.UseSqlite(config.GetConnectionString("SqliteConnection")); });
         services.AddSingleton<IConnectionMultiplexer>(c =>
         {
             var configuration = ConfigurationOptions.Parse(config.GetConnectionString("Redis"), true);
