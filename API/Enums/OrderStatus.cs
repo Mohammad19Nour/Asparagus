@@ -6,7 +6,7 @@ public enum OrderStatus
 {
     [EnumMember(Value = "Pending")]
     Pending,
-    [EnumMember(Value = "Delivered")]
-    Delivered
+    [EnumMember(Value = "Done")]
+    Done
     
 }

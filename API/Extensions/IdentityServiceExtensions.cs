@@ -57,19 +57,19 @@ public static class IdentityServiceExtensions
                             else
                             {
                                 var user = await userManager.Users.FirstOrDefaultAsync(x=>x.Email == email);
-                                Console.WriteLine(user == null);
                                 if (user == null)
                                 {
                                     context.Fail("Unauthorized");
                                 }
                                 else
                                 {
-                                    /*var roles = await userManager.GetRolesAsync(user);
+                                    
+                                    var roles = await userManager.GetRolesAsync(user);
 
                                     // Add the custom claim to the bearer token
                                     var identity = new ClaimsIdentity();
-                                    identity.AddClaims(roles.Select(r => new Claim(ClaimTypes.Role, r)));
-                                    context.Principal?.AddIdentity(identity);*/
+                                    identity.AddClaims(roles.Select(r => new Claim(ClaimTypes.Role, r.ToLower())));
+                                    context.Principal?.AddIdentity(identity);
                                 }
 
                             }

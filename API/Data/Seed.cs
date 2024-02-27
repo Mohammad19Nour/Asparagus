@@ -33,11 +33,12 @@ public static class Seed
         await SeedPlanTypes(context);
         await SeedAdminSelectedCarbs(context);
         await SeedUsers(userManager);
-        await SeedDrivers(context);
+        await SeedDrivers(context,userManager);
+        await SeedCashiers(context,userManager);
         await SeedOrders(context);
         await SeedGifts(context);
     }
-
+    
     private static async Task SeedGifts(DataContext context)
     {
         if (await context.GiftSelections.AnyAsync()) return;
@@ -45,7 +46,7 @@ public static class Seed
         {
             var newOne = new GiftSelection
             {
-                Month = j ,
+                Month = j,
                 MonthName = new DateTime(2024, j, 1).ToString("MMMMM")
             };
             context.GiftSelections.Add(newOne);
@@ -54,7 +55,7 @@ public static class Seed
         await context.SaveChangesAsync();
     }
 
-    private static async Task SeedDrivers(DataContext context)
+    private static async Task SeedDrivers(DataContext context, UserManager<AppUser> userManager)
     {
         if (await context.Drivers.AnyAsync()) return;
         var drivers = new List<Driver>
@@ -63,8 +64,8 @@ public static class Seed
             {
                 Name = "John Doe",
                 PhoneNumber = "1234567890",
-                Email = "john@example.com",
-                Password = "password123",
+                Email = "john@exampdle.com",
+                Password = "string",
                 IsActive = true,
                 ZoneId = 3, // Example zone ID
                 PictureUrl = "https://example.com/picture.jpg",
@@ -74,8 +75,8 @@ public static class Seed
             {
                 Name = "Jane Smith",
                 PhoneNumber = "0987654321",
-                Email = "jane@example.com",
-                Password = "pass321word",
+                Email = "jane@examplee.com",
+                Password = "string",
                 IsActive = true,
                 ZoneId = 5, // Example zone ID
                 PictureUrl = "https://example.com/picture2.jpg",
@@ -85,8 +86,8 @@ public static class Seed
             {
                 Name = "Alice Johnson",
                 PhoneNumber = "5551234567",
-                Email = "alice@example.com",
-                Password = "alicepassword",
+                Email = "alice@examplee.com",
+                Password = "string",
                 IsActive = true,
                 ZoneId = 2, // Example zone ID
                 PictureUrl = "https://example.com/alice.jpg",
@@ -96,15 +97,96 @@ public static class Seed
             {
                 Name = "Bob Smith",
                 PhoneNumber = "5559876543",
-                Email = "bob@example.com",
-                Password = "bobpassword",
+                Email = "bob@examplee.com",
+                Password = "string",
                 IsActive = true,
                 ZoneId = 4, // Example zone ID
                 PictureUrl = "https://example.com/bob.jpg",
                 Period = Period.Night
             }
         };
+        foreach (var cashier in drivers)
+        {
+            var user = new AppUser
+            {
+                Email = cashier.Email,
+                UserName = cashier.Email,
+                FullName = cashier.Name,
+                EmailConfirmed = true,
+            };
+            await userManager.CreateAsync(user, "string");
+            await userManager.AddToRoleAsync(user, Roles.Driver.GetDisplayName());
+        }
+
         await context.Drivers.AddRangeAsync(drivers);
+    }
+
+    private static async Task SeedCashiers(DataContext context, UserManager<AppUser> userManager)
+    {
+        Console.WriteLine("FFFFFF");
+        if (await context.Cashiers.AnyAsync()) return;
+        var cashiers = new List<Cashier>
+        {
+            new Cashier
+            {
+                Name = "John Doe",
+                PhoneNumber = "1234567890",
+                Email = "john@example.com",
+                Password = "string",
+                IsActive = true,
+                BranchId = 5,
+                PictureUrl = "https://example.com/picture.jpg",
+                Period = Period.Day
+            },
+            new Cashier
+            {
+                Name = "Jane Smith",
+                PhoneNumber = "0987654321",
+                Email = "jane@example.com",
+                Password = "string",
+                IsActive = true,
+                BranchId = 5, // Example zone ID
+                PictureUrl = "https://example.com/picture2.jpg",
+                Period = Period.Night
+            },
+            new Cashier
+            {
+                Name = "Alice Johnson",
+                PhoneNumber = "5551234567",
+                Email = "alice@example.com",
+                Password = "string",
+                IsActive = true,
+                BranchId = 2, // Example zone ID
+                PictureUrl = "https://example.com/alice.jpg",
+                Period = Period.Day
+            },
+            new Cashier
+            {
+                Name = "Bob Smith",
+                PhoneNumber = "5559876543",
+                Email = "bob@example.com",
+                Password = "string",
+                IsActive = true,
+                BranchId = 1, // Example zone ID
+                PictureUrl = "https://example.com/bob.jpg",
+                Period = Period.Night
+            }
+        };
+
+        foreach (var cashier in cashiers)
+        {
+            var user = new AppUser
+            {
+                Email = cashier.Email,
+                UserName = cashier.Email,
+                FullName = cashier.Name,
+                EmailConfirmed = true,
+            };
+          //  await userManager.CreateAsync(user, "string");
+           // await userManager.AddToRoleAsync(user, Roles.Cashier.GetDisplayName());
+        }
+
+        await context.Cashiers.AddRangeAsync(cashiers);
     }
 
     private static decimal CalculatePrice(SubscriptionDuration duration, int numberOfMeals)

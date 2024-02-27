@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.Meal;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.AllergyDtos;
@@ -13,6 +14,7 @@ public class SomeProfile : Profile
 {
     public SomeProfile()
     {
+        CreateMap<AppUser, AdminAccountDto>();
         CreateMap<GiftSelection, MonthGiftDto>();
         CreateMap<Meal, MealInfoDto>();
         CreateMap<Notification, NotificationDto>();

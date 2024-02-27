@@ -67,6 +67,8 @@ public class OrderService : IOrderService
             return (false, $"Priority is already chosen,you can choose {available} priority");
         }
 
+        if (order.Driver != null && order.Driver.Status == DriverStatus.Delivering)
+            return (false,"Driver has started his trip for delivering");
         order.Driver = driver;
         order.Priority = priority;
         _unitOfWork.Repository<Order>().Update(order);

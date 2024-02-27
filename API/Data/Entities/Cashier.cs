@@ -12,7 +12,6 @@ public class Cashier
     public bool IsActive { get; set; } = true;
     public Branch Branch { get; set; }
     public int BranchId { get; set; }
-    public int ZoneId { get; set; }
     public string PictureUrl { get; set; }
     public Period Period { get; set; }
 }

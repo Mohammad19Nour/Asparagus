@@ -1,6 +1,7 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.DTOs.DriverDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
@@ -8,6 +9,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
 
 namespace AsparagusN.Controllers.Dashboard;
 
@@ -62,7 +64,7 @@ public class AdminDriverController : BaseApiController
                     return Ok(new ApiResponse(400, result.Errors.Aggregate("",(error, identityError) => error+identityError.Description)));
                 }
 
-                IdentityResult roleResult = await _userManager.AddToRoleAsync(driverUser, "Driver");
+                IdentityResult roleResult = await _userManager.AddToRoleAsync(driverUser, Roles.Driver.GetDisplayName().ToLower());
 
                 if (!roleResult.Succeeded)
                 {

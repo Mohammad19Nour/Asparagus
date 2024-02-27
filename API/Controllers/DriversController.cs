@@ -18,13 +18,13 @@ public class DriversController : BaseApiController
     }
 
     [HttpPut("{driverId:int}")]
-    public async Task<ActionResult> ChangeDriverStatus(int driverId, DriverStatus newStatus)
+    public async Task<ActionResult> ChangeDriverStatus(int driverId)
     {
         var driver = await _unitOfWork.Repository<Driver>().GetByIdAsync(driverId);
 
         if (driver == null) return Ok(new ApiResponse(404, "Driver not found"));
 
-        driver.Status = newStatus;
+        driver.Status = DriverStatus.Delivering;
         _unitOfWork.Repository<Driver>().Update(driver);
 
         if (await _unitOfWork.SaveChanges())
@@ -40,7 +40,7 @@ public class DriversController : BaseApiController
 
         if (order == null) return Ok(new ApiResponse(404, "Order not found"));
 
-        order.Status = OrderStatus.Delivered;
+        order.Status = OrderStatus.Done;
         _unitOfWork.Repository<Order>().Update(order);
 
         if (await _unitOfWork.SaveChanges())

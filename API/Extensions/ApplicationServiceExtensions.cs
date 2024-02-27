@@ -19,6 +19,7 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
+        services.AddScoped<ICarService, CarService>();
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IStatisticService, StatisticService>();
         services.AddScoped<IPlanRecommendationService, PlanRecommendationService>();

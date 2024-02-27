@@ -50,10 +50,14 @@ public class AccountController : BaseApiController
         if (user == null)
             return Ok(new ApiResponse(400, messageEN: "Invalid Email", messageAR: "البريد الإلكتروني خاطئ"));
 
+        var isUserRole = await _userManager.IsInRoleAsync(user, Roles.User.GetDisplayName().ToLower());
+        if (!isUserRole) return Ok(new ApiResponse(403, "Can't access to this resource"));
+
         var res = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
         if (!res.Succeeded)
             return Ok(new ApiResponse(400, messageEN: "Invalid password", messageAR: "كلمة السر خاطئة"));
-     /*   if (!user.EmailConfirmed)
+
+        /*   if (!user.EmailConfirmed)
         {
             var response = await GenerateTokenAndSendEmailForUser(user);
 

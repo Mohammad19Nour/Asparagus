@@ -1,6 +1,7 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.DTOs.CashierDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
@@ -8,6 +9,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
 
 namespace AsparagusN.Controllers.Dashboard;
 
@@ -63,7 +65,7 @@ public class AdminCashiersController : BaseApiController
                         result.Errors.Aggregate("", (error, identityError) => error + identityError.Description)));
                 }
 
-                IdentityResult roleResult = await _userManager.AddToRoleAsync(cashierUser, "Cashier");
+                IdentityResult roleResult = await _userManager.AddToRoleAsync(cashierUser, Roles.Cashier.GetDisplayName().ToLower());
 
                 if (!roleResult.Succeeded)
                 {
