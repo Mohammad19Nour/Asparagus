@@ -4,6 +4,7 @@ using AsparagusN.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240227062515_faq")]
+    partial class faq
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -366,13 +369,16 @@ namespace AsparagusN.Migrations
                     b.Property<int?>("ParentFAQId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentFAQId");
+                    b.HasIndex("ParentId");
 
                     b.ToTable("Questions");
                 });
@@ -1635,11 +1641,11 @@ namespace AsparagusN.Migrations
 
             modelBuilder.Entity("AsparagusN.Data.Entities.FAQ", b =>
                 {
-                    b.HasOne("AsparagusN.Data.Entities.FAQ", "ParentFAQ")
-                        .WithMany("FAQChildern")
-                        .HasForeignKey("ParentFAQId");
+                    b.HasOne("AsparagusN.Data.Entities.FAQ", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentId");
 
-                    b.Navigation("ParentFAQ");
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.GiftSelection", b =>
@@ -2037,11 +2043,6 @@ namespace AsparagusN.Migrations
             modelBuilder.Entity("AsparagusN.Data.Entities.Driver", b =>
                 {
                     b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("AsparagusN.Data.Entities.FAQ", b =>
-                {
-                    b.Navigation("FAQChildern");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.Identity.AppRole", b =>

@@ -95,14 +95,12 @@ public class OrderService : IOrderService
         {
             using (var transaction = _unitOfWork.BeginTransaction())
             {
+                if (newOrderInfoDto.PaymentType == PaymentType.Gift) return (null, "Wrong payment type");
                 var user = await _unitOfWork.Repository<AppUser>().GetByIdAsync(basketId);
 
                 Order? order;
                 (order, var message) = await CalcPriceOfOrder(buyerEmail, basketId, newOrderInfoDto);
 
-                //var branch = await _unitOfWork.Repository<Branch>().GetByIdAsync(newOrderInfoDto.BranchId);
-                //if (branch == null)
-                // return (null, "Branch not found");
                 if (order == null) return (order, Message: message);
                 if (!await _locationService.CanDeliver(newOrderInfoDto.ShipToAddress))
                     return (null, "Can't deliver to this location");
@@ -125,7 +123,9 @@ public class OrderService : IOrderService
                 if (order.PaymentType != PaymentType.Points)
                     user.LoyaltyPoints += order.GainedPoints;
 
-                order.BuyerPhoneNumber = user!.PhoneNumber;
+
+                order.BuyerPhoneNumber = user.PhoneNumber;
+                order.BuyerId = user.Id;
                 _unitOfWork.Repository<Order>().Add(order);
 
                 if (!(await _unitOfWork.SaveChanges()))
@@ -139,6 +139,38 @@ public class OrderService : IOrderService
                 await transaction.CommitAsync();
                 return (order: order, "Done");
             }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    public async Task<(bool Success, string Message)> CreateGiftOrderAsync(AppUser user, int mealId)
+    {
+        try
+        {
+            var meal = await _unitOfWork.Repository<Meal>().GetByIdAsync(mealId);
+            var mealOrdered = _mapper.Map<MealItemOrdered>(meal);
+            var items = new List<OrderItem> { new OrderItem { OrderedMeal = mealOrdered } };
+            var branchId = await _locationService.GetClosestBranch(user.HomeAddress);
+
+            if (branchId == 0) return (true, "ok");
+            var order = new Order
+            {
+                Items = items,
+                BuyerEmail = user.Email,
+                BuyerPhoneNumber = user.PhoneNumber,
+                BranchId = branchId,
+                PaymentType = PaymentType.Gift,
+                ShipToAddress = user.HomeAddress,
+                BuyerId = user.Id
+            };
+            _unitOfWork.Repository<Order>().Add(order);
+            if (await _unitOfWork.SaveChanges())
+                return (true, "Done");
+            return (false, "Failed");
         }
         catch (Exception e)
         {

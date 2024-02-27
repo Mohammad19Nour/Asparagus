@@ -6,6 +6,7 @@ public class Order
 {
     public int Id { get; set; }
     public string BuyerEmail { get; set; }
+    public int BuyerId { get; set; }
     public string BuyerPhoneNumber { get; set; }
     public ICollection<OrderItem> Items { get; set; }
     public DateTime OrderDate { get; set; } = DateTime.Now;

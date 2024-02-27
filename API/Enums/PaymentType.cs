@@ -9,5 +9,7 @@ public enum PaymentType
     [EnumMember(Value = "Card")]
     Card,
     [EnumMember(Value = "Points")]
-    Points
+    Points,
+    [EnumMember(Value = "Gift")]
+    Gift
 }

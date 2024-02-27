@@ -8,9 +8,11 @@ public class MealInfoDto
     public string DescriptionAR { get; set; }
     public string CarbNameEN { get; set; } = "This meal doesn't have carb";
     public string CarbNameAR { get; set; } = "لا تحتوي هذه الوجبة على كارب";
+    public string PictureUrl { get; set; }
     public decimal Calories{ get; set; }
     public decimal Fibers{ get; set; }
     public decimal Fats{ get; set; }
     public decimal Carbs{ get; set; }
     public decimal Protein{ get; set; }
+    public decimal Price { get; set; }
 }

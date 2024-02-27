@@ -50,6 +50,12 @@ public class LocationService : ILocationService
         return true;
     }
 
+    public async Task<int> GetClosestBranch(AsparagusN.Data.Entities.Address address)
+    {
+        var branches = await _unitOfWork.Repository<Branch>().ListAllAsync();
+        return branches.Count > 0 ? branches[0].Id : 0;
+    }
+
     private decimal ParseDistanceFromGoogleMapsResponse(string responseContent)
     {
         // Parse the JSON response to extract the driving distance

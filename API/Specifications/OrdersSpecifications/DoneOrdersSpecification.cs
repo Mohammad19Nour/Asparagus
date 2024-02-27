@@ -6,7 +6,7 @@ namespace AsparagusN.Specifications.OrdersSpecifications;
 
 public class DoneOrdersSpecification : BaseSpecification<Order>
 {
-    public DoneOrdersSpecification(DateTime startDate, DateTime endDate) : base( c=> c.PaymentType != PaymentType.Points &&
+    public DoneOrdersSpecification(DateTime startDate, DateTime endDate) : base( c=> (c.PaymentType == PaymentType.Cash || c.PaymentType == PaymentType.Card) &&
         c.OrderDate.Date >= startDate && c.OrderDate.Date <= endDate && c.Status == OrderStatus.Delivered)
     {
     }

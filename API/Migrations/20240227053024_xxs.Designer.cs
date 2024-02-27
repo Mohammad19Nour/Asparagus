@@ -4,6 +4,7 @@ using AsparagusN.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240227053024_xxs")]
+    partial class xxs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -355,28 +358,6 @@ namespace AsparagusN.Migrations
                     b.ToTable("ExtraOptions");
                 });
 
-            modelBuilder.Entity("AsparagusN.Data.Entities.FAQ", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ParentFAQId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParentFAQId");
-
-                    b.ToTable("Questions");
-                });
-
             modelBuilder.Entity("AsparagusN.Data.Entities.GiftSelection", b =>
                 {
                     b.Property<int>("Id")
@@ -386,6 +367,7 @@ namespace AsparagusN.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("MealId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("Month")
@@ -1633,21 +1615,13 @@ namespace AsparagusN.Migrations
                     b.Navigation("Zone");
                 });
 
-            modelBuilder.Entity("AsparagusN.Data.Entities.FAQ", b =>
-                {
-                    b.HasOne("AsparagusN.Data.Entities.FAQ", "ParentFAQ")
-                        .WithMany("FAQChildern")
-                        .HasForeignKey("ParentFAQId");
-
-                    b.Navigation("ParentFAQ");
-                });
-
             modelBuilder.Entity("AsparagusN.Data.Entities.GiftSelection", b =>
                 {
                     b.HasOne("AsparagusN.Data.Entities.Meal.Meal", "Meal")
                         .WithMany()
                         .HasForeignKey("MealId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
 
                     b.Navigation("Meal");
                 });
@@ -2037,11 +2011,6 @@ namespace AsparagusN.Migrations
             modelBuilder.Entity("AsparagusN.Data.Entities.Driver", b =>
                 {
                     b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("AsparagusN.Data.Entities.FAQ", b =>
-                {
-                    b.Navigation("FAQChildern");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.Identity.AppRole", b =>

@@ -4,6 +4,7 @@ using AsparagusN.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240227062754_ff")]
+    partial class ff
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -363,6 +366,9 @@ namespace AsparagusN.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("FAQId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ParentFAQId")
                         .HasColumnType("int");
 
@@ -372,7 +378,7 @@ namespace AsparagusN.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentFAQId");
+                    b.HasIndex("FAQId");
 
                     b.ToTable("Questions");
                 });
@@ -1635,11 +1641,9 @@ namespace AsparagusN.Migrations
 
             modelBuilder.Entity("AsparagusN.Data.Entities.FAQ", b =>
                 {
-                    b.HasOne("AsparagusN.Data.Entities.FAQ", "ParentFAQ")
-                        .WithMany("FAQChildern")
-                        .HasForeignKey("ParentFAQId");
-
-                    b.Navigation("ParentFAQ");
+                    b.HasOne("AsparagusN.Data.Entities.FAQ", null)
+                        .WithMany("FaqChildern")
+                        .HasForeignKey("FAQId");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.GiftSelection", b =>
@@ -2041,7 +2045,7 @@ namespace AsparagusN.Migrations
 
             modelBuilder.Entity("AsparagusN.Data.Entities.FAQ", b =>
                 {
-                    b.Navigation("FAQChildern");
+                    b.Navigation("FaqChildern");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.Identity.AppRole", b =>

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Meal;
+using AsparagusN.DTOs;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AutoMapper;
@@ -77,10 +78,10 @@ public class GiftsController : BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetGifts()
+    public async Task<ActionResult<List<MonthGiftDto>>> GetGifts()
     {
         var gifts = await _unitOfWork.Repository<GiftSelection>().GetQueryable().Include(y => y.Meal).ToListAsync();
 
-        return Ok(new ApiOkResponse<object>(gifts));
+        return Ok(new ApiOkResponse<List<MonthGiftDto>>(_mapper.Map<List<MonthGiftDto>>(gifts)));
     }
 }

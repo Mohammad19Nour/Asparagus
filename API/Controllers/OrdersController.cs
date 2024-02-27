@@ -35,6 +35,8 @@ public class OrdersController : BaseApiController
         var user = await _getUser();
         if (user == null) return Ok(new ApiResponse(404, "User not found"));
 
+        if (newOrderInfo.PaymentType == PaymentType.Gift)
+            return Ok(new ApiResponse(400, "Wrong payment type"));
         var address = _mapper.Map<AddressDto, Address>(newOrderInfo.ShipToAddress);
 
         var result = await _orderService.CreateOrderAsync(user.Email, user.Id, newOrderInfo);

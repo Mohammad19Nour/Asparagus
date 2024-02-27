@@ -58,7 +58,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<AppCoupon> AppCoupons { get; set; }
     public DbSet<PlanPrice> PlanPrices { get; set; }
     public DbSet<GiftSelection> GiftSelections { get; set; }
-    public DbSet<UserGift> UserGiftsDay { get; set; }
+    public DbSet<FAQ> Questions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

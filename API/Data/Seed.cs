@@ -43,7 +43,11 @@ public static class Seed
         if (await context.GiftSelections.AnyAsync()) return;
         for (var j = 1; j <= 12; j++)
         {
-            var newOne = new GiftSelection { Month = j };
+            var newOne = new GiftSelection
+            {
+                Month = j ,
+                MonthName = new DateTime(2024, j, 1).ToString("MMMMM")
+            };
             context.GiftSelections.Add(newOne);
         }
 
@@ -803,7 +807,8 @@ public static class Seed
                 Status = OrderStatus.Pending,
                 PaymentType = PaymentType.Cash,
                 PointsPrice = 0,
-                GainedPoints = 0
+                GainedPoints = 0,
+                BuyerId = user.Id
             };
             context.Orders.Add(order);
         }
