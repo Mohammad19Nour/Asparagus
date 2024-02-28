@@ -11,4 +11,8 @@ public class NewDrinkDto
     public IFormFile Image { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public CapacityLevel Volume { get; set; }
+    public decimal Protein{ get; set; }
+    public decimal Carb{ get; set; }
+    public decimal Fat{ get; set; }
+    public decimal Fiber{ get; set; }
 }

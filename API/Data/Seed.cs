@@ -37,8 +37,16 @@ public static class Seed
         await SeedCashiers(context,userManager);
         await SeedOrders(context);
         await SeedGifts(context);
+        await SeedCar(context);
     }
     
+    private static async Task SeedCar(DataContext context)
+    {
+        if (await context.Cars.AnyAsync()) return;
+
+        context.Cars.Add(new Car());
+        await context.SaveChangesAsync();
+    }
     private static async Task SeedGifts(DataContext context)
     {
         if (await context.GiftSelections.AnyAsync()) return;

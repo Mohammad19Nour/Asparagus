@@ -7,4 +7,8 @@ public class UpdateExtraOptionDto
     public decimal? Price { get; set; }
     public decimal? Weight { get; set; }
     public IFormFile? Image { get; set; }
+    public decimal? Protein{ get; set; }
+    public decimal? Carb{ get; set; }
+    public decimal? Fat{ get; set; }
+    public decimal? Fiber{ get; set; }
 }

@@ -106,4 +106,30 @@ public class FaqController : BaseApiController
 
         return Ok(new ApiResponse(400, "Failed to add"));
     }
+    
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> DeleteTitle(int id)
+    {
+        var spec = new FAQSpecification(id);
+        var faq = await _unitOfWork.Repository<FAQ>().GetEntityWithSpec(spec);
+
+        if (faq == null) return Ok(new ApiResponse(404, "Title not found"));
+
+        
+       recDelete(faq);
+
+        if (await _unitOfWork.SaveChanges())
+            return Ok(new ApiResponse(200,"Deleted"));
+
+        return Ok(new ApiResponse(400, "Failed to delete"));
+    }
+
+    private void recDelete(FAQ? faq)
+    {
+        if (faq == null) return;
+
+        foreach (var ch in faq.FAQChildern)
+            recDelete(ch);
+        _unitOfWork.Repository<FAQ>().Delete(faq);
+    }
 }

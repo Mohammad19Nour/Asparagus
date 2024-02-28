@@ -8,4 +8,9 @@ public class DrinkDto
     public decimal Price { get; set; }
     public string PictureUrl { get; set; }
     public string Volume { get; set; }
+    public decimal Protein{ get; set; }
+    public decimal Carb{ get; set; }
+    public decimal Fat{ get; set; }
+    public decimal Fiber{ get; set; }
+    public decimal Calories { get; set; }
 }

@@ -59,6 +59,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<PlanPrice> PlanPrices { get; set; }
     public DbSet<GiftSelection> GiftSelections { get; set; }
     public DbSet<FAQ> Questions { get; set; }
+    public DbSet<Car>Cars { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -82,6 +83,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
             .WithOne(c => c.CustomerBasket)
             .HasForeignKey(g => g.CustomerBasketId).OnDelete(DeleteBehavior.Cascade);
 
+      //  builder.ApplyConfiguration(new FaqConfiguration());
         builder.ApplyConfiguration(new GiftSelectionConfiguration());
         builder.ApplyConfiguration(new AppCouponConfiguration());
         builder.ApplyConfiguration(new DriverConfiguration());

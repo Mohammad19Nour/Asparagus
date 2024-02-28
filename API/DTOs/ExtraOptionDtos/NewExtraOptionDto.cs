@@ -12,4 +12,8 @@ public class NewExtraOptionDto
     public IFormFile Image { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ExtraOptionType OptionType { get; set; }
+    public decimal Protein{ get; set; }
+    public decimal Carbs{ get; set; }
+    public decimal Fats{ get; set; }
+    public decimal Fibers{ get; set; }
 }

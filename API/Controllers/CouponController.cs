@@ -79,4 +79,17 @@ public class CouponController : BaseApiController
             return Ok(new ApiResponse(200));
         return Ok(new ApiResponse(400, "Failed to update coupon"));
     }
+    [HttpGet("check")]
+    public async Task<ActionResult<bool>> CheckCoupon(string code)
+    {
+        var exist = (await _unitOfWork.Repository<AppCoupon>().GetQueryable().Where(x => x.Code == code)
+            .FirstOrDefaultAsync());
+
+        if (exist == null)
+            return Ok(new ApiResponse(400, "Coupon not exist"));
+
+      
+            return Ok(new ApiResponse(200,"Valid"));
+    }
+
 }

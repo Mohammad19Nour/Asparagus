@@ -12,6 +12,9 @@ public class UserSelectedSnack
     public decimal Carbs{ get; set; }
     public decimal Fats{ get; set; }
     public decimal Fibers{ get; set; }
-    public decimal Calories{ get; set; }
     public int Quantity { get; set; }
+    public decimal GetCalories()
+    {
+        return (Protein * 4 + Carbs * 4 + Fats * 9) * Quantity;
+    }
 }

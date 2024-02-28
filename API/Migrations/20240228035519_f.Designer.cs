@@ -3,6 +3,7 @@ using System;
 using AsparagusN.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,39 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240228035519_f")]
+    partial class f
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
-
-            modelBuilder.Entity("AsparagusN.Data.Booking", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CarId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Booking");
-                });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.Address", b =>
                 {
@@ -158,49 +134,6 @@ namespace AsparagusN.Migrations
                     b.ToTable("Branches");
                 });
 
-            modelBuilder.Entity("AsparagusN.Data.Entities.Car", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<TimeSpan>("WorkingEndHour")
-                        .HasColumnType("TEXT");
-
-                    b.Property<TimeSpan>("WorkingStartHour")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Cars");
-                });
-
-            modelBuilder.Entity("AsparagusN.Data.Entities.CarWorkingDay", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CarId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Day")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarId");
-
-                    b.ToTable("CarWorkingDay");
-                });
-
             modelBuilder.Entity("AsparagusN.Data.Entities.Cashier", b =>
                 {
                     b.Property<int>("Id")
@@ -282,15 +215,6 @@ namespace AsparagusN.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Carb")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Fat")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Fiber")
-                        .HasColumnType("REAL");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
@@ -307,9 +231,6 @@ namespace AsparagusN.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Price")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Protein")
                         .HasColumnType("REAL");
 
                     b.Property<string>("Volume")
@@ -377,15 +298,6 @@ namespace AsparagusN.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Carb")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Fat")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Fiber")
-                        .HasColumnType("REAL");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
@@ -408,9 +320,6 @@ namespace AsparagusN.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("REAL");
 
-                    b.Property<double>("Protein")
-                        .HasColumnType("REAL");
-
                     b.Property<double>("Weight")
                         .HasColumnType("REAL");
 
@@ -426,6 +335,10 @@ namespace AsparagusN.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("ParentFAQId")
+                        .IsRequired()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ParentFAQId1")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")
@@ -435,6 +348,8 @@ namespace AsparagusN.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ParentFAQId");
+
+                    b.HasIndex("ParentFAQId1");
 
                     b.ToTable("Questions");
                 });
@@ -1095,15 +1010,6 @@ namespace AsparagusN.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Carb")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Fat")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Fiber")
-                        .HasColumnType("REAL");
-
                     b.Property<string>("NameArabic")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -1117,9 +1023,6 @@ namespace AsparagusN.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Price")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Protein")
                         .HasColumnType("REAL");
 
                     b.Property<int>("UserPlanDayId")
@@ -1141,15 +1044,6 @@ namespace AsparagusN.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Carb")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Fat")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Fiber")
-                        .HasColumnType("REAL");
-
                     b.Property<string>("NameArabic")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -1166,9 +1060,6 @@ namespace AsparagusN.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Price")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Protein")
                         .HasColumnType("REAL");
 
                     b.Property<int>("UserPlanDayId")
@@ -1254,6 +1145,9 @@ namespace AsparagusN.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<double>("Calories")
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Carbs")
                         .HasColumnType("REAL");
@@ -1564,25 +1458,6 @@ namespace AsparagusN.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AsparagusN.Data.Booking", b =>
-                {
-                    b.HasOne("AsparagusN.Data.Entities.Car", "Car")
-                        .WithMany("Bookings")
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AsparagusN.Data.Entities.Identity.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Car");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("AsparagusN.Data.Entities.BasketItem", b =>
                 {
                     b.HasOne("AsparagusN.Data.Entities.CustomerBasket", "CustomerBasket")
@@ -1613,17 +1488,6 @@ namespace AsparagusN.Migrations
                     b.Navigation("Address");
                 });
 
-            modelBuilder.Entity("AsparagusN.Data.Entities.CarWorkingDay", b =>
-                {
-                    b.HasOne("AsparagusN.Data.Entities.Car", "Car")
-                        .WithMany("WorkingDays")
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Car");
-                });
-
             modelBuilder.Entity("AsparagusN.Data.Entities.Cashier", b =>
                 {
                     b.HasOne("AsparagusN.Data.Entities.Branch", "Branch")
@@ -1648,9 +1512,15 @@ namespace AsparagusN.Migrations
 
             modelBuilder.Entity("AsparagusN.Data.Entities.FAQ", b =>
                 {
-                    b.HasOne("AsparagusN.Data.Entities.FAQ", "ParentFAQ")
+                    b.HasOne("AsparagusN.Data.Entities.FAQ", null)
                         .WithMany("FAQChildern")
-                        .HasForeignKey("ParentFAQId");
+                        .HasForeignKey("ParentFAQId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AsparagusN.Data.Entities.FAQ", "ParentFAQ")
+                        .WithMany()
+                        .HasForeignKey("ParentFAQId1");
 
                     b.Navigation("ParentFAQ");
                 });
@@ -2035,13 +1905,6 @@ namespace AsparagusN.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("AsparagusN.Data.Entities.Car", b =>
-                {
-                    b.Navigation("Bookings");
-
-                    b.Navigation("WorkingDays");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.Category", b =>
