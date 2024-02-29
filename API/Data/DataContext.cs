@@ -60,6 +60,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     public DbSet<GiftSelection> GiftSelections { get; set; }
     public DbSet<FAQ> Questions { get; set; }
     public DbSet<Car>Cars { get; set; }
+    public DbSet<Bundle>Bundles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

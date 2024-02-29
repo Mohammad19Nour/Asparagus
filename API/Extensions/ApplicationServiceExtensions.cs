@@ -28,7 +28,7 @@ public static class ApplicationServiceExtensions
         services.AddHostedService<BackgroundGiftService>();
         services.AddHostedService<BackgroundTask>();
         services.Configure<KestrelServerOptions>(options => { options.Limits.MaxRequestBodySize = null; });
-        services.AddAutoMapper(typeof(CarProfile),typeof(PackageProfile),typeof(ReportProfile),typeof(CashierProfile),typeof(AppCouponProfile),typeof(BasketProfile),typeof(SnackProfile), typeof(UserPlanProfile), typeof(OrderProfile),
+        services.AddAutoMapper(typeof(BundleProfile),typeof(CarProfile),typeof(PackageProfile),typeof(ReportProfile),typeof(CashierProfile),typeof(AppCouponProfile),typeof(BasketProfile),typeof(SnackProfile), typeof(UserPlanProfile), typeof(OrderProfile),
             typeof(DrinkProfile), typeof(DriverProfile), typeof(AdminPlanProfile), typeof(ExtraOptionsProfile),
             typeof(AddressProfile), typeof(BranchProfile), typeof(CategoryProfile), typeof(SomeProfile),
             typeof(UserProfile), typeof(MealProfile),

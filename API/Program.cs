@@ -17,7 +17,8 @@ builder.Services.AddControllers().AddNewtonsoftJson(opt =>
 {
     opt.SerializerSettings.Converters.Add(new RoundedNumberConverter(2));
     opt.SerializerSettings.Converters.Add(new PictureUrlConverter(builder.Configuration["ApiUrl"]));
-   opt.SerializerSettings.Converters.Add(new TimeSpanConverter());
+    opt.SerializerSettings.Converters.Add(new TimeSpanConverter());
+    opt.SerializerSettings.Converters.Add(new DateTimeConverter());
     //   opt.JsonSerializerOptions.Converters.Add();
 });
 builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>

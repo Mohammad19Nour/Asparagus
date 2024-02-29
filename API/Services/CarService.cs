@@ -1,9 +1,11 @@
-﻿using AsparagusN.Data;
+﻿using System.Globalization;
+using AsparagusN.Data;
 using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.CarDtos;
 using AsparagusN.Interfaces;
+using AsparagusN.Specifications;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,13 +33,15 @@ public class CarService : ICarService
 
     public async Task<(Car? car, string Message)> UpdateCar(UpdateCarDto dto, int carId)
     {
-        if (dto.WorkingStartHour > dto.WorkingEndHour)
+        if (dto.WorkingStartHour != null && dto.WorkingEndHour != null &&
+            TimeSpan.Parse(dto.WorkingStartHour) > TimeSpan.Parse(dto.WorkingEndHour))
             return (null, "start working hour should be less than end working hour");
         var car = await GetCarByIdAsync(carId);
         if (car == null) return (null, "Car not found");
-        Console.WriteLine(dto.WorkingStartHour);
         _mapper.Map(dto, car);
 
+        if (dto.WorkingStartHour != null) car.WorkingStartHour = TimeSpan.Parse(dto.WorkingStartHour);
+        if (dto.WorkingEndHour != null) car.WorkingEndHour = TimeSpan.Parse(dto.WorkingEndHour);
         _unitOfWork.Repository<Car>().Update(car);
         if (await _unitOfWork.SaveChanges())
             return (car, "Done");
@@ -65,7 +69,8 @@ public class CarService : ICarService
     {
         try
         {
-            return (await _unitOfWork.Repository<Car>().GetQueryable().Include(x=>x.WorkingDays).ToListAsync()).ToList();
+            return (await _unitOfWork.Repository<Car>().GetQueryable().Include(x => x.WorkingDays).ToListAsync())
+                .ToList();
         }
         catch (Exception e)
         {
@@ -74,17 +79,21 @@ public class CarService : ICarService
         }
     }
 
-    public async Task<bool> IsCarAvailable(int carId, DateTime startTime, DateTime endTime)
+    public bool IsCarAvailable(Car car, DateTime startTime, DateTime endTime)
     {
-        var car = await GetCarByIdAsync(carId);
-        if (car == null) return false;
-
-        if (car.WorkingStartHour > startTime.TimeOfDay || car.WorkingEndHour < endTime.TimeOfDay)
+        if (startTime.DayOfWeek != endTime.DayOfWeek) return false;
+        if (car.WorkingStartHour> startTime.TimeOfDay ||
+            car.WorkingEndHour < endTime.TimeOfDay)
             return false;
 
+        if (car.WorkingDays.All(x => x.Day != startTime.DayOfWeek))
+            return false;
+
+        var bookingsStart = car.Bookings.Select(c => c.StartTime).ToList();
+
         var booking = car.Bookings.FirstOrDefault(b => (b.StartTime <= startTime && b.EndTime >= endTime) ||
-                                                       (b.StartTime <= endTime && startTime <= b.StartTime) ||
-                                                       (b.EndTime <= endTime && startTime <= b.EndTime));
+                                                       (b.StartTime < endTime && startTime < b.StartTime) ||
+                                                       (b.EndTime < endTime && startTime < b.EndTime));
         return booking == null;
     }
 
@@ -94,6 +103,11 @@ public class CarService : ICarService
         var user = await _unitOfWork.Repository<AppUser>().GetByIdAsync(userId);
 
         if (user == null) return (false, "User not found");
+
+        var available = await GetAvailableDates();
+        var rangeList = available.FirstOrDefault(x => x.Any(t => t.Start == startTime && t.End == endTime));
+        if (rangeList == null)
+            return (false, "This time is not available");
 
         var (carId, message) = await GetAvailableCarId(startTime, endTime);
         if (carId != null)
@@ -105,7 +119,8 @@ public class CarService : ICarService
                 User = user,
                 UserId = userId,
                 StartTime = startTime,
-                CarId = carId.Value
+                CarId = carId.Value,
+                EndTime = endTime
             };
             car.Bookings.Add(booking);
 
@@ -113,15 +128,8 @@ public class CarService : ICarService
                 return (true, "Done");
             return (false, "Failed to make booking... something wrong happened");
         }
-        else
-        {
-            (carId, var availableTime, message) = await GetAlternativeBookingTime(startTime, endTime);
 
-            if (carId == null)
-                return (false, message);
-
-            return (false, $"Your booked time is not available... you could book time {availableTime} ");
-        }
+        return (false, $"Your booked time is not available...");
     }
 
     public async Task<(int? CarId, string Message)> GetAvailableCarId(DateTime startTime, DateTime endTime)
@@ -131,7 +139,7 @@ public class CarService : ICarService
             var cars = await GetAllCarsAsync();
             foreach (var car in cars)
             {
-                if (await IsCarAvailable(car.Id, startTime, endTime))
+                if (IsCarAvailable(car, startTime, endTime))
                     return (car.Id, "Ok");
             }
 
@@ -145,9 +153,32 @@ public class CarService : ICarService
         }
     }
 
-    public Task<(int? carId, DateTime? StartAvailableTime, string Message)> GetAlternativeBookingTime(
-        DateTime startTime, DateTime endTime)
+    public async Task<List<List<(DateTime Start, DateTime End)>>> GetAvailableDates()
     {
-        throw new NotImplementedException();
+        var days = new List<List<(DateTime Start, DateTime End)>>();
+        var carSpec = new CarSpecification();
+        var cars = await _unitOfWork.Repository<Car>().ListWithSpecAsync(carSpec);
+
+        for (int j = 1; j < 2; j++)
+        {
+            var day = DateTime.Now.Date.AddDays(j);
+            var availableInDay = new List<(DateTime Start, DateTime End)>();
+
+            foreach (var car in cars)
+            {
+                for (int w = 0; w <= 22; w++)
+                {
+                    if (!IsCarAvailable(car, day.AddHours(w), day.AddHours(w + 2)))
+                        continue;
+                    availableInDay.Add((Start: day.AddHours(w), End: day.AddHours(w + 2)));
+                    w++;
+                }
+            }
+
+            availableInDay = availableInDay.Where(x => x.Start >= DateTime.Now).ToList();
+            days.Add(availableInDay);
+        }
+
+        return days;
     }
 }

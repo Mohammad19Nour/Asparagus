@@ -37,4 +37,11 @@ public class CarsController : BaseApiController
         var result = await _carService.MakeBooking(user.Id,start);
         return Ok(result);
     }
+    [HttpGet("available")]
+    public async Task<ActionResult<List<List<(DateTime Start,DateTime End)>>>> GetAvailable()
+    {
+       
+        var result = await _carService.GetAvailableDates();
+        return Ok(result);
+    }
 }

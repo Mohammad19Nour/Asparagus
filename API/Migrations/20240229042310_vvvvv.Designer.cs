@@ -3,6 +3,7 @@ using System;
 using AsparagusN.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240229042310_vvvvv")]
+    partial class vvvvv
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
@@ -158,26 +161,6 @@ namespace AsparagusN.Migrations
                     b.ToTable("Branches");
                 });
 
-            modelBuilder.Entity("AsparagusN.Data.Entities.Bundle", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Duration")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MealsPerDay")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Bundles");
-                });
-
             modelBuilder.Entity("AsparagusN.Data.Entities.Car", b =>
                 {
                     b.Property<int>("Id")
@@ -191,11 +174,11 @@ namespace AsparagusN.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<TimeSpan>("WorkingEndHour")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("WorkingEndHour")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<TimeSpan>("WorkingStartHour")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("WorkingStartHour")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
