@@ -1,4 +1,5 @@
-﻿using AsparagusN.Data.Entities.OrderAggregate;
+﻿using AsparagusN.Data.Entities.MealPlan.UserPlan;
+using AsparagusN.Data.Entities.OrderAggregate;
 using AsparagusN.Enums;
 
 namespace AsparagusN.Data.Entities;
@@ -17,6 +18,6 @@ public class Driver
         public Period Period { get; set; }
         public DateTime RegistrationDate { get; set; } = DateTime.Now;
     
-    public List<Order> Orders{ get; set; }
+    public List<UserPlanDay> Orders{ get; set; }
     public DriverStatus Status { get; set; } = DriverStatus.Idle;
 }

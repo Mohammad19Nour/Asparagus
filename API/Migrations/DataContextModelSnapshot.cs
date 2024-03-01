@@ -1088,6 +1088,9 @@ namespace AsparagusN.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("DriverId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsCustomerInfoPrinted")
                         .HasColumnType("INTEGER");
 
@@ -1097,12 +1100,17 @@ namespace AsparagusN.Migrations
                     b.Property<bool>("IsMealsInfoPrinted")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("Priority")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("UserPlanId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DeliveryLocationId");
+
+                    b.HasIndex("DriverId");
 
                     b.HasIndex("UserPlanId");
 
@@ -1393,9 +1401,6 @@ namespace AsparagusN.Migrations
                     b.Property<double>("CouponValue")
                         .HasColumnType("REAL");
 
-                    b.Property<int?>("DriverId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("GainedPoints")
                         .HasColumnType("INTEGER");
 
@@ -1409,12 +1414,6 @@ namespace AsparagusN.Migrations
                     b.Property<int>("PointsPrice")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("Priority")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ShipToAddressId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -1425,10 +1424,6 @@ namespace AsparagusN.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BranchId");
-
-                    b.HasIndex("DriverId");
-
-                    b.HasIndex("ShipToAddressId");
 
                     b.ToTable("Orders");
                 });
@@ -1862,6 +1857,10 @@ namespace AsparagusN.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("AsparagusN.Data.Entities.Driver", "Driver")
+                        .WithMany("Orders")
+                        .HasForeignKey("DriverId");
+
                     b.HasOne("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlan", "UserPlan")
                         .WithMany("Days")
                         .HasForeignKey("UserPlanId")
@@ -1869,6 +1868,8 @@ namespace AsparagusN.Migrations
                         .IsRequired();
 
                     b.Navigation("DeliveryLocation");
+
+                    b.Navigation("Driver");
 
                     b.Navigation("UserPlan");
                 });
@@ -1929,22 +1930,7 @@ namespace AsparagusN.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AsparagusN.Data.Entities.Driver", "Driver")
-                        .WithMany("Orders")
-                        .HasForeignKey("DriverId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("AsparagusN.Data.Entities.Address", "ShipToAddress")
-                        .WithMany()
-                        .HasForeignKey("ShipToAddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Branch");
-
-                    b.Navigation("Driver");
-
-                    b.Navigation("ShipToAddress");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.OrderAggregate.OrderItem", b =>

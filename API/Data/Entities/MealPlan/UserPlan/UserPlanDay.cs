@@ -12,6 +12,10 @@ public class UserPlanDay
     public Address DeliveryLocation { get; set; }
     public Period DeliveryPeriod { get; set; }
     public bool IsHomeAddress { get; set; } = true;
+    
+    public Driver? Driver { get; set; }
+    public int? DriverId { get; set; }
+    public int? Priority { get; set; }
     public ICollection<UserSelectedDrink> SelectedDrinks { get; set; } = new List<UserSelectedDrink>();
 
     public ICollection<UserSelectedExtraOption> SelectedExtraOptions { get; set; } =

@@ -1,10 +1,12 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs.DriverDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
+using AsparagusN.Specifications.OrdersSpecifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +21,13 @@ public class AdminDriverController : BaseApiController
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly UserManager<AppUser> _userManager;
+    private readonly IUserPlanOrderService _userPlanOrderService;
 
-    public AdminDriverController(IMediaService mediaService, IUnitOfWork unitOfWork, IMapper mapper,
+    public AdminDriverController(IOrderService orderService, IUserPlanOrderService userPlanOrderService
+        , IMediaService mediaService, IUnitOfWork unitOfWork, IMapper mapper,
         UserManager<AppUser> userManager)
     {
+        _userPlanOrderService = userPlanOrderService;
         _mediaService = mediaService;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
@@ -61,10 +66,12 @@ public class AdminDriverController : BaseApiController
                 if (!result.Succeeded)
                 {
                     await transaction.RollbackAsync();
-                    return Ok(new ApiResponse(400, result.Errors.Aggregate("",(error, identityError) => error+identityError.Description)));
+                    return Ok(new ApiResponse(400,
+                        result.Errors.Aggregate("", (error, identityError) => error + identityError.Description)));
                 }
 
-                IdentityResult roleResult = await _userManager.AddToRoleAsync(driverUser, Roles.Driver.GetDisplayName().ToLower());
+                IdentityResult roleResult =
+                    await _userManager.AddToRoleAsync(driverUser, Roles.Driver.GetDisplayName().ToLower());
 
                 if (!roleResult.Succeeded)
                 {
@@ -166,7 +173,8 @@ public class AdminDriverController : BaseApiController
                     driver.PictureUrl = img.Url;
                 }
 
-                if (updateDriverDto.Password != null && !string.IsNullOrEmpty(updateDriverDto.Password.Trim()) &&updateDriverDto.Password != driver.Password)
+                if (updateDriverDto.Password != null && !string.IsNullOrEmpty(updateDriverDto.Password.Trim()) &&
+                    updateDriverDto.Password != driver.Password)
                 {
                     var token = await _userManager.GeneratePasswordResetTokenAsync(driverUser);
                     var result = await _userManager.ResetPasswordAsync(driverUser, token, updateDriverDto.Password);
@@ -183,13 +191,14 @@ public class AdminDriverController : BaseApiController
 
                     driver.Password = updateDriverDto.Password;
                 }
-                if (updateDriverDto.Email != null && updateDriverDto.Email.ToLower()!= driver.Email.ToLower())
+
+                if (updateDriverDto.Email != null && updateDriverDto.Email.ToLower() != driver.Email.ToLower())
                 {
                     var exist = await _userManager.Users.FirstOrDefaultAsync(x =>
                         x.Email.ToLower() == updateDriverDto.Email.ToLower());
                     if (exist != null)
                         return Ok(new ApiResponse(400, "Email already taken"));
-                    
+
                     driverUser.UserName = updateDriverDto.Email.ToLower();
                     driverUser.Email = updateDriverDto.Email.ToLower();
                     driverUser.NormalizedUserName = _userManager.NormalizeEmail(updateDriverDto.Email);
@@ -240,5 +249,23 @@ public class AdminDriverController : BaseApiController
 
             throw;
         }
+    }
+
+    [HttpPost("assign")]
+    public async Task<ActionResult> AssignOrder([FromQuery] int orderId, [FromQuery] int driverId,
+        [FromQuery] int priority)
+    {
+        var result = await _userPlanOrderService.AssignPlanDayOrderToDriver(orderId, driverId, priority);
+        if (result.Success) return Ok(new ApiResponse(200));
+        return Ok(new ApiResponse(400, result.Message));
+    }
+
+    [HttpGet("orders")]
+    public async Task<ActionResult> GetPlanDayOrders(PlanOrderStatus status,DateTime day)
+    {
+        var spec = new PlanDayOrdersWithItemsAndDriverSpecification(status,day);
+        var orders = await _unitOfWork.Repository<UserPlanDay>().ListWithSpecAsync(spec);
+
+        return Ok(orders);
     }
 }

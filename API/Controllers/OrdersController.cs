@@ -37,8 +37,7 @@ public class OrdersController : BaseApiController
 
         if (newOrderInfo.PaymentType == PaymentType.Gift)
             return Ok(new ApiResponse(400, "Wrong payment type"));
-        var address = _mapper.Map<AddressDto, Address>(newOrderInfo.ShipToAddress);
-
+        
         var result = await _orderService.CreateOrderAsync(user.Email, user.Id, newOrderInfo);
 
         if (result.Order == null) return Ok(new ApiResponse(400, result.Message));
@@ -52,7 +51,7 @@ public class OrdersController : BaseApiController
         var orders = await _orderService.GetOrderWithStatus(status);
         return Ok(new ApiOkResponse<IReadOnlyList<OrderDto>>(_mapper.Map<IReadOnlyList<OrderDto>>(orders)));
     }
-
+/*
     [HttpGet("{id:int}")]
     public async Task<ActionResult<OrderDto>> GetOrderByIdForUser(int id)
     {
@@ -65,15 +64,7 @@ public class OrdersController : BaseApiController
 
         return Ok(new ApiOkResponse<OrderDto>(_mapper.Map<OrderDto>(order)));
     }
-
-    [HttpPost("assign")]
-    public async Task<ActionResult> AssignOrder([FromQuery] int orderId, [FromQuery] int driverId,
-        [FromQuery] int priority)
-    {
-        var result = await _orderService.AssignOrderToDriver(orderId, driverId, priority);
-        if (result.Success) return Ok(new ApiResponse(200));
-        return Ok(new ApiResponse(400, result.Message));
-    }
+*/
 
     private async Task<AppUser?> _getUser()
     {

@@ -2,7 +2,6 @@
 
 public enum PlanOrderStatus
 {
-    InProgress,
     Ready,
     Delivered,
 }

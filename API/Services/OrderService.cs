@@ -1,6 +1,7 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.Meal;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.Data.Entities.OrderAggregate;
 using AsparagusN.DTOs.OrderDtos;
 using AsparagusN.Enums;
@@ -36,49 +37,6 @@ public class OrderService : IOrderService
         return order;
     }
 
-    public async Task<(bool Success, string Message)> AssignOrderToDriver(int orderId, int driverId, int priority)
-    {
-        var spec = new OrderWithItemsSpecification(orderId);
-        var order = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
-
-        if (order == null) return (false, "Order not found");
-
-        var driver = await _unitOfWork.Repository<Driver>().GetByIdAsync(driverId);
-        if (driver == null) return (false, "Driver not found");
-
-
-        if (order.Status != OrderStatus.Pending) return (false, "Order isn't pending");
-
-        if (driver.Status != DriverStatus.Idle)
-            return (false, $" Can't assign to this driver because he is {driver.Status}");
-
-        var allSpec = new OrdersForDriverWithStatusSpecification(driverId, OrderStatus.Pending);
-        var driverOrders = await _unitOfWork.Repository<Order>().ListWithSpecAsync(allSpec);
-
-        var priorities = driverOrders.Select(x => x.Priority).ToList();
-        if (priorities.Contains(priority))
-        {
-            var available = 1;
-            foreach (var p in priorities.TakeWhile(p => p == available))
-            {
-                available++;
-            }
-
-            return (false, $"Priority is already chosen,you can choose {available} priority");
-        }
-
-        if (order.Driver != null && order.Driver.Status == DriverStatus.Delivering)
-            return (false,"Driver has started his trip for delivering");
-        order.Driver = driver;
-        order.Priority = priority;
-        _unitOfWork.Repository<Order>().Update(order);
-
-        if (await _unitOfWork.SaveChanges())
-            return (true, "Assigned successfully");
-
-        return (false, "Failed to assign driver");
-    }
-
     public async Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string buyerEmail)
     {
         buyerEmail = buyerEmail.ToLower();
@@ -104,11 +62,6 @@ public class OrderService : IOrderService
                 (order, var message) = await CalcPriceOfOrder(buyerEmail, basketId, newOrderInfoDto);
 
                 if (order == null) return (order, Message: message);
-                if (!await _locationService.CanDeliver(newOrderInfoDto.ShipToAddress))
-                    return (null, "Can't deliver to this location");
-
-                //  order.Branch = branch;
-
 
                 if (order.PaymentType == PaymentType.Card)
                 {
@@ -166,7 +119,6 @@ public class OrderService : IOrderService
                 BuyerPhoneNumber = user.PhoneNumber,
                 BranchId = branchId,
                 PaymentType = PaymentType.Gift,
-                ShipToAddress = user.HomeAddress,
                 BuyerId = user.Id
             };
             _unitOfWork.Repository<Order>().Add(order);
@@ -232,7 +184,6 @@ public class OrderService : IOrderService
         {
             BuyerEmail = buyerEmail,
             Items = items,
-            ShipToAddress = _mapper.Map<Address>(newOrderInfoDto.ShipToAddress),
             Subtotal = subtotal,
             PaymentType = newOrderInfoDto.PaymentType,
             BranchId = newOrderInfoDto.BranchId,
@@ -265,5 +216,52 @@ public class OrderService : IOrderService
         var spec = new OrderWithItemsSpecification(status);
         var orders = await _unitOfWork.Repository<Order>().ListWithSpecAsync(spec);
         return orders.ToList();
+    }
+
+    public async Task<(Order? Order, string Message)> CreateCashierOrderAsync(string userEmail, int mealId,
+        string cashierEmail)
+    {
+        cashierEmail = cashierEmail.ToLower();
+        userEmail = userEmail.ToLower();
+
+        var cashier = await _unitOfWork.Repository<Cashier>().GetQueryable().Where(c => c.Email == cashierEmail)
+            .FirstOrDefaultAsync();
+        if (cashier == null) return (null, $"Cashier with email {userEmail} not found ");
+
+
+        var user = await _unitOfWork.Repository<AppUser>().GetQueryable().Where(u => u.Email.ToLower() == userEmail)
+            .FirstOrDefaultAsync();
+        if (user == null) return (null, $"User with email {userEmail} not found ");
+
+        var meal = await _unitOfWork.Repository<Meal>().GetByIdAsync(mealId);
+
+        if (meal == null) return (null, "Meal not found");
+
+        if (meal.LoyaltyPoints == null) return (null, "You can't buy this meal");
+
+        if (user.LoyaltyPoints < meal.LoyaltyPoints) return (null, "User doesn't have enough points");
+        user.LoyaltyPoints -= meal.Points;
+
+        var orderItem = new OrderItem();
+        var mealOrdered = _mapper.Map<MealItemOrdered>(meal);
+
+        orderItem.OrderedMeal = mealOrdered;
+        orderItem.Quantity = 1;
+        orderItem.PointsPrice = meal.LoyaltyPoints.Value;
+
+        var order = new Order
+        {
+            BuyerEmail = userEmail,
+            BranchId = user.Id,
+            BuyerPhoneNumber = user.PhoneNumber,
+            Items = new List<OrderItem> { orderItem },
+            BuyerId = cashier.BranchId,
+            PointsPrice = orderItem.PointsPrice * orderItem.Quantity,
+            PaymentType = PaymentType.Points
+        };
+        _unitOfWork.Repository<Order>().Add(order);
+
+        if (await _unitOfWork.SaveChanges()) return (order, "Done");
+        return (null, "Failed to make an order");
     }
 }

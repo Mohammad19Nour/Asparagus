@@ -38,8 +38,28 @@ public static class Seed
         await SeedOrders(context);
         await SeedGifts(context);
         await SeedCar(context);
+        await SeedBundles(context);
     }
-    
+
+    private static async Task SeedBundles(DataContext context)
+    {
+        if ( await context.Bundles.AnyAsync())return;
+        for (int i = 1; i <= 3; i++)
+        {
+            foreach (int d in Enum.GetValues(typeof(SubscriptionDuration)))
+            {
+                context.Bundles.Add(new Bundle
+                {
+                    Duration = d,
+                    MealsPerDay = i,
+                    Price = i*d*3
+                }) ;
+            }
+        }
+
+        await context.SaveChangesAsync();
+    }
+
     private static async Task SeedCar(DataContext context)
     {
         if (await context.Cars.AnyAsync()) return;
@@ -891,7 +911,6 @@ public static class Seed
                 Items = new List<OrderItem>(),
 
                 OrderDate = DateTime.Now,
-                ShipToAddress = new Address(),
                 BranchId = 1,
                 Subtotal = 506.3m,
                 Status = OrderStatus.Pending,

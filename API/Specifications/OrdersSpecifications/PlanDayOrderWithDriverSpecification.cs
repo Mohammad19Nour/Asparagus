@@ -1,13 +1,14 @@
 ﻿using System.Linq.Expressions;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.Data.Entities.OrderAggregate;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Specifications.OrdersSpecifications;
 
-public class OrderWithDriverSpecification : BaseSpecification<Order>
+public class PlanDayOrderWithDriverSpecification : BaseSpecification<UserPlanDay>
 {
-    public OrderWithDriverSpecification(int orderId, int driverId)
-        : base(x=>x.DriverId == driverId && orderId == x.Id)
+    public PlanDayOrderWithDriverSpecification(int orderId)
+        : base(x=>orderId == x.Id)
     {
         AddInclude(x=>x.Include(y=>y.Driver));
     }

@@ -34,7 +34,6 @@ public class SubscriptionService : ISubscriptionService
     {
         try
         {
-            Console.WriteLine("FFF\n\n");
             var spec = new UserPlanWithMealsDrinksAndExtrasSpecification(user.Id, planType);
             return await _unitOfWork.Repository<UserPlan>().GetEntityWithSpec(spec);
         }
@@ -370,7 +369,7 @@ public class SubscriptionService : ISubscriptionService
             if (plan.NumberOfMealPerDay > subscriptionDto.NumberOfMealPerDay)
                 return (false, "Number of meal per day must be greater than or equal to the original");
 
-            var validation = _validationService.IsValidSubscriptionDto(subscriptionDto);
+            var validation = await _validationService.IsValidSubscriptionDto(subscriptionDto);
 
             var numberOfUpdatedDays = subscriptionDto.Duration - plan.Duration;
             var numberOfUpdatedSnacks = subscriptionDto.NumberOfSnacks - plan.NumberOfSnacks;
@@ -494,7 +493,7 @@ public class SubscriptionService : ISubscriptionService
     {
         try
         {
-            var validate = _validationService.IsValidSubscriptionDto(subscriptionDto);
+            var validate = await _validationService.IsValidSubscriptionDto(subscriptionDto);
             if (!validate.Success)
                 return (false, validate.Message);
 

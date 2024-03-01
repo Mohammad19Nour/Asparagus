@@ -1,4 +1,5 @@
-﻿using AsparagusN.Data.Entities.MealPlan.AdminPlans;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Enums;
 using AsparagusN.Interfaces;
@@ -17,7 +18,7 @@ public class ValidationService : IValidationService
         _unitOfWork = unitOfWork;
     }
 
-    public (bool Success, string Message) IsValidSubscriptionDto(object tmp)
+    public async Task<(bool Success, string Message)> IsValidSubscriptionDto(object tmp)
     {
         dynamic? subscriptionDto = tmp switch
         {
@@ -29,9 +30,8 @@ public class ValidationService : IValidationService
         if (subscriptionDto == null) return (false, "invalid type of subscription model");
         if (subscriptionDto.PlanType != PlanTypeEnum.CustomMealPlan)
         {
-            var isEnumValue = Enum.IsDefined(typeof(SubscriptionDuration), subscriptionDto.Duration);
-
-            if (!isEnumValue)
+            var exist = await CheckIfBundleExist(subscriptionDto.Duration,subscriptionDto.NumberOfMealPerDay);
+            if (!exist)
                 return (false, "Duration not valid");
 
             if (subscriptionDto.NumberOfMealPerDay > 3)
@@ -74,5 +74,12 @@ public class ValidationService : IValidationService
             .Where(x => x.PlanTypeEnum == planType && ids.Contains(x.Id)).ToListAsync();
 
         return adminDrinks.Distinct().ToList().Count == ids.Distinct().ToList().Count;
+    }
+
+    public async Task<bool> CheckIfBundleExist(int duration , int mealsPerDay)
+    {
+        var spec = new BundleSpecification(duration, mealsPerDay);
+        var bundle = await _unitOfWork.Repository<Bundle>().GetEntityWithSpec(spec);
+        return bundle != null;
     }
 }

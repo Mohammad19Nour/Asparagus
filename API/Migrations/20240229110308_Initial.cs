@@ -90,6 +90,37 @@ namespace AsparagusN.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Bundles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Price = table.Column<double>(type: "REAL", nullable: false),
+                    Duration = table.Column<int>(type: "INTEGER", nullable: false),
+                    MealsPerDay = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bundles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Cars",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "INTEGER", nullable: false),
+                    WorkingStartHour = table.Column<TimeSpan>(type: "TEXT", nullable: false),
+                    WorkingEndHour = table.Column<TimeSpan>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cars", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -126,7 +157,11 @@ namespace AsparagusN.Migrations
                     Price = table.Column<double>(type: "REAL", nullable: false),
                     Volume = table.Column<string>(type: "TEXT", nullable: false),
                     PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Protein = table.Column<double>(type: "REAL", nullable: false),
+                    Carb = table.Column<double>(type: "REAL", nullable: false),
+                    Fat = table.Column<double>(type: "REAL", nullable: false),
+                    Fiber = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -145,7 +180,11 @@ namespace AsparagusN.Migrations
                     Weight = table.Column<double>(type: "REAL", nullable: false),
                     PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    OptionType = table.Column<string>(type: "TEXT", nullable: false)
+                    OptionType = table.Column<string>(type: "TEXT", nullable: false),
+                    Protein = table.Column<double>(type: "REAL", nullable: false),
+                    Carb = table.Column<double>(type: "REAL", nullable: false),
+                    Fat = table.Column<double>(type: "REAL", nullable: false),
+                    Fiber = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -365,6 +404,26 @@ namespace AsparagusN.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CarWorkingDay",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Day = table.Column<int>(type: "INTEGER", nullable: false),
+                    CarId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CarWorkingDay", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CarWorkingDay_Cars_CarId",
+                        column: x => x.CarId,
+                        principalTable: "Cars",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -596,6 +655,34 @@ namespace AsparagusN.Migrations
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Booking",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CarId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Booking", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Booking_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Booking_Cars_CarId",
+                        column: x => x.CarId,
+                        principalTable: "Cars",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -946,7 +1033,11 @@ namespace AsparagusN.Migrations
                     NameEnglish = table.Column<string>(type: "TEXT", nullable: false),
                     Volume = table.Column<int>(type: "INTEGER", nullable: false),
                     PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    Price = table.Column<double>(type: "REAL", nullable: false)
+                    Price = table.Column<double>(type: "REAL", nullable: false),
+                    Protein = table.Column<double>(type: "REAL", nullable: false),
+                    Carb = table.Column<double>(type: "REAL", nullable: false),
+                    Fat = table.Column<double>(type: "REAL", nullable: false),
+                    Fiber = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -971,7 +1062,11 @@ namespace AsparagusN.Migrations
                     Weight = table.Column<double>(type: "REAL", nullable: false),
                     PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
                     OptionType = table.Column<int>(type: "INTEGER", nullable: false),
-                    Price = table.Column<double>(type: "REAL", nullable: false)
+                    Price = table.Column<double>(type: "REAL", nullable: false),
+                    Protein = table.Column<double>(type: "REAL", nullable: false),
+                    Carb = table.Column<double>(type: "REAL", nullable: false),
+                    Fat = table.Column<double>(type: "REAL", nullable: false),
+                    Fiber = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1038,7 +1133,6 @@ namespace AsparagusN.Migrations
                     Carbs = table.Column<double>(type: "REAL", nullable: false),
                     Fats = table.Column<double>(type: "REAL", nullable: false),
                     Fibers = table.Column<double>(type: "REAL", nullable: false),
-                    Calories = table.Column<double>(type: "REAL", nullable: false),
                     Quantity = table.Column<int>(type: "INTEGER", nullable: false),
                     UserPlanDayId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
@@ -1135,10 +1229,25 @@ namespace AsparagusN.Migrations
                 column: "MealId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Booking_CarId",
+                table: "Booking",
+                column: "CarId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Booking_UserId",
+                table: "Booking",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Branches_AddressId",
                 table: "Branches",
                 column: "AddressId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CarWorkingDay_CarId",
+                table: "CarWorkingDay",
+                column: "CarId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cashiers_BranchId",
@@ -1281,6 +1390,15 @@ namespace AsparagusN.Migrations
                 name: "BasketItems");
 
             migrationBuilder.DropTable(
+                name: "Booking");
+
+            migrationBuilder.DropTable(
+                name: "Bundles");
+
+            migrationBuilder.DropTable(
+                name: "CarWorkingDay");
+
+            migrationBuilder.DropTable(
                 name: "Cashiers");
 
             migrationBuilder.DropTable(
@@ -1339,6 +1457,9 @@ namespace AsparagusN.Migrations
 
             migrationBuilder.DropTable(
                 name: "CustomerBaskets");
+
+            migrationBuilder.DropTable(
+                name: "Cars");
 
             migrationBuilder.DropTable(
                 name: "Allergies");
