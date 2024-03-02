@@ -3,8 +3,11 @@ using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.Data.Entities.OrderAggregate;
+using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Enums;
 using AsparagusN.Helpers;
+using AsparagusN.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Extensions;
@@ -14,7 +17,7 @@ namespace AsparagusN.Data;
 public static class Seed
 {
     public static async Task SeedData(DataContext context, RoleManager<AppRole> roleManager,
-        UserManager<AppUser> userManager)
+        UserManager<AppUser> userManager, ISubscriptionService subscriptionService, IMapper mapper)
     {
         await SeedRoles(roleManager);
         await SeedAdminPlans(context);
@@ -35,11 +38,71 @@ public static class Seed
         await SeedUsers(userManager);
         await SeedDrivers(context, userManager);
         await SeedCashiers(context, userManager);
-        await SeedOrders(context);
+        await SeedOrders(context, mapper);
         await SeedGifts(context);
         await SeedCar(context);
         await SeedBundles(context);
+        await SeedSubscription(context, subscriptionService);
+        await SeedAssign(context);
     }
+
+    private static async Task SeedAssign(DataContext context)
+    {
+        var drivers = await context.Drivers.ToListAsync();
+        var days = await context.UserPlanDays.ToListAsync();
+
+        int p = 1;
+        int id = 1;
+        int tmp = days.Count / drivers.Count;
+        int x = 1;
+        foreach (var day in days)
+        {
+            if (x + 10 == days.Count) break;
+
+            day.DriverId = id;
+            day.Priority = p;
+            day.DayOrderStatus = (x % 2 == 0) ? PlanOrderStatus.Delivered : PlanOrderStatus.Ready;
+            p++;
+            if (p > tmp)
+            {
+                p = 1;
+                id++;
+            }
+
+            x++;
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedSubscription(DataContext context, ISubscriptionService subscriptionService)
+    {
+        if (await context.UserPlans.AnyAsync()) return;
+        var users = await context.Users.Where(x => x.IsNormalUser).ToListAsync();
+
+        var bundles = await context.Bundles.ToListAsync();
+        foreach (var user in users)
+        {
+            foreach (var bundle in bundles)
+            {
+                foreach (PlanTypeEnum plan in Enum.GetValues(typeof(PlanTypeEnum)))
+                {
+                    if (plan == PlanTypeEnum.CustomMealPlan) continue;
+
+                    var sub = new NewSubscriptionDto
+                    {
+                        Duration = bundle.Duration,
+                        NumberOfMealPerDay = bundle.MealsPerDay,
+                        NumberOfSnacks = bundle.Duration * bundle.MealsPerDay,
+                        DeliveryCity = "Test",
+                        PlanType = plan
+                    };
+                    var result = await subscriptionService.CreateSubscriptionAsync(sub, user);
+                }
+            }
+        }
+    }
+
 
     private static async Task SeedBundles(DataContext context)
     {
@@ -152,7 +215,6 @@ public static class Seed
 
     private static async Task SeedCashiers(DataContext context, UserManager<AppUser> userManager)
     {
-        Console.WriteLine("FFFFFF");
         if (await context.Cashiers.AnyAsync()) return;
         var cashiers = new List<Cashier>
         {
@@ -163,7 +225,7 @@ public static class Seed
                 Email = "john@example.com",
                 Password = "string",
                 IsActive = true,
-                BranchId = 5,
+                BranchId = 3,
                 PictureUrl = "https://example.com/picture.jpg",
                 Period = Period.Day
             },
@@ -174,7 +236,7 @@ public static class Seed
                 Email = "jane@example.com",
                 Password = "string",
                 IsActive = true,
-                BranchId = 5, // Example zone ID
+                BranchId = 3, // Example zone ID
                 PictureUrl = "https://example.com/picture2.jpg",
                 Period = Period.Night
             },
@@ -211,8 +273,8 @@ public static class Seed
                 FullName = cashier.Name,
                 EmailConfirmed = true,
             };
-              await userManager.CreateAsync(user, "string");
-             await userManager.AddToRoleAsync(user, Roles.Cashier.GetDisplayName());
+            await userManager.CreateAsync(user, "string");
+            await userManager.AddToRoleAsync(user, Roles.Cashier.GetDisplayName());
         }
 
         await context.Cashiers.AddRangeAsync(cashiers);
@@ -274,7 +336,14 @@ public static class Seed
             FullName = "user",
             EmailConfirmed = true,
             LoyaltyPoints = 152362,
-            IsNormalUser = true
+            IsNormalUser = true,
+            HomeAddress = new Address
+            {
+                City = "Test",
+                BuildingName = "ttt",
+                StreetName = "gfdd",
+                ApartmentNumber = 250
+            }
         };
         await userManager.CreateAsync(user, "string");
         await userManager.AddToRoleAsync(user, Roles.User.GetDisplayName());
@@ -285,7 +354,47 @@ public static class Seed
             FullName = "duser",
             EmailConfirmed = true,
             LoyaltyPoints = 152362,
-            IsNormalUser = true
+            IsNormalUser = true, HomeAddress = new Address
+            {
+                City = "Test",
+                BuildingName = "ttt",
+                StreetName = "gfdd",
+                ApartmentNumber = 250
+            }
+        };
+        await userManager.CreateAsync(user, "string");
+        await userManager.AddToRoleAsync(user, Roles.User.GetDisplayName());
+        user = new AppUser
+        {
+            Email = "ud@u.vvu",
+            UserName = "du@u.vvu",
+            FullName = "duser",
+            EmailConfirmed = true,
+            LoyaltyPoints = 152362,
+            IsNormalUser = true, HomeAddress = new Address
+            {
+                City = "Test",
+                BuildingName = "ttt",
+                StreetName = "gfdd",
+                ApartmentNumber = 250
+            }
+        };
+        await userManager.CreateAsync(user, "string");
+        await userManager.AddToRoleAsync(user, Roles.User.GetDisplayName());
+        user = new AppUser
+        {
+            Email = "ud@u.ssu",
+            UserName = "du@u.ssu",
+            FullName = "duser",
+            EmailConfirmed = true,
+            LoyaltyPoints = 152362,
+            IsNormalUser = true, HomeAddress = new Address
+            {
+                City = "Test",
+                BuildingName = "ttt",
+                StreetName = "gfdd",
+                ApartmentNumber = 250
+            }
         };
         await userManager.CreateAsync(user, "string");
         await userManager.AddToRoleAsync(user, Roles.User.GetDisplayName());
@@ -906,33 +1015,47 @@ public static class Seed
         await _context.SaveChangesAsync();
     }
 
-    private static async Task SeedOrders(DataContext context)
+    private static async Task SeedOrders(DataContext context, IMapper mapper)
     {
         try
         {
             if (await context.Orders.AnyAsync()) return;
             var users = await context.Users.Where(x => x.IsNormalUser).ToListAsync();
+            var meals = await context.Meals.ToListAsync();
 
-            int c = 0;
-            foreach (var user in users)
+            for (int j = 1; j <= 3; j++)
             {
-                if (c > 4) c = 1;
-                var order = new Order
-                {
-                    BuyerEmail = user.Email,
-                    BuyerPhoneNumber = user.PhoneNumber,
-                    Items = new List<OrderItem>(),
+                var items = new List<OrderItem>();
 
-                    OrderDate = DateTime.Now,
-                    BranchId = ++c,
-                    Subtotal = 506.3m,
-                    Status = OrderStatus.Pending,
-                    PaymentType = PaymentType.Cash,
-                    PointsPrice = 0,
-                    GainedPoints = 0,
-                    BuyerId = user.Id
-                };
-            await    context.Orders.AddAsync(order);
+                for (int k = 1; k <= 2; k++)
+                {
+                    var item = new OrderItem();
+                    var mealOrder = mapper.Map<MealItemOrdered>(meals[k]);
+                    item.OrderedMeal = mealOrder;
+                    item.Quantity = k + j;
+                    item.Price = meals[k].Price;
+                    items.Add(item);
+                }
+
+                foreach (var user in users)
+                {
+                    var order = new Order
+                    {
+                        BuyerEmail = user.Email,
+                        BuyerPhoneNumber = user.PhoneNumber,
+                        Items = items,
+
+                        OrderDate = DateTime.Now,
+                        BranchId = j,
+                        Subtotal = items.Sum(c => c.Price * c.Quantity),
+                        Status = OrderStatus.Pending,
+                        PaymentType = PaymentType.Cash,
+                        PointsPrice = 0,
+                        GainedPoints = 0,
+                        BuyerId = user.Id
+                    };
+                    await context.Orders.AddAsync(order);
+                }
             }
 
             await context.SaveChangesAsync();

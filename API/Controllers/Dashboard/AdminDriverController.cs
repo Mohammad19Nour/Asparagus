@@ -1,4 +1,6 @@
-﻿using AsparagusN.Data.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs.DriverDtos;
@@ -261,9 +263,17 @@ public class AdminDriverController : BaseApiController
     }
 
     [HttpGet("orders")]
-    public async Task<ActionResult> GetPlanDayOrders(PlanOrderStatus status,DateTime day)
+    public async Task<ActionResult> GetPlanDayOrders(PlanOrderStatus status, string day)
     {
-        var spec = new PlanDayOrdersWithItemsAndDriverSpecification(status,day);
+        DateTime resultDateTime;
+        if (!DateTime.TryParseExact(day.ToString(CultureInfo.InvariantCulture), "dd-MM-yyyy",
+                System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None,
+                out resultDateTime))
+        {
+            return Ok(new ApiResponse(400, "the date format must be in dd-MM-yyyy format"));
+        }
+
+        var spec = new PlanDayOrdersWithItemsAndDriverSpecification(status, resultDateTime);
         var orders = await _unitOfWork.Repository<UserPlanDay>().ListWithSpecAsync(spec);
 
         return Ok(orders);

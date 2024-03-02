@@ -4,8 +4,10 @@ using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Extensions;
 using AsparagusN.Helpers;
 using AsparagusN.Helpers.MappingProfiles;
+using AsparagusN.Interfaces;
 using AsparagusN.Middleware;
 using AsparagusN.SignalR;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -63,8 +65,10 @@ try
     var context = services.GetRequiredService<DataContext>();
     var roleContext = services.GetRequiredService<RoleManager<AppRole>>();
     var userContext = services.GetRequiredService<UserManager<AppUser>>();
+    var mapper = services.GetRequiredService<IMapper>();
+    var subscriptionService = services.GetRequiredService<ISubscriptionService>();
     await context.Database.MigrateAsync();
-    await Seed.SeedData(context, roleContext,userContext);
+    await Seed.SeedData(context, roleContext,userContext,subscriptionService,mapper);
 }
 catch (Exception e)
 {

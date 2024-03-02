@@ -2,12 +2,15 @@
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.Data.Entities.OrderAggregate;
+using AsparagusN.DTOs.DriverDtos;
+using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AsparagusN.Specifications.OrdersSpecifications;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,11 +20,13 @@ public class DriversController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly INotificationService _notificationService;
+    private readonly IMapper _mapper;
 
-    public DriversController(IUnitOfWork unitOfWork, INotificationService notificationService)
+    public DriversController(IUnitOfWork unitOfWork, INotificationService notificationService,IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _notificationService = notificationService;
+        _mapper = mapper;
     }
 
     [HttpGet("orders")]
@@ -35,7 +40,7 @@ public class DriversController : BaseApiController
 
         var spec = new PlanDayOrdersForDriverWithStatusSpecification(driver.Id, PlanOrderStatus.Ready);
         var orders = await _unitOfWork.Repository<UserPlanDay>().ListWithSpecAsync(spec);
-        return Ok(orders);
+        return Ok(new ApiOkResponse<List<UserPlanDayDto>>(_mapper.Map<List<UserPlanDayDto>>(orders)));
     }
 
     [HttpPut]
@@ -102,5 +107,16 @@ public class DriversController : BaseApiController
 
         return (Ok(new ApiResponse(200, "Updated")));
     }
-    //[HttpGet("info")]
+/*
+    [HttpGet("info")]
+    public async Task<ActionResult<DriverDto>> GetInfo()
+    {
+        var email = User.GetEmail();
+        var spec = new DriverSpecification(email.ToLower());
+        var driver = await _unitOfWork.Repository<Driver>().GetEntityWithSpec(spec);
+
+        if (driver == null) return Ok(new ApiResponse(404, "driver not found"));
+        
+        //return Ok(new ApiOkResponse<DriverDto>(_ma))
+    }*/
 }

@@ -15,4 +15,8 @@ public class DriverSpecification : BaseSpecification<Driver>
     {
         AddInclude(x=>x.Include(y=>y.Zone));
     }
+    public DriverSpecification(string email) : base(x=>x.Email.ToLower() == email)
+    {
+        AddInclude(x=>x.Include(y=>y.Zone));
+    }
 }
