@@ -14,13 +14,13 @@ public class CarProfile : Profile
             .ForAllMembers(dest => dest.Condition((src, b, member) => member != default));
     }
 
-    private List<CarWorkingDay> getEnumDays(List<int> cWorkingDays)
+    private List<CarWorkingDay> getEnumDays(List<bool> cWorkingDays)
     {
         var num = new List<CarWorkingDay>(7);
 
         for (int j = 0; j < 7; j++)
         {
-            if (cWorkingDays[j] != 1) continue;
+            if (cWorkingDays[j]) continue;
             int id = (j + 2) % 7;
             var day = (DayOfWeek)id;
 

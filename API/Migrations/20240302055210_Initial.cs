@@ -452,6 +452,7 @@ namespace AsparagusN.Migrations
                     Fibers = table.Column<double>(type: "REAL", nullable: false),
                     PricePerProtein = table.Column<double>(type: "REAL", nullable: false),
                     PricePerCarb = table.Column<double>(type: "REAL", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -703,7 +704,9 @@ namespace AsparagusN.Migrations
                     NumberOfSnacks = table.Column<int>(type: "INTEGER", nullable: false),
                     NumberOfRemainingSnacks = table.Column<int>(type: "INTEGER", nullable: false),
                     Notes = table.Column<string>(type: "TEXT", nullable: true),
-                    DeliveryCity = table.Column<string>(type: "TEXT", nullable: false)
+                    DeliveryCity = table.Column<string>(type: "TEXT", nullable: false),
+                    CarbPerMealForCustomPlan = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProteinPerMealForCustomPlan = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -897,39 +900,24 @@ namespace AsparagusN.Migrations
                     BuyerId = table.Column<int>(type: "INTEGER", nullable: false),
                     BuyerPhoneNumber = table.Column<string>(type: "TEXT", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ShipToAddressId = table.Column<int>(type: "INTEGER", nullable: false),
                     BranchId = table.Column<int>(type: "INTEGER", nullable: false),
                     Subtotal = table.Column<double>(type: "REAL", nullable: false),
                     Status = table.Column<string>(type: "TEXT", nullable: false),
                     PaymentType = table.Column<string>(type: "TEXT", nullable: false),
                     PointsPrice = table.Column<int>(type: "INTEGER", nullable: false),
                     BillId = table.Column<string>(type: "TEXT", nullable: true),
-                    DriverId = table.Column<int>(type: "INTEGER", nullable: true),
                     GainedPoints = table.Column<int>(type: "INTEGER", nullable: false),
-                    CouponValue = table.Column<double>(type: "REAL", nullable: false),
-                    Priority = table.Column<int>(type: "INTEGER", nullable: true)
+                    CouponValue = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Orders_Address_ShipToAddressId",
-                        column: x => x.ShipToAddressId,
-                        principalTable: "Address",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Orders_Branches_BranchId",
                         column: x => x.BranchId,
                         principalTable: "Branches",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Orders_Drivers_DriverId",
-                        column: x => x.DriverId,
-                        principalTable: "Drivers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -965,6 +953,8 @@ namespace AsparagusN.Migrations
                     DeliveryLocationId = table.Column<int>(type: "INTEGER", nullable: false),
                     DeliveryPeriod = table.Column<string>(type: "TEXT", nullable: false),
                     IsHomeAddress = table.Column<bool>(type: "INTEGER", nullable: false),
+                    DriverId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Priority = table.Column<int>(type: "INTEGER", nullable: true),
                     DayOrderStatus = table.Column<int>(type: "INTEGER", nullable: false),
                     IsCustomerInfoPrinted = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsMealsInfoPrinted = table.Column<bool>(type: "INTEGER", nullable: false)
@@ -976,6 +966,11 @@ namespace AsparagusN.Migrations
                         name: "FK_UserPlanDays_Address_DeliveryLocationId",
                         column: x => x.DeliveryLocationId,
                         principalTable: "Address",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UserPlanDays_Drivers_DriverId",
+                        column: x => x.DriverId,
+                        principalTable: "Drivers",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UserPlanDays_UserPlans_UserPlanId",
@@ -1290,16 +1285,6 @@ namespace AsparagusN.Migrations
                 column: "BranchId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_DriverId",
-                table: "Orders",
-                column: "DriverId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_ShipToAddressId",
-                table: "Orders",
-                column: "ShipToAddressId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Questions_ParentFAQId",
                 table: "Questions",
                 column: "ParentFAQId");
@@ -1313,6 +1298,11 @@ namespace AsparagusN.Migrations
                 name: "IX_UserPlanDays_DeliveryLocationId",
                 table: "UserPlanDays",
                 column: "DeliveryLocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPlanDays_DriverId",
+                table: "UserPlanDays",
+                column: "DriverId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPlanDays_UserPlanId",

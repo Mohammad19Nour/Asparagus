@@ -211,8 +211,8 @@ public static class Seed
                 FullName = cashier.Name,
                 EmailConfirmed = true,
             };
-            //  await userManager.CreateAsync(user, "string");
-            // await userManager.AddToRoleAsync(user, Roles.Cashier.GetDisplayName());
+              await userManager.CreateAsync(user, "string");
+             await userManager.AddToRoleAsync(user, Roles.Cashier.GetDisplayName());
         }
 
         await context.Cashiers.AddRangeAsync(cashiers);
@@ -273,7 +273,8 @@ public static class Seed
             UserName = "u@u.u",
             FullName = "user",
             EmailConfirmed = true,
-            LoyaltyPoints = 152362
+            LoyaltyPoints = 152362,
+            IsNormalUser = true
         };
         await userManager.CreateAsync(user, "string");
         await userManager.AddToRoleAsync(user, Roles.User.GetDisplayName());
@@ -283,7 +284,8 @@ public static class Seed
             UserName = "du@u.u",
             FullName = "duser",
             EmailConfirmed = true,
-            LoyaltyPoints = 152362
+            LoyaltyPoints = 152362,
+            IsNormalUser = true
         };
         await userManager.CreateAsync(user, "string");
         await userManager.AddToRoleAsync(user, Roles.User.GetDisplayName());
@@ -906,29 +908,39 @@ public static class Seed
 
     private static async Task SeedOrders(DataContext context)
     {
-        if (await context.Orders.AnyAsync()) return;
-        var users = await context.Users.Where(x => x.IsNormalUser).ToListAsync();
-
-        foreach (var user in users)
+        try
         {
-            var order = new Order
+            if (await context.Orders.AnyAsync()) return;
+            var users = await context.Users.Where(x => x.IsNormalUser).ToListAsync();
+
+            int c = 0;
+            foreach (var user in users)
             {
-                BuyerEmail = user.Email,
-                BuyerPhoneNumber = user.PhoneNumber,
-                Items = new List<OrderItem>(),
+                if (c > 4) c = 1;
+                var order = new Order
+                {
+                    BuyerEmail = user.Email,
+                    BuyerPhoneNumber = user.PhoneNumber,
+                    Items = new List<OrderItem>(),
 
-                OrderDate = DateTime.Now,
-                BranchId = 1,
-                Subtotal = 506.3m,
-                Status = OrderStatus.Pending,
-                PaymentType = PaymentType.Cash,
-                PointsPrice = 0,
-                GainedPoints = 0,
-                BuyerId = user.Id
-            };
-            context.Orders.Add(order);
+                    OrderDate = DateTime.Now,
+                    BranchId = ++c,
+                    Subtotal = 506.3m,
+                    Status = OrderStatus.Pending,
+                    PaymentType = PaymentType.Cash,
+                    PointsPrice = 0,
+                    GainedPoints = 0,
+                    BuyerId = user.Id
+                };
+            await    context.Orders.AddAsync(order);
+            }
+
+            await context.SaveChangesAsync();
         }
-
-        await context.SaveChangesAsync();
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

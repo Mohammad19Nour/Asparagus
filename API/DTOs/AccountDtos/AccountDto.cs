@@ -19,5 +19,7 @@ public class AccountDto
     public DateTime Birthday { get; set; }
     public AddressDto HomeAddress { get; set; }
     public AddressDto WorkAddress { get; set; }
+    public int LoyaltyPoints { get; set; }
+
     
 }

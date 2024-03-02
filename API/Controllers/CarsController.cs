@@ -1,7 +1,10 @@
-﻿using AsparagusN.Data.Entities.Identity;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.Identity;
 using AsparagusN.DTOs.CarDtos;
+using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
+using AsparagusN.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +23,15 @@ public class CarsController : BaseApiController
         _mapper = mapper;
         _carService = carService;
     }
+
+    /*[HttpGet]
+    public async Task<ActionResult> GetCarInfo()
+    {
+        var spec = new CarSpecification();
+        var car = await _unitOfWork.Repository<Car>().GetEntityWithSpec(spec);
+
+        return Ok(new ApiOkResponse<CatInfoDto>(_mapper.Map<CatInfoDto>(car)));
+    }*/
 
     [HttpPost]
     public async Task<ActionResult> UpdateCar(UpdateCarDto dto)

@@ -38,7 +38,7 @@ public class DriversController : BaseApiController
         return Ok(orders);
     }
 
-    [HttpPut("{driverId:int}")]
+    [HttpPut]
     public async Task<ActionResult> ChangeDriverStatus()
     {
         var email = User.GetEmail();
@@ -102,4 +102,5 @@ public class DriversController : BaseApiController
 
         return (Ok(new ApiResponse(200, "Updated")));
     }
+    //[HttpGet("info")]
 }

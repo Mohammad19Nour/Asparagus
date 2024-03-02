@@ -14,5 +14,5 @@ public class UpdateCarDto
 
     [MinLength(7, ErrorMessage = "WorkingDays list must have a length of 7 "),
      MaxLength(7, ErrorMessage = "WorkingDays list must have a length of 7 representing all days of the week.")]
-    public List<int> WorkingDays { get; set; } = new List<int>();
+    public List<bool> WorkingDays { get; set; } = new List<bool>();
 }
