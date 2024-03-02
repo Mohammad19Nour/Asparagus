@@ -24,6 +24,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     {
     }
 
+    public DbSet<UnavailableMeal> UnvailableMeals { get; set; }
     public DbSet<Cashier> Cashiers { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<AdminSelectedCarb> AdminSelectedCarbs { get; set; }
@@ -134,14 +135,6 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
                 userPlan.NumberOfRemainingSnacks = userPlan.NumberOfSnacks;
                 var dif = (userPlan.StartDate - userPlan.CreatedDate).TotalDays;
                 if (dif < 2) userPlan.StartDate = userPlan.CreatedDate.AddDays(2);
-            }
-        }
-        foreach (var entry in ChangeTracker.Entries<Meal>())
-        {
-            if (entry.State == EntityState.Added)
-            {
-                var meal = entry.Entity;
-                meal.IsAvailable = true;
             }
         }
 

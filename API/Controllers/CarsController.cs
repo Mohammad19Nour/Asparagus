@@ -7,6 +7,7 @@ using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,13 +44,15 @@ public class CarsController : BaseApiController
         return Ok(new ApiOkResponse<CatInfoDto>(_mapper.Map<CatInfoDto>(car)));
     }
 
+
     [HttpPost]
     public async Task<ActionResult> UpdateCar(UpdateCarDto dto)
     {
         var res = await _carService.UpdateCar(dto, 1);
-        return Ok(res);
+        return Ok(new ApiResponse(200));
     }
 
+    [Authorize]
     [HttpPost("book")]
     public async Task<ActionResult> MakeBooking(DateTime start)
     {
@@ -57,13 +60,16 @@ public class CarsController : BaseApiController
         var user = await _unitOfWork.Repository<AppUser>().GetQueryable()
             .Where(c => c.Email.ToLower() == email.ToLower()).FirstAsync();
         var result = await _carService.MakeBooking(user.Id, start);
-        return Ok(result);
+
+        if (result.Success)
+            return Ok(new ApiResponse(200));
+        return Ok(new ApiResponse(400, result.Message));
     }
 
     [HttpGet("available")]
     public async Task<ActionResult<List<List<(DateTime Start, DateTime End)>>>> GetAvailable()
     {
         var result = await _carService.GetAvailableDates();
-        return Ok(result);
+        return Ok(new ApiOkResponse<object>(result));
     }
 }

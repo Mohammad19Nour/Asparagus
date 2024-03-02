@@ -1,6 +1,7 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
+using AsparagusN.DTOs;
 using AsparagusN.DTOs.DriverDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
@@ -267,7 +268,7 @@ public class AdminDriverController : BaseApiController
         var spec = new PlanDayOrdersWithItemsAndDriverSpecification(status, resultDateTime);
         var orders = await _unitOfWork.Repository<UserPlanDay>().ListWithSpecAsync(spec);
 
-        return Ok(orders);
+        return Ok(new ApiOkResponse<List<OrderUserPlanDayDto>>(_mapper.Map<List<OrderUserPlanDayDto>>(orders)));
     }
     [HttpPut("change")]
 

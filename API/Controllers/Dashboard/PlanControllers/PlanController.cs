@@ -46,14 +46,30 @@ public partial class PlanController : BaseApiController
 
         var days = await _unitOfWork.Repository<AdminPlanDay>().ListWithSpecAsync(specDays);
         result.Drinks = await _getDrinks(planType);
-        result.ExtraOptionDtos = await _getExtraOptions(planType,null);
+        result.ExtraOptionDtos = await _getExtraOptions(planType, null);
         result.Snacks = await _getSnacks(planType);
         result.Days = _mapper.Map<List<AdminPlanDayDto>>(days);
+        if (PlanTypeEnum.CustomMealPlan == planType)
+        {
+           
+            var meals = await _unitOfWork.Repository<Meal>().ListAllAsync();
+            
+
+            foreach (var day in result.Days)
+            {
+                var specUn = new UnavailableMealsInAdminDaySpecification(day.Id);
+                var unavailableMeals = await _unitOfWork.Repository<UnavailableMeal>().ListWithSpecAsync(specUn);
+
+                var mls =  meals.Where(m => unavailableMeals.All(un => un.MealId != m.Id)).ToList();
+                day.Meals = _mapper.Map<List<MealWithIngredientsDto>>(mls);
+            }
+        }
 
 
         var response = new ApiOkResponse<PlanDetailsDto>(result);
         return Ok(response);
     }
+    
 
     [HttpGet("day")]
     public async Task<ActionResult<AdminPlanDayDto>> GetPlanDay([FromQuery] int dayId)
@@ -158,6 +174,12 @@ public partial class PlanController : BaseApiController
 
     private async Task<List<ExtraOptionDto>> _getExtraOptions(PlanTypeEnum planTypeEnum, ExtraOptionType? optionType)
     {
+        if (planTypeEnum == PlanTypeEnum.CustomMealPlan)
+        {
+            var ext = await _unitOfWork.Repository<ExtraOption>().ListAllAsync();
+            return _mapper.Map<List<ExtraOptionDto>>(ext);
+        }
+
         var spec = new AdminSelectedExtrasAndSaladsSpecification(planTypeEnum);
         if (optionType != null)
             spec = new AdminSelectedExtrasAndSaladsSpecification(optionType.Value, planTypeEnum);
@@ -168,6 +190,12 @@ public partial class PlanController : BaseApiController
 
     private async Task<List<DrinkDto>> _getDrinks(PlanTypeEnum planTypeEnum)
     {
+        if (planTypeEnum == PlanTypeEnum.CustomMealPlan)
+        {
+            var drks = await _unitOfWork.Repository<Drink>().ListAllAsync();
+            return _mapper.Map<List<DrinkDto>>(drks);
+        }
+
         var spec = new AdminSelectedDrinksSpecification(planTypeEnum);
         var drinks = await _unitOfWork.Repository<AdminSelectedDrink>()
             .ListWithSpecAsync(spec);
@@ -178,6 +206,13 @@ public partial class PlanController : BaseApiController
 
     private async Task<List<SnackDto>> _getSnacks(PlanTypeEnum planTypeEnum)
     {
+        if (planTypeEnum == PlanTypeEnum.CustomMealPlan)
+        {
+            var sp = new SnackMealsSpecification();
+            var snks = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(sp);
+            return _mapper.Map<List<SnackDto>>(snks);
+        }
+
         var spec = new AdminSelectedSnacksSpecification(planTypeEnum);
         var drinks = await _unitOfWork.Repository<AdminSelectedSnack>()
             .ListWithSpecAsync(spec);

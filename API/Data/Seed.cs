@@ -103,18 +103,38 @@ public static class Seed
                 }
             }
         }
-
+        await context.SaveChangesAsync();
         var days = await context.UserPlanDays.ToListAsync();
-        var adminMeals = await context.AdminSelectedMeals.Include(y => y.Meal).ToListAsync();
-        var adminDrinks = await context.AdminSelectedDrinks.ToListAsync();
+        var adminMeals = await context.AdminSelectedMeals
+            .Include(y => y.Meal).ToListAsync();
+     //   var adminDrinks = await context.AdminSelectedDrinks.ToListAsync();
+     var ingredients = await context.MealIngredients
+         .Include(x => x.Ingredient)
+         .Where(x => x.MealId == adminMeals[0].MealId).ToListAsync();
+
+     var carb = ingredients.FirstOrDefault(x => x.Ingredient.TypeOfIngredient == IngredientType.Carb);
+
+     var carbSelected = new UserMealCarb();
+     if (carb != null)
+     {
+         mapper.Map(carb.Ingredient, carbSelected);
+         HelperFunctions.CalcNewPropertyForCarbOfMeal(carbSelected,carb.Weight,carb.Ingredient.Weight);
+     }
+
+    
         foreach (var day in days)
         {
             var meal = mapper.Map<UserSelectedMeal>(adminMeals[0].Meal);
-            meal.Id = 0;
+            meal.ChangedCarb = carbSelected;
+
+            meal.OriginalMealId = adminMeals[0].Meal.Id;
+            meal.UserPlanDayId = day.Id;
             day.SelectedMeals.Add(meal);
+            context.UserPlanDays.Update(day);
+            await context.SaveChangesAsync();
         }
 
-        await context.SaveChangesAsync();
+        
     }
 
 
@@ -568,6 +588,11 @@ public static class Seed
             {
                 Points = 40,
                 PlanTypeE = PlanTypeEnum.FutureLeader
+            },
+             new PlanType
+            {
+                Points = 40,
+                PlanTypeE = PlanTypeEnum.CustomMealPlan
             }
         };
 
@@ -761,21 +786,14 @@ public static class Seed
         for (var j = 0; j <= 6; j++)
         {
             var date = startDay.AddDays(j).Date;
-            context.AdminPlans.Add(new AdminPlanDay
+            foreach (PlanTypeEnum type in Enum.GetValues(typeof(PlanTypeEnum)))
             {
-                PlanType = PlanTypeEnum.MaintainWeight,
-                AvailableDate = date
-            });
-            context.AdminPlans.Add(new AdminPlanDay
-            {
-                PlanType = PlanTypeEnum.LossWeight,
-                AvailableDate = date
-            });
-            context.AdminPlans.Add(new AdminPlanDay
-            {
-                PlanType = PlanTypeEnum.FutureLeader,
-                AvailableDate = date
-            });
+                context.AdminPlans.Add(new AdminPlanDay
+                {
+                    PlanType = type,
+                    AvailableDate = date
+                });
+            }
         }
 
         await context.SaveChangesAsync();
@@ -1016,6 +1034,7 @@ public static class Seed
 
         foreach (var day in days)
         {
+            if (day.PlanType == PlanTypeEnum.CustomMealPlan)continue;
             day.Meals.Add(new AdminSelectedMeal { MealId = cnt++ });
             if (cnt == 5) cnt = 1;
 
@@ -1039,8 +1058,6 @@ public static class Seed
 
             for (int j = 1; j <= 3; j++)
             {
-                
-
                 foreach (var user in users)
                 {
                     var items = new List<OrderItem>();
@@ -1054,6 +1071,7 @@ public static class Seed
                         item.Price = meals[k].Price;
                         items.Add(item);
                     }
+
                     var order = new Order
                     {
                         BuyerEmail = user.Email,
