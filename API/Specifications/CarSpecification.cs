@@ -6,14 +6,16 @@ namespace AsparagusN.Specifications;
 
 public class CarSpecification : BaseSpecification<Car>
 {
-    public CarSpecification(int id) : base(x=>x.Id == id)
+    public CarSpecification(int id) : base(x => x.Id == id)
     {
-        AddInclude(c=>c.Include(y=>y.WorkingDays));
-        AddInclude(c=>c.Include(y=>y.Bookings));
+        AddInclude(c => c.Include(y => y.WorkingDays));
+        AddInclude(c => c.Include(y => y.Bookings));
     }
-    public CarSpecification() : base(x=>true)
+
+    public CarSpecification(bool includeBooking = true) : base(x => true)
     {
-        AddInclude(c=>c.Include(y=>y.WorkingDays));
-        AddInclude(c=>c.Include(y=>y.Bookings));
+        AddInclude(c => c.Include(y => y.WorkingDays));
+        if (includeBooking)
+            AddInclude(c => c.Include(y => y.Bookings).ThenInclude(u => u.User));
     }
 }

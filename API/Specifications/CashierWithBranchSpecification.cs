@@ -15,4 +15,8 @@ public class CashierWithBranchSpecification : BaseSpecification<Cashier>
     {
         AddInclude(x=>x.Include(y=>y.Branch));
     }
+    public CashierWithBranchSpecification(string email) : base(x=>x.Email == email)
+    {
+        AddInclude(x=>x.Include(y=>y.Branch));
+    }
 }

@@ -5,10 +5,12 @@ using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers;
 
+[Authorize]
 public class FaqController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -48,7 +50,7 @@ public class FaqController : BaseApiController
                 Id = faq.Id,
                 Title = faq.Title,
                 Questions = qstn
-            }; 
+            };
             result.Add(q);
         }
 
@@ -106,7 +108,7 @@ public class FaqController : BaseApiController
 
         return Ok(new ApiResponse(400, "Failed to add"));
     }
-    
+
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteTitle(int id)
     {
@@ -115,11 +117,11 @@ public class FaqController : BaseApiController
 
         if (faq == null) return Ok(new ApiResponse(404, "Title not found"));
 
-        
-       recDelete(faq);
+
+        recDelete(faq);
 
         if (await _unitOfWork.SaveChanges())
-            return Ok(new ApiResponse(200,"Deleted"));
+            return Ok(new ApiResponse(200, "Deleted"));
 
         return Ok(new ApiResponse(400, "Failed to delete"));
     }

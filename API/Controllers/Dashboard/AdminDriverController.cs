@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Globalization;
-using AsparagusN.Data.Entities;
+﻿using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs.DriverDtos;
@@ -16,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Extensions;
 
 namespace AsparagusN.Controllers.Dashboard;
-
 public class AdminDriverController : BaseApiController
 {
     private readonly IMediaService _mediaService;
@@ -263,19 +260,29 @@ public class AdminDriverController : BaseApiController
     }
 
     [HttpGet("orders")]
-    public async Task<ActionResult> GetPlanDayOrders(PlanOrderStatus status, string day)
+    public async Task<ActionResult> GetPlanDayOrders(PlanOrderStatus status)
     {
-        DateTime resultDateTime;
-        if (!DateTime.TryParseExact(day.ToString(CultureInfo.InvariantCulture), "dd-MM-yyyy",
-                System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None,
-                out resultDateTime))
-        {
-            return Ok(new ApiResponse(400, "the date format must be in dd-MM-yyyy format"));
-        }
+        DateTime resultDateTime = DateTime.Now.Date;
 
         var spec = new PlanDayOrdersWithItemsAndDriverSpecification(status, resultDateTime);
         var orders = await _unitOfWork.Repository<UserPlanDay>().ListWithSpecAsync(spec);
 
         return Ok(orders);
+    }
+    [HttpPut("change")]
+
+    public async Task<ActionResult> Active(int driverId)
+    {
+        var driver = await _unitOfWork.Repository<Driver>().GetByIdAsync(driverId);
+
+        if (driver == null)
+            return Ok(new ApiResponse(404, "Driver not found"));
+
+        driver.IsActive = !driver.IsActive;
+        _unitOfWork.Repository<Driver>().Update(driver);
+
+        if (await _unitOfWork.SaveChanges())
+            return Ok(new ApiResponse(200));
+        return Ok(new ApiResponse(400, "Failed to update driver"));
     }
 }

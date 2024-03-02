@@ -2,6 +2,7 @@
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
+using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.Data.Entities.OrderAggregate;
 using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Enums;
@@ -42,7 +43,7 @@ public static class Seed
         await SeedGifts(context);
         await SeedCar(context);
         await SeedBundles(context);
-        await SeedSubscription(context, subscriptionService);
+        await SeedSubscription(context, subscriptionService,mapper);
         await SeedAssign(context);
     }
 
@@ -75,7 +76,8 @@ public static class Seed
         await context.SaveChangesAsync();
     }
 
-    private static async Task SeedSubscription(DataContext context, ISubscriptionService subscriptionService)
+    private static async Task SeedSubscription(DataContext context, ISubscriptionService subscriptionService,
+        IMapper mapper)
     {
         if (await context.UserPlans.AnyAsync()) return;
         var users = await context.Users.Where(x => x.IsNormalUser).ToListAsync();
@@ -101,6 +103,16 @@ public static class Seed
                 }
             }
         }
+
+        var days = await context.UserPlanDays.ToListAsync();
+        var adminMeals = await context.AdminSelectedMeals.ToListAsync();
+        var adminDrinks = await context.AdminSelectedDrinks.ToListAsync();
+        foreach (var day in days)
+        {
+            var meal = mapper.Map<UserSelectedMeal>(adminMeals[0]) ;
+            day.SelectedMeals.Add(meal);
+        }
+        await context.SaveChangesAsync();
     }
 
 

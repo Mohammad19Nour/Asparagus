@@ -2,18 +2,21 @@
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.OrderAggregate;
+using AsparagusN.DTOs.CashierDtos;
 using AsparagusN.DTOs.OrderDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
+using AsparagusN.Specifications;
 using AsparagusN.Specifications.OrdersSpecifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers;
-
+[Authorize]
 public class CashiersController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -67,5 +70,16 @@ public class CashiersController : BaseApiController
 
         if (result.Order != null) return Ok(new ApiResponse(200, "Order created"));
         return Ok(new ApiResponse(400, "Failed to create order"));
+    }
+    [HttpGet("info")]
+    public async Task<ActionResult<CashierDto>> GetInfo()
+    {
+        var email = User.GetEmail();
+        var spec = new CashierWithBranchSpecification(email.ToLower());
+        var driver = await _unitOfWork.Repository<Cashier>().GetEntityWithSpec(spec);
+
+        if (driver == null) return Ok(new ApiResponse(404, "Cashier not found"));
+
+        return Ok(new ApiOkResponse<CashierDto>(_mapper.Map<CashierDto>(driver)));
     }
 }

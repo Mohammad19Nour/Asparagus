@@ -2,6 +2,7 @@
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.Data.Entities.OrderAggregate;
+using AsparagusN.DTOs;
 using AsparagusN.DTOs.DriverDtos;
 using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Enums;
@@ -11,18 +12,19 @@ using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AsparagusN.Specifications.OrdersSpecifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers;
-
+[Authorize]
 public class DriversController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly INotificationService _notificationService;
     private readonly IMapper _mapper;
 
-    public DriversController(IUnitOfWork unitOfWork, INotificationService notificationService,IMapper mapper)
+    public DriversController(IUnitOfWork unitOfWork, INotificationService notificationService, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _notificationService = notificationService;
@@ -38,9 +40,21 @@ public class DriversController : BaseApiController
 
         if (driver == null) return Ok(new ApiResponse(404, "driver not found"));
 
+        var users = await _unitOfWork.Repository<AppUser>().ListAllAsync();
+
         var spec = new PlanDayOrdersForDriverWithStatusSpecification(driver.Id, PlanOrderStatus.Ready);
         var orders = await _unitOfWork.Repository<UserPlanDay>().ListWithSpecAsync(spec);
-        return Ok(new ApiOkResponse<List<UserPlanDayDto>>(_mapper.Map<List<UserPlanDayDto>>(orders)));
+
+        var orderToReturn = _mapper.Map<List<OrderUserPlanDayDto>>(orders);
+        for (int j = 0; j < orders.Count; j++)
+        {
+            var user = users.First(c => c.Id == orders[j].UserPlan.AppUserId);
+            orderToReturn[j].PhoneNumber = user.PhoneNumber;
+            orderToReturn[j].Username = user.FullName;
+            orderToReturn[j].PictureUrl = user.PictureUrl;
+        }
+
+        return Ok(new ApiOkResponse<List<OrderUserPlanDayDto>>(orderToReturn));
     }
 
     [HttpPut]
@@ -107,7 +121,7 @@ public class DriversController : BaseApiController
 
         return (Ok(new ApiResponse(200, "Updated")));
     }
-/*
+
     [HttpGet("info")]
     public async Task<ActionResult<DriverDto>> GetInfo()
     {
@@ -116,7 +130,7 @@ public class DriversController : BaseApiController
         var driver = await _unitOfWork.Repository<Driver>().GetEntityWithSpec(spec);
 
         if (driver == null) return Ok(new ApiResponse(404, "driver not found"));
-        
-        //return Ok(new ApiOkResponse<DriverDto>(_ma))
-    }*/
+
+        return Ok(new ApiOkResponse<DriverDto>(_mapper.Map<DriverDto>(driver)));
+    }
 }
