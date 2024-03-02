@@ -43,7 +43,7 @@ public static class Seed
         await SeedGifts(context);
         await SeedCar(context);
         await SeedBundles(context);
-        await SeedSubscription(context, subscriptionService,mapper);
+        await SeedSubscription(context, subscriptionService, mapper);
         await SeedAssign(context);
     }
 
@@ -105,13 +105,15 @@ public static class Seed
         }
 
         var days = await context.UserPlanDays.ToListAsync();
-        var adminMeals = await context.AdminSelectedMeals.ToListAsync();
+        var adminMeals = await context.AdminSelectedMeals.Include(y => y.Meal).ToListAsync();
         var adminDrinks = await context.AdminSelectedDrinks.ToListAsync();
         foreach (var day in days)
         {
-            var meal = mapper.Map<UserSelectedMeal>(adminMeals[0]) ;
+            var meal = mapper.Map<UserSelectedMeal>(adminMeals[0].Meal);
+            meal.Id = 0;
             day.SelectedMeals.Add(meal);
         }
+
         await context.SaveChangesAsync();
     }
 
@@ -1037,20 +1039,21 @@ public static class Seed
 
             for (int j = 1; j <= 3; j++)
             {
-                var items = new List<OrderItem>();
-
-                for (int k = 1; k <= 2; k++)
-                {
-                    var item = new OrderItem();
-                    var mealOrder = mapper.Map<MealItemOrdered>(meals[k]);
-                    item.OrderedMeal = mealOrder;
-                    item.Quantity = k + j;
-                    item.Price = meals[k].Price;
-                    items.Add(item);
-                }
+                
 
                 foreach (var user in users)
                 {
+                    var items = new List<OrderItem>();
+
+                    for (int k = 1; k <= 2; k++)
+                    {
+                        var item = new OrderItem();
+                        var mealOrder = mapper.Map<MealItemOrdered>(meals[k]);
+                        item.OrderedMeal = mealOrder;
+                        item.Quantity = k + j;
+                        item.Price = meals[k].Price;
+                        items.Add(item);
+                    }
                     var order = new Order
                     {
                         BuyerEmail = user.Email,

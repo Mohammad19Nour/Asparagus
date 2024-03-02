@@ -8,8 +8,8 @@ public class CashierDto
     public string Email { get; set; }
     public string Name { get; set; }
     public string PhoneNumber { get; set; }
+    public string PictureUrl { get; set; }
     public bool IsActive { get; set; }
     public string Period { get; set; }
     public BranchDto Branch { get; set; }
-    public string PictureUrl { get; set; }
 }

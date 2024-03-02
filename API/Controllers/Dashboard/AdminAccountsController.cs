@@ -1,12 +1,18 @@
-﻿using AsparagusN.Data.Entities.Identity;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.Identity;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.AccountDtos;
+using AsparagusN.DTOs.CashierDtos;
+using AsparagusN.DTOs.DriverDtos;
+using AsparagusN.DTOs.UserDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
 using AsparagusN.Services;
+using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +65,55 @@ public class AdminAccountsController : BaseApiController
         adminDto.Token = _tokenService.CreateToken(user);
         var roles = await _userManager.GetRolesAsync(user);
         adminDto.Role = roles.First() ?? "No role";
+        if (adminDto.Role.ToLower() == Roles.Cashier.GetDisplayName().ToLower())
+        {
+            var driverSpec = new DriverSpecification(adminDto.Email.ToLower());
+            var driver = await _unitOfWork.Repository<Driver>().GetEntityWithSpec(driverSpec);
+            adminDto.Name = driver.Name;
+            adminDto.PictureUrl = driver.PictureUrl;
+            adminDto.PhoneNumber = driver.PhoneNumber;
+        }
+        else if (adminDto.Role.ToLower() == Roles.Driver.GetDisplayName().ToLower())
+        {
+            var cashierSpec = new CashierWithBranchSpecification(adminDto.Email.ToLower());
+            var cashier = await _unitOfWork.Repository<Cashier>().GetEntityWithSpec(cashierSpec);
+            adminDto.Name = cashier.Name;
+            adminDto.PictureUrl = cashier.PictureUrl;
+            adminDto.PhoneNumber = cashier.PhoneNumber;
+        }
+
         return Ok(new ApiOkResponse<AdminAccountDto>(adminDto));
+    }
+
+    [Authorize]
+    [HttpGet("info")]
+    public async Task<ActionResult> GetInfo()
+    {
+        var email = User.GetEmail();
+        var user = await _unitOfWork.Repository<AppUser>().GetQueryable().Where(u => u.Email.ToLower() == email)
+            .FirstAsync();
+        var roles = (await _userManager.GetRolesAsync(user)).Select(c=>c.ToLower()).ToList();
+
+        
+        if (roles.Contains(Roles.Cashier.GetDisplayName().ToLower()))
+        {
+            var spec = new CashierWithBranchSpecification(email.ToLower());
+            var cashier = await _unitOfWork.Repository<Cashier>().GetEntityWithSpec(spec);
+
+            if (cashier == null) return Ok(new ApiResponse(404, "Cashier not found"));
+            return Ok(new ApiOkResponse<CashierDto>(_mapper.Map<CashierDto>(cashier)));
+        }
+
+        if (roles.Contains(Roles.Driver.GetDisplayName().ToLower()))
+        {
+            var spec = new DriverSpecification(email.ToLower());
+            var driver = await _unitOfWork.Repository<Driver>().GetEntityWithSpec(spec);
+
+            if (driver == null) return Ok(new ApiResponse(404, "driver not found"));
+
+            return Ok(new ApiOkResponse<DriverDto>(_mapper.Map<DriverDto>(driver)));
+        }
+
+        return Ok(new ApiOkResponse<UserInfoDto>(_mapper.Map<UserInfoDto>(user)));
     }
 }

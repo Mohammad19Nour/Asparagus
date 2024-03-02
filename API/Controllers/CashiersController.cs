@@ -71,15 +71,4 @@ public class CashiersController : BaseApiController
         if (result.Order != null) return Ok(new ApiResponse(200, "Order created"));
         return Ok(new ApiResponse(400, "Failed to create order"));
     }
-    [HttpGet("info")]
-    public async Task<ActionResult<CashierDto>> GetInfo()
-    {
-        var email = User.GetEmail();
-        var spec = new CashierWithBranchSpecification(email.ToLower());
-        var driver = await _unitOfWork.Repository<Cashier>().GetEntityWithSpec(spec);
-
-        if (driver == null) return Ok(new ApiResponse(404, "Cashier not found"));
-
-        return Ok(new ApiOkResponse<CashierDto>(_mapper.Map<CashierDto>(driver)));
-    }
 }

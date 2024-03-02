@@ -121,16 +121,5 @@ public class DriversController : BaseApiController
 
         return (Ok(new ApiResponse(200, "Updated")));
     }
-
-    [HttpGet("info")]
-    public async Task<ActionResult<DriverDto>> GetInfo()
-    {
-        var email = User.GetEmail();
-        var spec = new DriverSpecification(email.ToLower());
-        var driver = await _unitOfWork.Repository<Driver>().GetEntityWithSpec(spec);
-
-        if (driver == null) return Ok(new ApiResponse(404, "driver not found"));
-
-        return Ok(new ApiOkResponse<DriverDto>(_mapper.Map<DriverDto>(driver)));
-    }
+    
 }
