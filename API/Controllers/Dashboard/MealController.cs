@@ -2,9 +2,12 @@
 using AsparagusN.Data.Entities.Meal;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.MealDtos;
+using AsparagusN.DTOs.PackageDtos;
 using AsparagusN.Errors;
+using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
+using AsparagusN.Specifications.UserSpecifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +26,29 @@ public class MealController : BaseApiController
         _mediaService = mediaService;
     }
 
+     [HttpGet("all")]
+    public async Task<ActionResult<List<MealIfoForCustomPlanDto>>> GetAllMeal()
+    {
+        var meals = await _unitOfWork.Repository<Meal>().ListAllAsync();
+        return Ok(new ApiOkResponse<List<MealIfoForCustomPlanDto>>(_mapper.Map<List<MealIfoForCustomPlanDto>>(meals)));
+    }
+    
+    [HttpGet("available/{id:int}")]
+    public async Task<ActionResult> DisableMealBy(int id)
+    {
+       
+        var meal = await _unitOfWork.Repository<Meal>().GetByIdAsync(id);
+
+        if (meal == null) return Ok(new ApiResponse(404, "Meal not found"));
+
+        meal.IsAvailable = !meal.IsAvailable;
+        _unitOfWork.Repository<Meal>().Update(meal);
+
+        if (await _unitOfWork.SaveChanges())
+            return Ok(new ApiResponse(200, "Done"));
+
+        return Ok(new ApiResponse(400, "Failed to update meal"));
+    }
     [HttpGet("{id:int}")]
     public async Task<ActionResult<MealWithIngredientsDto>> GetMealById(int id)
     {

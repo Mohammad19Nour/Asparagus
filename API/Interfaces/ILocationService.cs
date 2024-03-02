@@ -8,5 +8,5 @@ public interface ILocationService
 {
     Task<decimal> GetDrivingDistanceAsync(decimal startLatitude, decimal startLongitude, decimal endLatitude, decimal endLongitude);
     Task<bool> CanDeliver(AddressDto shippingToAddress);
-    Task<int> GetClosestBranch(Address address);
+    Task<int> GetClosestBranch(decimal userLat,decimal userLon);
 }

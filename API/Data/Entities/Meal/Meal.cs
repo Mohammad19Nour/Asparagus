@@ -49,6 +49,7 @@ public class Meal : ISoftDeletable
     public decimal PricePerCarb{ get; private set; }
     public decimal Calories() => Protein * 4 + Carbs * 4 + Fats * 9;
 
+    public bool IsAvailable { get; set; } = true;
     public bool IsDeleted { get; set; }
 
     private void CalcProtein()

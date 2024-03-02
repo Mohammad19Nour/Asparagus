@@ -2,6 +2,7 @@
 using AsparagusN.DTOs.AddressDtos;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
+using GeoCoordinatePortable;
 using Newtonsoft.Json.Linq;
 
 namespace AsparagusN.Services;
@@ -11,13 +12,14 @@ public class LocationService : ILocationService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IConfiguration _configuration;
 
-    public LocationService(IUnitOfWork unitOfWork,IConfiguration configuration)
+    public LocationService(IUnitOfWork unitOfWork, IConfiguration configuration)
     {
         _unitOfWork = unitOfWork;
         _configuration = configuration;
     }
 
-    public async Task<decimal> GetDrivingDistanceAsync(decimal startLatitude, decimal startLongitude, decimal endLatitude, decimal endLongitude)
+    public async Task<decimal> GetDrivingDistanceAsync(decimal startLatitude, decimal startLongitude,
+        decimal endLatitude, decimal endLongitude)
     {
         var apiKey = _configuration["MapApiKey"];
         var url = _configuration["MapUrl"] +
@@ -40,20 +42,39 @@ public class LocationService : ILocationService
                 Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
             }
         }
+
         return 0m;
     }
 
     public async Task<bool> CanDeliver(AddressDto shippingToAddress)
     {
-        var spec = new BranchWithAddressSpecification();
-        var branches = await _unitOfWork.Repository<Branch>().ListWithSpecAsync(spec);
+        //   var spec = new BranchWithAddressSpecification();
+        //    var branches = await _unitOfWork.Repository<Branch>().ListWithSpecAsync(spec);
         return true;
     }
 
-    public async Task<int> GetClosestBranch(AsparagusN.Data.Entities.Address address)
+    public async Task<int> GetClosestBranch(decimal userLat, decimal userLong)
     {
-        var branches = await _unitOfWork.Repository<Branch>().ListAllAsync();
-        return branches.Count > 0 ? branches[0].Id : 0;
+        var closestBranch = 1;
+
+        var spec = new BranchWithAddressSpecification();
+        var branches = await _unitOfWork.Repository<Branch>().ListWithSpecAsync(spec);
+
+        var userGeo = new GeoCoordinate((double)userLat, (double)userLong);
+        double shortestDistance = Double.MaxValue;
+
+        foreach (var branch in branches)
+        {
+            var branchGeo = new GeoCoordinate((double)branch.Address.Latitude, (double)branch.Address.Longitude);
+            var distance = userGeo.GetDistanceTo(branchGeo);
+            if (distance < shortestDistance)
+            {
+                shortestDistance = distance;
+                closestBranch = branch.Id;
+            }
+        }
+
+        return closestBranch;
     }
 
     private decimal ParseDistanceFromGoogleMapsResponse(string responseContent)
@@ -68,7 +89,7 @@ public class LocationService : ILocationService
         }
 
         var distanceText = jsonResponse.routes[0].legs[0].distance.text.ToString(); // Ensure it's a string
-        Console.WriteLine(distanceText+"\n\n\n");
+
         decimal distanceValue;
 
         // Extract the numeric value from the distance text (assuming the format is like "1234.56 km")
@@ -83,6 +104,4 @@ public class LocationService : ILocationService
             throw new Exception($"Failed to parse distance from response: {distanceText}");
         }
     }
-
-
 }

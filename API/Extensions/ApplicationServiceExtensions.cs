@@ -19,6 +19,7 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
+        services.AddScoped<ICustomSubscriptionService, CustomSubscriptionService>();
         services.AddScoped<IUserPlanOrderService, UserPlanOrderService>();
         services.AddScoped<ICarService, CarService>();
         services.AddScoped<IReportService, ReportService>();
@@ -29,7 +30,9 @@ public static class ApplicationServiceExtensions
         services.AddHostedService<BackgroundGiftService>();
         services.AddHostedService<BackgroundTask>();
         services.Configure<KestrelServerOptions>(options => { options.Limits.MaxRequestBodySize = null; });
-        services.AddAutoMapper(typeof(BundleProfile),typeof(CarProfile),typeof(PackageProfile),typeof(ReportProfile),typeof(CashierProfile),typeof(AppCouponProfile),typeof(BasketProfile),typeof(SnackProfile), typeof(UserPlanProfile), typeof(OrderProfile),
+        services.AddAutoMapper(typeof(SubscriptionProfile),typeof(BundleProfile), typeof(CarProfile), typeof(PackageProfile), typeof(ReportProfile),
+            typeof(CashierProfile), typeof(AppCouponProfile), typeof(BasketProfile), typeof(SnackProfile),
+            typeof(UserPlanProfile), typeof(OrderProfile),
             typeof(DrinkProfile), typeof(DriverProfile), typeof(AdminPlanProfile), typeof(ExtraOptionsProfile),
             typeof(AddressProfile), typeof(BranchProfile), typeof(CategoryProfile), typeof(SomeProfile),
             typeof(UserProfile), typeof(MealProfile),
@@ -45,9 +48,9 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IOrderService, OrderService>();
         //services.AddScoped<IBasketRepository, BasketRepository>();
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-      //  services.AddDbContext<DataContext>(opt => { opt.UseSqlServer(config.GetConnectionString("DefaultConnection")); });
+        //  services.AddDbContext<DataContext>(opt => { opt.UseSqlServer(config.GetConnectionString("DefaultConnection")); });
 
-       services.AddDbContext<DataContext>(opt => { opt.UseSqlite(config.GetConnectionString("SqliteConnection")); });
+        services.AddDbContext<DataContext>(opt => { opt.UseSqlite(config.GetConnectionString("SqliteConnection")); });
         services.AddSingleton<IConnectionMultiplexer>(c =>
         {
             var configuration = ConfigurationOptions.Parse(config.GetConnectionString("Redis"), true);
@@ -69,6 +72,7 @@ public static class ApplicationServiceExtensions
                 {
                     Console.WriteLine(e);
                 }
+
                 var errorResponse = new ApiValidationErrorResponse
                 {
                     Errors = errors

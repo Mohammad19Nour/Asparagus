@@ -1,159 +1,78 @@
-﻿using AsparagusN.Data;
+﻿using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs;
+using AsparagusN.DTOs.SubscriptionDtos;
 using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Enums;
 using AsparagusN.Helpers;
 using AsparagusN.Interfaces;
-using AsparagusN.Specifications;
-using AsparagusN.Specifications.AdminPlanSpecifications;
 using AsparagusN.Specifications.UserSpecifications;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Services;
 
-public class SubscriptionService : ISubscriptionService
+public class CustomSubscriptionService : ICustomSubscriptionService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly IValidationService _validationService;
 
-    public SubscriptionService(IUnitOfWork unitOfWork, IMapper mapper, IValidationService validationService)
+    public CustomSubscriptionService(IUnitOfWork unitOfWork, IMapper mapper, IValidationService validationService)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _validationService = validationService;
     }
 
-    public async Task<UserPlan?> GetUserSubscriptionAsync(AppUser user, PlanTypeEnum planType)
-    {
-        try
-        {
-            var spec = new UserPlanWithMealsDrinksAndExtrasSpecification(user.Id, planType);
-            return await _unitOfWork.Repository<UserPlan>().GetEntityWithSpec(spec);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
-    public async Task<List<UserPlan>> GetAllUserSubscriptionsAsync(AppUser user)
-    {
-        try
-        {
-            var spec = new BaseSpecification<UserPlan>(x =>
-                x.AppUserId == user.Id && x.StartDate.Date >= HelperFunctions.WeekStartDay() &&
-                x.StartDate <= HelperFunctions.WeekEndDay());
-
-            return (await _unitOfWork.Repository<UserPlan>().ListWithSpecAsync(spec)).ToList();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
-    public async Task<(decimal? Price, string Message)> GetPriceForUpdate(UpdateSubscriptionDto subscription,
-        AppUser user)
-    {
-        try
-        {
-            var plan = await GetUserSubscriptionAsync(user, subscription.PlanType);
-            if (plan == null)
-                return (null, "You don't have a subscription with this plan type");
-
-            var t = await Update((UpdateSubscriptionDto)subscription, user, plan);
-
-            if (!t.Success) return (null, t.Message);
-            return (plan.Price, "Ok");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return (null, "Exception happened");
-            throw;
-        }
-    }
-
-    public async Task<(decimal? Price, string Message)> GetPriceForCreate(NewSubscriptionDto subscription, AppUser user)
-    {
-        try
-        {
-            var plan = await GetUserSubscriptionAsync(user, subscription.PlanType);
-
-            if (plan != null)
-                return (null, "You have a subscription with this plan type");
-
-            plan = new UserPlan();
-            var res = await Add((NewSubscriptionDto)subscription, user, plan);
-
-            if (!res.Succes) return (null, res.Message);
-            return (plan.Price, "Ok");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return (null, "Exception happened");
-            throw;
-        }
-    }
-    
-
     public async Task<(UserPlan? createdPlan, string Message)> CreateSubscriptionAsync(
-        NewSubscriptionDto subscriptionDto, AppUser user)
+        NewCustomSubscriptionDto subscriptionDto, AppUser user)
     {
-        try
-        {
-            if (subscriptionDto.PlanType == PlanTypeEnum.CustomMealPlan)
-                return (null, "Can't subscribe with custom plan");
-            user = await _unitOfWork.Repository<AppUser>()
-                .GetEntityWithSpec(new UserWithAddressSpecification(user!.Email));
-            var plan = await GetUserSubscriptionAsync(user, subscriptionDto.PlanType);
+        if (subscriptionDto.PlanType != PlanTypeEnum.CustomMealPlan)
+            return (null, "You can subscribe only with custom plan");
 
-            if (plan != null)
-                return (null, "You have a subscription with this plan type");
+        if ((subscriptionDto.CarbPerMeal % 10 != 0) || (subscriptionDto.ProteinPerMeal % 10 != 0))
+            return (null, "Protein and Carb must be multiple of 10 (120,130..)");
 
-            if (!HelperFunctions.CheckExistAddress(user.HomeAddress) &&
-                !HelperFunctions.CheckExistAddress(user.WorkAddress))
-                return (null, "You have to provide at least one address");
-            var planPoints = (await _unitOfWork.Repository<PlanType>().ListAllAsync())
-                .First(x => x.PlanTypeE == subscriptionDto.PlanType).Points;
-            plan = new UserPlan();
+        user = await _unitOfWork.Repository<AppUser>()
+            .GetEntityWithSpec(new UserWithAddressSpecification(user!.Email));
 
-            var result = await Add(subscriptionDto, user, plan);
-            if (!result.Succes) return (null, result.Message);
-            user!.IsMealPlanMember = true;
-            user!.IsNormalUser = false;
-            plan.NumberOfRemainingSnacks = plan.NumberOfSnacks;
-            plan.User.LoyaltyPoints += planPoints;
-            _unitOfWork.Repository<UserPlan>().Add(plan);
+        var plan = await GetUserSubscriptionAsync(user, subscriptionDto.PlanType);
 
-            if (await _unitOfWork.SaveChanges()) return (plan, "Success");
-            return (null, "Failed to add user plan");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return (null, "Exception happened");
-            throw;
-        }
+        if (plan != null)
+            return (null, "You have a subscription with this plan type");
+
+        if (!HelperFunctions.CheckExistAddress(user.HomeAddress) &&
+            !HelperFunctions.CheckExistAddress(user.WorkAddress))
+            return (null, "You have to provide at least one address");
+
+       
+        plan = new UserPlan();
+        var result = await Add(subscriptionDto, user, plan);
+        if (!result.Succes) return (null, result.Message);
+        user!.IsMealPlanMember = true;
+        user!.IsNormalUser = false;
+        plan.NumberOfRemainingSnacks = plan.NumberOfSnacks;
+       
+        _unitOfWork.Repository<UserPlan>().Add(plan);
+
+        if (await _unitOfWork.SaveChanges()) return (plan, "Success");
+        return (null, "Failed to add user plan");
+
+        throw new NotImplementedException();
     }
 
     public async Task<(UserPlan?, string Message)> UpdateSubscription(UpdateSubscriptionDto subscriptionDto,
         AppUser user)
+
     {
         try
         {
-            
-            if (subscriptionDto.PlanType == PlanTypeEnum.CustomMealPlan)
-                return (null, "Can't update custom plan");
+            if (subscriptionDto.PlanType != PlanTypeEnum.CustomMealPlan)
+                return (null, "Can't update plan");
             var plan = await GetUserSubscriptionAsync(user, subscriptionDto.PlanType);
 
             if (plan == null)
@@ -177,6 +96,50 @@ public class SubscriptionService : ISubscriptionService
             throw;
         }
     }
+    public async Task<(decimal? Price, string Message)> GetPriceForUpdate(UpdateSubscriptionDto subscription,
+        AppUser user)
+    {
+        try
+        {
+            var plan = await GetUserSubscriptionAsync(user, subscription.PlanType);
+            if (plan == null)
+                return (null, "You don't have a subscription with this plan type");
+
+            var t = await Update((UpdateSubscriptionDto)subscription, user, plan);
+
+            if (!t.Success) return (null, t.Message);
+            return (plan.Price, "Ok");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return (null, "Exception happened");
+            throw;
+        }
+    }
+
+    public async Task<(decimal? Price, string Message)> GetPriceForCreate(NewCustomSubscriptionDto subscription, AppUser user)
+    {
+        try
+        {
+            var plan = await GetUserSubscriptionAsync(user, subscription.PlanType);
+
+            if (plan != null)
+                return (null, "You have a subscription with this plan type");
+
+            plan = new UserPlan();
+            var res = await Add(subscription, user, plan);
+
+            if (!res.Succes) return (null, res.Message);
+            return (plan.Price, "Ok");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return (null, "Exception happened");
+            throw;
+        }
+    }
 
 
     private async Task<(bool Success, string Message)> AddDrinksToDaysPlan(List<int>? drinkIds, List<UserPlanDay> days,
@@ -185,14 +148,16 @@ public class SubscriptionService : ISubscriptionService
         try
         {
             if (drinkIds == null) return (true, "");
-            var exist = await _validationService.CheckExistingDrinks(drinkIds, planType);
+
+            var drinks = await _unitOfWork.Repository<Drink>().ListAllAsync();
+            var systemDrinkIds = drinks.Select(i => i.Id).ToList();
+            var exist = drinkIds.All(id => systemDrinkIds.Contains(id));
 
             if (!exist)
                 return (false, "One or more drinks not exist");
 
-            var adminDrinks = await GetAdminSelectedDrinksWithIds(drinkIds, planType);
-
-            var drinksToAdd = adminDrinks.Select(drink => _mapper.Map<UserSelectedDrink>(drink.Drink)).ToList();
+            drinks = drinks.Where(d => drinkIds.Contains(d.Id)).ToList();
+            var drinksToAdd = drinks.Select(drink => _mapper.Map<UserSelectedDrink>(drink)).ToList();
 
             for (int j = 0; j < drinkIds.Count; j++)
             {
@@ -209,21 +174,95 @@ public class SubscriptionService : ISubscriptionService
         }
     }
 
-    private async Task<List<AdminSelectedDrink>> GetAdminSelectedDrinksWithIds(List<int> drinkIds,
-        PlanTypeEnum planType)
+    public async Task<UserPlan?> GetUserSubscriptionAsync(AppUser user, PlanTypeEnum planType)
     {
         try
         {
-            var adminDrinks = await _unitOfWork.Repository<AdminSelectedDrink>().GetQueryable()
-                .Where(x => x.PlanTypeEnum == planType && drinkIds.Contains(x.Id)).Include(x => x.Drink)
-                .ToListAsync();
-            return adminDrinks;
+            var spec = new UserPlanWithMealsDrinksAndExtrasSpecification(user.Id, planType);
+            return await _unitOfWork.Repository<UserPlan>().GetEntityWithSpec(spec);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
         }
+    }
+
+    private async Task<(bool Succes, string Message)> Add(NewCustomSubscriptionDto subscriptionDto, AppUser user,
+        UserPlan plan)
+    {
+        try
+        {
+            var validate = await _validationService.IsValidSubscriptionDto(subscriptionDto);
+            if (!validate.Success)
+                return (false, validate.Message);
+
+            subscriptionDto.StartDate = subscriptionDto.StartDate.Date;
+            if (DateTime.Today.AddDays(2).Date >= subscriptionDto.StartDate.Date)
+                subscriptionDto.StartDate = DateTime.Today.AddDays(3).Date;
+
+            _mapper.Map(subscriptionDto, plan);
+
+            plan.User = user;
+
+            var days = GetPlanDays(subscriptionDto.StartDate, subscriptionDto.Duration);
+            if (days == null)
+                return (false, "Something happened");
+
+            foreach (var day in days)
+            {
+                day.DeliveryLocationId = HelperFunctions.CheckExistAddress(user.HomeAddress)
+                    ? user.HomeAddressId
+                    : user.WorkAddressId;
+            }
+
+            plan.Days = days;
+
+            var addProcess = await AddDrinksToDaysPlan(subscriptionDto.SelectedDrinks, plan.Days!, plan.PlanType);
+            if (!addProcess.Success) return (false, addProcess.Message);
+
+            addProcess = await AddExtrasOptionToDaysPlan(subscriptionDto.SelectedSalads,
+                plan.Days!, plan.PlanType, ExtraOptionType.Salad);
+
+            if (!addProcess.Success) return (false, addProcess.Message);
+
+            addProcess = await AddExtrasOptionToDaysPlan(subscriptionDto.SelectedExtras,
+                plan.Days!, plan.PlanType, ExtraOptionType.Nuts);
+
+            if (!addProcess.Success) return (false, addProcess.Message);
+
+            addProcess = await AddAllergies(subscriptionDto.Allergies, plan);
+            if (!addProcess.Success) return (false, addProcess.Message);
+
+            foreach (var day in plan.Days)
+            {
+                foreach (var drink in day.SelectedDrinks)
+                    plan.Price += drink.Price;
+
+                foreach (var extra in day.SelectedExtraOptions)
+                    plan.Price += extra.Price;
+            }
+
+            plan.Price += plan.NumberOfSnacks * 10;
+            plan.Price += plan.Duration * plan.NumberOfMealPerDay * 10;
+
+            plan.Price += 300; // for subscribe
+            plan.Price += CalcPriceOfAddedProteinAndCarb(subscriptionDto.CarbPerMeal,subscriptionDto.ProteinPerMeal);
+            return (true, "ok");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return (false, "Exception happened");
+            throw;
+        }
+    }
+
+    private decimal CalcPriceOfAddedProteinAndCarb(decimal? subscriptionDtoCarbPerMeal, decimal? subscriptionDtoProteinPerMeal)
+    {
+        var addedCarb = subscriptionDtoCarbPerMeal.Value - 120;
+        var addedProtein = subscriptionDtoProteinPerMeal.Value - 120;
+        return addedCarb / 10 * 50 + addedProtein / 10 * 50;
     }
 
     private async Task<(bool Success, string Message)> AddExtrasOptionToDaysPlan(List<Item>? userSelectedExtras,
@@ -234,22 +273,22 @@ public class SubscriptionService : ISubscriptionService
         {
             if (userSelectedExtras == null) return (true, "");
 
-            if (!await _validationService.CheckExistingExtras(userSelectedExtras.Select(x => x.Id).ToList(), planType,
-                    optionType))
+            var extras = await _unitOfWork.Repository<ExtraOption>().ListAllAsync();
+            var ids = extras.Select(x => x.Id).ToList();
+            var exist = userSelectedExtras.All(c => ids.Contains(c.Id));
+            if (!exist)
                 return (false, $"One or more {optionType.ToString()} not exist");
 
             var extraIds = userSelectedExtras.Select(x => x.Id).ToList();
 
-            var adminExtras = await GetAdminSelectedExtraOptionsWithIds(planType, extraIds, optionType);
-
             var extrasToAdd = new List<UserSelectedExtraOption>();
             foreach (var extra in userSelectedExtras)
             {
-                var dr = adminExtras.First(x => x.Id == extra.Id);
+                var dr = extras.First(x => x.Id == extra.Id);
 
-                var toAdd = _mapper.Map<UserSelectedExtraOption>(dr.ExtraOption);
+                var toAdd = _mapper.Map<UserSelectedExtraOption>(dr);
                 toAdd.Weight = extra.Weight;
-                toAdd.Price = dr.ExtraOption.Price / dr.ExtraOption.Weight * toAdd.Weight;
+                toAdd.Price = dr.Price / dr.Weight * toAdd.Weight;
                 extrasToAdd.Add(toAdd);
             }
 
@@ -264,24 +303,6 @@ public class SubscriptionService : ISubscriptionService
         {
             Console.WriteLine(e);
             return (false, "Exception happened");
-            throw;
-        }
-    }
-
-    private async Task<List<AdminSelectedExtraOption>> GetAdminSelectedExtraOptionsWithIds(PlanTypeEnum planType,
-        List<int> extraIds, ExtraOptionType optionType)
-    {
-        try
-        {
-            var spec = new AdminSelectedExtrasAndSaladsSpecification(optionType, planType);
-            var adminExtras = await _unitOfWork.Repository<AdminSelectedExtraOption>().GetQueryable()
-                .Where(x => x.PlanTypeEnum == planType && extraIds.Contains(x.Id)).Include(x => x.ExtraOption)
-                .ToListAsync();
-            return adminExtras;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
             throw;
         }
     }
@@ -364,7 +385,7 @@ public class SubscriptionService : ISubscriptionService
             if (DateTime.Today.AddDays(1) >= plan.EndDate())
                 return (false,
                     "Can't update your plan now... you have to wait until end of this subscription and subscribe again ");
-            if (subscriptionDto.Duration < plan!.Duration)
+            if (subscriptionDto.Duration < plan.Duration)
                 return (false, "The updated duration should be greater than or equal the previous one");
 
             if (plan.NumberOfSnacks > subscriptionDto.NumberOfSnacks)
@@ -386,8 +407,6 @@ public class SubscriptionService : ISubscriptionService
 
             if (!validation.Success) return (false, validation.Message);
 
-
-            Console.WriteLine(plan.EndDate());
             var days = new List<UserPlanDay>();
             var updateDuration = true;
 
@@ -480,76 +499,6 @@ public class SubscriptionService : ISubscriptionService
                         : user.WorkAddress;
                     plan.Days.Add(day);
                 }
-
-            Console.WriteLine(plan.EndDate());
-            return (true, "ok");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return (false, "Exception happened");
-            throw;
-        }
-    }
-
-    private async Task<(bool Succes, string Message)> Add(NewSubscriptionDto subscriptionDto, AppUser user,
-        UserPlan plan)
-    {
-        try
-        {
-            var validate = await _validationService.IsValidSubscriptionDto(subscriptionDto);
-            if (!validate.Success)
-                return (false, validate.Message);
-
-            subscriptionDto.StartDate = subscriptionDto.StartDate.Date;
-            if (DateTime.Today.AddDays(2).Date >= subscriptionDto.StartDate.Date)
-                subscriptionDto.StartDate = DateTime.Today.AddDays(3).Date;
-            
-            _mapper.Map(subscriptionDto, plan);
-
-            plan.User = user;
-
-            var days = GetPlanDays(subscriptionDto.StartDate, subscriptionDto.Duration);
-            if (days == null)
-                return (false, "Something happened");
-
-            foreach (var day in days)
-            {
-                day.DeliveryLocationId = HelperFunctions.CheckExistAddress(user.HomeAddress)
-                    ? user.HomeAddressId
-                    : user.WorkAddressId;
-            }
-
-            plan.Days = days;
-
-            var addProcess = await AddDrinksToDaysPlan(subscriptionDto.SelectedDrinks, plan.Days!, plan.PlanType);
-            if (!addProcess.Success) return (false, addProcess.Message);
-
-            addProcess = await AddExtrasOptionToDaysPlan(subscriptionDto.SelectedSalads,
-                plan.Days!, plan.PlanType, ExtraOptionType.Salad);
-
-            if (!addProcess.Success) return (false, addProcess.Message);
-
-            addProcess = await AddExtrasOptionToDaysPlan(subscriptionDto.SelectedExtras,
-                plan.Days!, plan.PlanType, ExtraOptionType.Nuts);
-
-            if (!addProcess.Success) return (false, addProcess.Message);
-
-            addProcess = await AddAllergies(subscriptionDto.Allergies, plan);
-            if (!addProcess.Success) return (false, addProcess.Message);
-
-            foreach (var day in plan.Days)
-            {
-                foreach (var drink in day.SelectedDrinks)
-                    plan.Price += drink.Price;
-
-                foreach (var extra in day.SelectedExtraOptions)
-                    plan.Price += extra.Price;
-            }
-
-            plan.Price += plan.NumberOfSnacks * 10;
-            plan.Price += plan.Duration * plan.NumberOfMealPerDay * 10;
-
             return (true, "ok");
         }
         catch (Exception e)

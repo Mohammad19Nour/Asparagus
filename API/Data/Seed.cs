@@ -33,8 +33,8 @@ public static class Seed
         await SeedPlanTypes(context);
         await SeedAdminSelectedCarbs(context);
         await SeedUsers(userManager);
-        await SeedDrivers(context,userManager);
-        await SeedCashiers(context,userManager);
+        await SeedDrivers(context, userManager);
+        await SeedCashiers(context, userManager);
         await SeedOrders(context);
         await SeedGifts(context);
         await SeedCar(context);
@@ -43,7 +43,7 @@ public static class Seed
 
     private static async Task SeedBundles(DataContext context)
     {
-        if ( await context.Bundles.AnyAsync())return;
+        if (await context.Bundles.AnyAsync()) return;
         for (int i = 1; i <= 3; i++)
         {
             foreach (int d in Enum.GetValues(typeof(SubscriptionDuration)))
@@ -52,8 +52,8 @@ public static class Seed
                 {
                     Duration = d,
                     MealsPerDay = i,
-                    Price = i*d*3
-                }) ;
+                    Price = i * d * 3
+                });
             }
         }
 
@@ -67,6 +67,7 @@ public static class Seed
         context.Cars.Add(new Car());
         await context.SaveChangesAsync();
     }
+
     private static async Task SeedGifts(DataContext context)
     {
         if (await context.GiftSelections.AnyAsync()) return;
@@ -210,8 +211,8 @@ public static class Seed
                 FullName = cashier.Name,
                 EmailConfirmed = true,
             };
-          //  await userManager.CreateAsync(user, "string");
-           // await userManager.AddToRoleAsync(user, Roles.Cashier.GetDisplayName());
+            //  await userManager.CreateAsync(user, "string");
+            // await userManager.AddToRoleAsync(user, Roles.Cashier.GetDisplayName());
         }
 
         await context.Cashiers.AddRangeAsync(cashiers);
@@ -244,6 +245,12 @@ public static class Seed
         foreach (var role in roles)
         {
             await roleManager.CreateAsync(role);
+        }
+
+        var rr = Enum.GetNames(typeof(DashboardRoles)).ToList();
+        foreach (var role in rr)
+        {
+            await roleManager.CreateAsync(new AppRole { Name = role });
         }
     }
 

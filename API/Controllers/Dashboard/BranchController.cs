@@ -94,25 +94,19 @@ public class BranchController : BaseApiController
     }
 
     [HttpGet("closest")]
-    public async Task<ActionResult<List<BranchDto>>> GetSuggestedBranch(decimal latitude, decimal longitude)
+    public async Task<ActionResult<List<BranchDto>>> GetSuggestedBranch(double latitude, double longitude)
     {
-        var user = await _getUser();
-        if (user == null) return Ok(new ApiResponse(404, "User not found"));
+        //var user = await _getUser();
+      //  if (user == null) return Ok(new ApiResponse(404, "User not found"));
 
         var spec = new BranchWithAddressSpecification();
         var branches = await _unitOfWork.Repository<Branch>().ListWithSpecAsync(spec);
-       
-        var branchDistances = await Task.WhenAll(branches.Select(async branch =>
-        {
-            var distance = await _distanceService.GetDrivingDistanceAsync(branch.Address.Latitude, branch.Address.Longitude, latitude, longitude);
-            Console.WriteLine(branch.Id);
-            Console.WriteLine(distance);
-            return new { Branch = branch, Distance = distance };
-        }));
+        var id = await _distanceService.GetClosestBranch((decimal)latitude, (decimal)longitude);
 
-        var sortedBranches = branchDistances.OrderBy(x => x.Distance).Select(x => x.Branch).ToList();
-
-        return Ok(new ApiOkResponse<List<BranchDto>>(_mapper.Map<List<BranchDto>>(branches)));
+        var orderedBranches = new List<Branch>();
+        orderedBranches.Add(branches.First(c=>c.Id == id));
+        orderedBranches.AddRange(branches.Where(c=>c.Id != id).ToList());
+        return Ok(new ApiOkResponse<List<BranchDto>>(_mapper.Map<List<BranchDto>>(orderedBranches)));
     }
 
     private async Task<AppUser?> _getUser()

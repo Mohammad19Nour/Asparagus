@@ -16,6 +16,11 @@ public class MealProfile : Profile
 {
     public MealProfile()
     {
+        CreateMap<Meal, MealIfoForCustomPlanDto>()
+            .ForMember(dest => dest.Carbs, opt => opt.MapFrom(src => 120))
+            .ForMember(dest => dest.Protein, opt => opt.MapFrom(src => 120))
+            .ForMember(dest => dest.Calories, opt => opt.MapFrom(src => 240 * 4 + src.Fats * 9))
+            ;
         CreateMap<Meal, MealLoyaltyPointDto>();
         CreateMap<Ingredient, UserMealCarb>().ForMember(dest => dest.Id, opt => opt.Ignore());
         CreateMap<Meal, CarbDto>();
@@ -26,14 +31,16 @@ public class MealProfile : Profile
             .ForMember(dest => dest.PictureUrl, opt => opt.MapFrom(x => x.Allergy.PictureUrl));
 
         CreateMap<MealIngredient, MealIngredientDetailsDto>();
-        
+
         CreateMap<Meal, MealWithIngredientsDto>()
             .ForMember(x => x.SelectedCarb,
-            opt => opt.MapFrom(src =>
-                src.Ingredients
-                    .FirstOrDefault(y => y.Ingredient.TypeOfIngredient == IngredientType.Carb) == null ? null : src.Ingredients
-                    .FirstOrDefault(y => y.Ingredient.TypeOfIngredient == IngredientType.Carb).Ingredient));
-        
+                opt => opt.MapFrom(src =>
+                    src.Ingredients
+                        .FirstOrDefault(y => y.Ingredient.TypeOfIngredient == IngredientType.Carb) == null
+                        ? null
+                        : src.Ingredients
+                            .FirstOrDefault(y => y.Ingredient.TypeOfIngredient == IngredientType.Carb).Ingredient));
+
         CreateMap<Meal, MealItemOrdered>();
 
         CreateMap<UpdateMealDto, Meal>()

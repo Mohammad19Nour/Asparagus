@@ -1,6 +1,7 @@
 ﻿using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs;
+using AsparagusN.DTOs.SubscriptionDtos;
 using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
@@ -21,14 +22,18 @@ public class SubscriptionsController : BaseApiController
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly UserManager<AppUser> _userManager;
+    private readonly ICustomSubscriptionService _customSubscriptionService;
 
-    public SubscriptionsController(ISubscriptionService subscriptionService, IUnitOfWork unitOfWork, IMapper mapper,
+
+    public SubscriptionsController(ICustomSubscriptionService customSubscriptionService,
+        ISubscriptionService subscriptionService, IUnitOfWork unitOfWork, IMapper mapper,
         UserManager<AppUser> userManager)
     {
         _subscriptionService = subscriptionService;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _userManager = userManager;
+        _customSubscriptionService = customSubscriptionService;
     }
 
     [HttpGet("id")]
@@ -57,12 +62,20 @@ public class SubscriptionsController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<ActionResult<UserPlanDto>> CreateSubscription(NewSubscriptionDto subscriptionDto)
+    public async Task<ActionResult<UserPlanDto>> CreateSubscription(NewCustomSubscriptionDto subscriptionDto)
     {
         var user = await _getUser();
         if (user == null) return Ok(new ApiResponse(404, "user not found"));
 
-        var (plan, message) = await _subscriptionService.CreateSubscriptionAsync(subscriptionDto, user);
+        var normal = new NewSubscriptionDto();
+        if (subscriptionDto.PlanType != PlanTypeEnum.CustomMealPlan)
+            normal = _mapper.Map<NewSubscriptionDto>(subscriptionDto);
+
+        (UserPlan? plan, string message) = (null, "");
+        if (subscriptionDto.PlanType != PlanTypeEnum.CustomMealPlan)
+            (plan, message) = await _subscriptionService.CreateSubscriptionAsync(normal, user);
+        else
+            (plan, message) = await _customSubscriptionService.CreateSubscriptionAsync(subscriptionDto, user);
 
         if (plan == null)
             return Ok(new ApiResponse(400, message));
@@ -76,7 +89,13 @@ public class SubscriptionsController : BaseApiController
         var user = await _getUser();
         if (user == null) return Ok(new ApiResponse(404, "user not found"));
 
-        var (plan, message) = await _subscriptionService.UpdateSubscription(subscriptionDto, user);
+        (UserPlan? plan, string message) = (null, "");
+
+        if (subscriptionDto.PlanType != PlanTypeEnum.CustomMealPlan)
+            (plan, message) = await _subscriptionService.UpdateSubscription(subscriptionDto, user);
+        else
+
+            (plan, message) = await _customSubscriptionService.UpdateSubscription(subscriptionDto, user);
 
         if (plan == null) return Ok(new ApiResponse(400, message));
         return Ok(new ApiOkResponse<UserPlanDto>(_mapper.Map<UserPlanDto>(plan)));
@@ -88,19 +107,31 @@ public class SubscriptionsController : BaseApiController
         var user = await _getUser();
         if (user == null) return Ok(new ApiResponse(404, "user not found"));
 
-        var res = await _subscriptionService.GetPriceForUpdate(dto, user);
+        (decimal? price, string message) = (null, "");
 
-        return Ok(res.Price == null ? new ApiResponse(400, res.Message) : new ApiOkResponse<decimal>(res.Price.Value));
+        if (dto.PlanType != PlanTypeEnum.CustomMealPlan)
+            (price, message) = await _subscriptionService.GetPriceForUpdate(dto, user);
+        else (price, message) = await _customSubscriptionService.GetPriceForUpdate(dto, user);
+
+        return Ok(price == null ? new ApiResponse(400, message) : new ApiOkResponse<decimal>(price.Value));
     }
 
     [HttpPost("price/add")]
-    public async Task<ActionResult<decimal>> GetAddPrice(NewSubscriptionDto dto)
+    public async Task<ActionResult<decimal>> GetAddPrice(NewCustomSubscriptionDto dto)
     {
         var user = await _getUser();
         if (user == null) return Ok(new ApiResponse(404, "user not found"));
-        var res = await _subscriptionService.GetPriceForCreate(dto, user);
+        (decimal? price, string message) = (null, "");
 
-        return Ok(res.Price == null ? new ApiResponse(400, res.Message) : new ApiOkResponse<decimal>(res.Price.Value));
+        NewSubscriptionDto normal = null;
+        if (dto.PlanType != PlanTypeEnum.CustomMealPlan)
+            normal = _mapper.Map<NewSubscriptionDto>(dto);
+        
+        if (dto.PlanType != PlanTypeEnum.CustomMealPlan)
+            (price, message) = await _subscriptionService.GetPriceForCreate(normal, user);
+        else (price, message) = await _customSubscriptionService.GetPriceForCreate(dto, user);
+
+        return Ok(price == null ? new ApiResponse(400, message) : new ApiOkResponse<decimal>(price.Value));
     }
 
     private async Task<AppUser?> _getUser()

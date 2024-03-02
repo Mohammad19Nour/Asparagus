@@ -1,4 +1,4 @@
-﻿/*using AsparagusN.Data.Entities.Identity;
+﻿using AsparagusN.Data.Entities.Identity;
 using AsparagusN.DTOs;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
@@ -21,13 +21,14 @@ public class RolesController : BaseApiController
         _roleManager = roleManager;
     }
 
-    [HttpGet("cashiers")]
-    public async Task<ActionResult> GetCashiersWithRoles()
+    [HttpGet]
+    public async Task<ActionResult> GetRoles()
     {
-        var cashiers = await GetUsersWithRole(Roles.Cashier);
-        return Ok(new ApiOkResponse<List<UserWithRolesDto>>(cashiers));
+        var roles = (await _roleManager.Roles.ToListAsync()).Select(r => r.Name).ToList();
+       roles =  roles.Except(Enum.GetNames(typeof(Roles))).ToList();
+        return Ok(new ApiOkResponse<List<string>>(roles));
     }
-
+/*
     [HttpGet("drivers")]
     public async Task<ActionResult> GetDriversWithRoles()
     {
@@ -61,7 +62,7 @@ public class RolesController : BaseApiController
         var notExistRoles = !appRoles.Any(r => r.Name.ToLower() == enumRole.GetDisplayName().ToLower());
 
         if (notExistRoles)
-            return Ok(new ApiResponse(400, "Role " + roleDto+ " not found"));
+            return Ok(new ApiResponse(400, "Role " + roleDto + " not found"));
 
 
         var userRoles = await _userManager.GetRolesAsync(user);
@@ -118,5 +119,5 @@ public class RolesController : BaseApiController
             x.Roles
         )).ToList();
         return res;
-    }
-}*/
+    }*/
+}

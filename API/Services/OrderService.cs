@@ -109,7 +109,7 @@ public class OrderService : IOrderService
             var meal = await _unitOfWork.Repository<Meal>().GetByIdAsync(mealId);
             var mealOrdered = _mapper.Map<MealItemOrdered>(meal);
             var items = new List<OrderItem> { new OrderItem { OrderedMeal = mealOrdered } };
-            var branchId = await _locationService.GetClosestBranch(user.HomeAddress);
+            var branchId = await _locationService.GetClosestBranch(user.HomeAddress.Latitude,user.HomeAddress.Longitude);
 
             if (branchId == 0) return (true, "ok");
             var order = new Order

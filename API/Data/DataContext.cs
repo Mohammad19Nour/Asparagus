@@ -136,6 +136,14 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
                 if (dif < 2) userPlan.StartDate = userPlan.CreatedDate.AddDays(2);
             }
         }
+        foreach (var entry in ChangeTracker.Entries<Meal>())
+        {
+            if (entry.State == EntityState.Added)
+            {
+                var meal = entry.Entity;
+                meal.IsAvailable = true;
+            }
+        }
 
         return base.SaveChanges();
     }

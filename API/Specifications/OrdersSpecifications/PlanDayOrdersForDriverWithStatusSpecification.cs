@@ -12,4 +12,9 @@ public class PlanDayOrdersForDriverWithStatusSpecification : BaseSpecification<U
     {
         AddInclude(x=>x.Include(y=>y.DeliveryLocation));
     }
+     public PlanDayOrdersForDriverWithStatusSpecification(int driverId,PlanOrderStatus status,bool forNotification) 
+        : base(x=>x.DriverId == driverId && status == x.DayOrderStatus)
+    {
+        AddInclude(x=>x.Include(y=>y.UserPlan));
+    }
 }

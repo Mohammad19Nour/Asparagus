@@ -20,6 +20,8 @@ public class UserPlan
     public List<UserPlanAllergy> Allergies { get; set; } = new List<UserPlanAllergy>();
     public string? Notes { get; set; }
     public string DeliveryCity { get; set; }
+    public int CarbPerMealForCustomPlan { get; set; }
+    public int ProteinPerMealForCustomPlan { get; set; }
 
     public DateTime EndDate()
     {

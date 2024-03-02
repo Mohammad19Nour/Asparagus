@@ -1,5 +1,6 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.MealPlan.AdminPlans;
+using AsparagusN.DTOs.SubscriptionDtos;
 using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Enums;
 using AsparagusN.Interfaces;
@@ -24,6 +25,7 @@ public class ValidationService : IValidationService
         {
             NewSubscriptionDto dto => dto,
             UpdateSubscriptionDto uDto => uDto,
+            NewCustomSubscriptionDto xDto => xDto,
             _ => null
         };
 
