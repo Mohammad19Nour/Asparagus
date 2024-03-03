@@ -350,7 +350,8 @@ public static class Seed
     }
 
     private static async Task SeedRoles(RoleManager<AppRole> roleManager)
-    {
+    {  
+       // await roleManager.CreateAsync(new() { Name = Roles.Employee.GetDisplayName() });
         if (await roleManager.Roles.AnyAsync()) return;
 
         var roles = new List<AppRole>
@@ -359,6 +360,7 @@ public static class Seed
             new() { Name = Roles.Driver.GetDisplayName() },
             new() { Name = Roles.User.GetDisplayName() },
             new() { Name = Roles.Cashier.GetDisplayName() },
+            new() { Name = Roles.Employee.GetDisplayName() },
         };
 
         foreach (var role in roles)

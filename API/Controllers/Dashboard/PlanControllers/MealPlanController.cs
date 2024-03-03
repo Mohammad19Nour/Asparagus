@@ -56,7 +56,8 @@ public partial class PlanController
     [HttpDelete("meals/{mealId:int}")]
     public async Task<ActionResult<AdminPlanDayDto>> DeleteItems(int mealId, [FromQuery] int dayId)
     {
-        var adminDay = await _unitOfWork.Repository<AdminPlanDay>().GetByIdAsync(dayId);
+        var adminDaySpec = new AdminPlanDaysWithMealsSpecification(dayId);
+        var adminDay = await _unitOfWork.Repository<AdminPlanDay>().GetEntityWithSpec(adminDaySpec);
 
         if (adminDay == null) return Ok(new ApiResponse(404, "day not found"));
 
@@ -65,11 +66,18 @@ public partial class PlanController
             var ml = await _unitOfWork.Repository<Meal>().GetByIdAsync(mealId);
 
             if (ml == null) return Ok(new ApiResponse(404, "Meal not found"));
-            adminDay.Meals.Add(new AdminSelectedMeal { MealId = ml.Id });
 
-            if (await _unitOfWork.SaveChanges())
-                return Ok(new ApiResponse(200));
-            return Ok(new ApiResponse(400, "Failed to delete"));
+            if (adminDay.Meals.FirstOrDefault(c => c.MealId == mealId) == null)
+            {
+                Console.WriteLine(mealId);
+                adminDay.Meals.Add(new AdminSelectedMeal { MealId = ml.Id });
+
+                if (await _unitOfWork.SaveChanges())
+                    return Ok(new ApiResponse(200));
+                return Ok(new ApiResponse(400, "Failed to delete"));
+            }
+
+            return Ok(new ApiResponse(200));
         }
 
         var meal = await _unitOfWork.Repository<AdminSelectedMeal>().GetByIdAsync(mealId);

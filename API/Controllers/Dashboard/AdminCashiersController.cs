@@ -65,7 +65,8 @@ public class AdminCashiersController : BaseApiController
                         result.Errors.Aggregate("", (error, identityError) => error + identityError.Description)));
                 }
 
-                IdentityResult roleResult = await _userManager.AddToRoleAsync(cashierUser, Roles.Cashier.GetDisplayName().ToLower());
+                IdentityResult roleResult =
+                    await _userManager.AddToRoleAsync(cashierUser, Roles.Cashier.GetDisplayName().ToLower());
 
                 if (!roleResult.Succeeded)
                 {
@@ -145,7 +146,7 @@ public class AdminCashiersController : BaseApiController
 
                 if (cashier == null)
                     return Ok(new ApiResponse(404, "Cashier not found"));
-                
+
                 var cashierUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == cashier.Email);
                 if (cashierUser == null) return Ok(new ApiResponse(404, "Cashier not found"));
 
@@ -159,7 +160,7 @@ public class AdminCashiersController : BaseApiController
 
                     cashier.Branch = branch;
                 }
-                
+
                 if (updateCashierDto.Image != null)
                 {
                     var img = await _mediaService.AddPhotoAsync(updateCashierDto.Image);
@@ -167,9 +168,9 @@ public class AdminCashiersController : BaseApiController
                     cashier.PictureUrl = img.Url;
                 }
 
-                if (updateCashierDto.Password != null && !string.IsNullOrEmpty(updateCashierDto.Password.Trim()) && cashier.Password != updateCashierDto.Password)
+                if (updateCashierDto.Password != null && !string.IsNullOrEmpty(updateCashierDto.Password.Trim()) &&
+                    cashier.Password != updateCashierDto.Password)
                 {
-
                     var token = await _userManager.GeneratePasswordResetTokenAsync(cashierUser);
                     var result = await _userManager.ResetPasswordAsync(cashierUser, token, updateCashierDto.Password);
                     if (!result.Succeeded)
@@ -186,14 +187,14 @@ public class AdminCashiersController : BaseApiController
                     cashier.Password = updateCashierDto.Password;
                 }
 
-                
-                if (updateCashierDto.Email != null && updateCashierDto.Email.ToLower( )!= cashier.Email.ToLower())
+
+                if (updateCashierDto.Email != null && updateCashierDto.Email.ToLower() != cashier.Email.ToLower())
                 {
                     var exist = await _userManager.Users.FirstOrDefaultAsync(x =>
                         x.Email.ToLower() == updateCashierDto.Email.ToLower());
                     if (exist != null)
                         return Ok(new ApiResponse(400, "Email already taken"));
-                    
+
                     cashierUser.UserName = updateCashierDto.Email.ToLower();
                     cashierUser.Email = updateCashierDto.Email.ToLower();
                     cashierUser.NormalizedUserName = _userManager.NormalizeEmail(updateCashierDto.Email);
@@ -225,25 +226,40 @@ public class AdminCashiersController : BaseApiController
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteCashier(int id)
     {
-        try
+        using (var transaction = _unitOfWork.BeginTransaction())
         {
-            var cashier = await _unitOfWork.Repository<Cashier>().GetByIdAsync(id);
+            try
+            {
+                var cashier = await _unitOfWork.Repository<Cashier>().GetByIdAsync(id);
 
-            if (cashier == null)
-                return Ok(new ApiResponse(404, "Cashier not found"));
+                if (cashier == null)
+                    return Ok(new ApiResponse(404, "Cashier not found"));
 
-            _unitOfWork.Repository<Cashier>().Delete(cashier);
+                var userCashier =
+                    await _userManager.Users.FirstOrDefaultAsync(c => c.Email.ToLower() == cashier.Email.ToLower());
+                if (userCashier == null)
+                    return  Ok(new ApiResponse(404, "Cashier not found"));
+                
+                _unitOfWork.Repository<AppUser>().Delete(userCashier);
+                _unitOfWork.Repository<Cashier>().Delete(cashier);
 
-            if (await _unitOfWork.SaveChanges())
-                return Ok(new ApiResponse(200));
-            return Ok(new ApiResponse(400, "Failed to delete cashier"));
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return Ok(new ApiResponse(400, "Exception happened.. failed to add cashier"));
+                if (await _unitOfWork.SaveChanges())
+                {
+                    await transaction.CommitAsync();
+                    return Ok(new ApiResponse(200));
+                }
 
-            throw;
+                await transaction.RollbackAsync();
+                return Ok(new ApiResponse(400, "Failed to delete cashier"));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                await transaction.RollbackAsync();
+                return Ok(new ApiResponse(400, "Exception happened.. failed to add cashier"));
+
+                throw;
+            }
         }
     }
 }

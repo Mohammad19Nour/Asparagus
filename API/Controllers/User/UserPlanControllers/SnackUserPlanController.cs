@@ -1,10 +1,10 @@
-﻿using AsparagusN.Data.Entities.MealPlan.AdminPlans;
+﻿using AsparagusN.Data.Entities.Meal;
+using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
-using AsparagusN.DTOs;
 using AsparagusN.DTOs.SnackDtos;
 using AsparagusN.DTOs.UserPlanDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
-using AsparagusN.Specifications;
 using AsparagusN.Specifications.AdminPlanSpecifications;
 using AsparagusN.Specifications.UserSpecifications;
 using Microsoft.AspNetCore.Mvc;
@@ -49,15 +49,33 @@ public partial class UserPlanController
         if (planDay.UserPlan.NumberOfRemainingSnacks < quantity)
             return Ok(new ApiResponse(400, "You have no enough snacks"));
 
-        var adminSpec = new AdminSelectedSnackSpecification(snackId,planDay.UserPlan.PlanType);
-        var adminSnack = await _unitOfWork.Repository<AdminSelectedSnack>().GetEntityWithSpec(adminSpec);
+        Meal? skToAdd;
+        if (planDay.UserPlan.PlanType == PlanTypeEnum.CustomMealPlan)
+        {
+            var deletedSnacks = await _unitOfWork.Repository<AdminSelectedSnack>().ListAllAsync();
+            deletedSnacks = deletedSnacks.Where(c => c.PlanTypeEnum == PlanTypeEnum.CustomMealPlan).ToList();
 
-        if (adminSnack == null || adminSnack.PlanTypeEnum != planDay.UserPlan.PlanType)
-            return Ok(new ApiResponse(404, "Snack not found"));
+            if (deletedSnacks.FirstOrDefault(c => c.SnackId == snackId) != null)
+                return Ok(new ApiResponse(404, "Snack not found"));
+
+            var mealSnack = await _unitOfWork.Repository<Meal>().GetByIdAsync(snackId);
+            if (mealSnack == null)
+                return Ok(new ApiResponse(404, "Snack not found"));
+            skToAdd = mealSnack;
+        }
+        else
+        {
+            var adminSpec = new AdminSelectedSnackSpecification(snackId, planDay.UserPlan.PlanType);
+            var adminSnack = await _unitOfWork.Repository<AdminSelectedSnack>().GetEntityWithSpec(adminSpec);
+
+            if (adminSnack == null || adminSnack.PlanTypeEnum != planDay.UserPlan.PlanType)
+                return Ok(new ApiResponse(404, "Snack not found"));
+            skToAdd = adminSnack.Snack;
+        }
 
         planDay.UserPlan.NumberOfRemainingSnacks -= quantity;
 
-        var snackToAdd = _mapper.Map<UserSelectedSnack>(adminSnack.Snack);
+        var snackToAdd = _mapper.Map<UserSelectedSnack>(skToAdd);
         snackToAdd.Quantity = quantity;
         snackToAdd.Id = 0;
         planDay.SelectedSnacks.Add(snackToAdd);
@@ -92,18 +110,36 @@ public partial class UserPlanController
         planDay.UserPlan.NumberOfRemainingSnacks -= snackDto.Quantity;
         var dbId = oldSnack.Id;
 
+
         if (snackDto.AdminNewSnackId != null)
         {
-            var specAdmin = new AdminSelectedSnackSpecification(snackDto.AdminNewSnackId.Value,planDay.UserPlan.PlanType);
+            var specAdmin =
+                new AdminSelectedSnackSpecification(snackDto.AdminNewSnackId.Value, planDay.UserPlan.PlanType);
+
             var adminSnack = await _unitOfWork.Repository<AdminSelectedSnack>()
                 .GetEntityWithSpec(specAdmin);
 
-            if (adminSnack == null || adminSnack.PlanTypeEnum != planDay.UserPlan.PlanType)
-                return Ok(new ApiResponse(404, "Snack not found"));
+            Meal? snkToAdd;
 
+            if (planDay.UserPlan.PlanType == PlanTypeEnum.CustomMealPlan)
+            {
+                var snk = await _unitOfWork.Repository<Meal>().GetByIdAsync(snackDto.AdminNewSnackId.Value);
 
-            _mapper.Map(adminSnack.Snack, oldSnack);
+                if (snk == null || adminSnack != null)
+                    return Ok(new ApiResponse(404, "Snack not found"));
+                snkToAdd = snk;
+            }
+            else
+            {
+                if (adminSnack == null || adminSnack.PlanTypeEnum != planDay.UserPlan.PlanType)
+                    return Ok(new ApiResponse(404, "Snack not found"));
+
+                snkToAdd = adminSnack.Snack;
+            }
+
+            _mapper.Map(snkToAdd, oldSnack);
         }
+
 
         oldSnack.Id = dbId;
         oldSnack.Quantity = snackDto.Quantity;
@@ -136,6 +172,6 @@ public partial class UserPlanController
         _unitOfWork.Repository<UserPlanDay>().Update(planDay);
         if (await _unitOfWork.SaveChanges())
             return Ok(new ApiResponse(200));
-        return Ok(new ApiResponse(400, "Failed to delete snack"));  
+        return Ok(new ApiResponse(400, "Failed to delete snack"));
     }
 }

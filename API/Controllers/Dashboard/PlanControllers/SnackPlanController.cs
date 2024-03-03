@@ -15,12 +15,32 @@ public partial class PlanController
     [HttpPost("snacks")]
     public async Task<ActionResult> AddSnack(SnackIdsDto ids, PlanTypeEnum planType)
     {
-        if (planType == PlanTypeEnum.CustomMealPlan)
-            return Ok(new ApiResponse(400, "Can't add to this plan type"));
-
         var adminSpec = new AdminSelectedSnacksSpecification(planType);
+        var snks = (await _unitOfWork.Repository<AdminSelectedSnack>().ListWithSpecAsync(adminSpec)).ToList();
         var selectedSnackIds =
-            (await _unitOfWork.Repository<AdminSelectedSnack>().ListWithSpecAsync(adminSpec)).Select(x => x.SnackId);
+            snks.Select(x => x.SnackId);
+
+
+        if (planType == PlanTypeEnum.CustomMealPlan)
+        {
+            bool ff = false;
+            foreach (var id in ids.SnackIds)
+            {
+                var tmp = snks.FirstOrDefault(y => y.SnackId == id);
+                if (tmp != null)
+                {
+                    _unitOfWork.Repository<AdminSelectedSnack>().Delete(tmp);
+                    snks.Remove(tmp);
+                }
+
+                ff = true;
+            }
+
+            if (!ff) return Ok(new ApiResponse(200));
+            if (await _unitOfWork.SaveChanges()) return Ok(new ApiResponse(200));
+            return Ok(new ApiResponse(400, "Failed to add snack"));
+        }
+
         ids.SnackIds = ids.SnackIds.Where(x => !selectedSnackIds.Contains(x)).ToList();
 
         var spec = new SnackMealsSpecification();
@@ -53,16 +73,52 @@ public partial class PlanController
     [HttpGet("snacks")]
     public async Task<ActionResult<List<SnackDto>>> GetSnacks(PlanTypeEnum planType)
     {
-        var snacks = (await _unitOfWork.Repository<AdminSelectedSnack>().GetQueryable()
-            .Where(x => x.PlanTypeEnum == planType).Include(x => x.Snack)
-            .ToListAsync());
+        if (planType == PlanTypeEnum.CustomMealPlan)
+        {
+            var snackSpec = new SnackMealsSpecification();
+            var snk = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(snackSpec);
+            var deletedSnacks = await _unitOfWork.Repository<AdminSelectedSnack>().ListAllAsync();
+            deletedSnacks = deletedSnacks.Where(c => c.PlanTypeEnum == PlanTypeEnum.CustomMealPlan).ToList();
+            var deletedSnacksIds = deletedSnacks.Select(c => c.SnackId).ToList();
 
-        return Ok(new ApiOkResponse<List<SnackDto>>(_mapper.Map<List<SnackDto>>(snacks)));
+            snk = snk.Where(s => deletedSnacksIds.All(r => r != s.Id)).ToList();
+            var result = _mapper.Map<List<SnackDto>>(snk);
+            return Ok(new ApiOkResponse<List<SnackDto>>(result));
+        }
+        else
+        {
+            var snacks = (await _unitOfWork.Repository<AdminSelectedSnack>().GetQueryable()
+                .Where(x => x.PlanTypeEnum == planType).Include(x => x.Snack)
+                .ToListAsync());
+
+            var result = _mapper.Map<List<SnackDto>>(snacks);
+            return Ok(new ApiOkResponse<List<SnackDto>>(result));
+        }
     }
 
     [HttpDelete("snacks/{id:int}")]
-    public async Task<ActionResult> DeleteSnack(int id)
+    public async Task<ActionResult> DeleteSnack(int id, PlanTypeEnum planType)
     {
+        if (planType == PlanTypeEnum.CustomMealPlan)
+        {
+            var snackmeal = await _unitOfWork.Repository<Meal>().GetByIdAsync(id);
+
+            if (snackmeal == null) return Ok(new ApiResponse(404, "snack not found"));
+
+            var tmp = await _unitOfWork.Repository<AdminSelectedSnack>().ListAllAsync();
+
+            if (tmp.FirstOrDefault(c => c.SnackId == id && c.PlanTypeEnum == PlanTypeEnum.CustomMealPlan) != null)
+                return Ok(new ApiResponse(200));
+            _unitOfWork.Repository<AdminSelectedSnack>().Add(new AdminSelectedSnack
+            {
+                SnackId = id,
+                PlanTypeEnum = planType
+            });
+            if (await _unitOfWork.SaveChanges())
+                return Ok(new ApiResponse(200));
+            return Ok(new ApiResponse(400, "Failed to delete snack"));
+        }
+
         var snack = await _unitOfWork.Repository<AdminSelectedSnack>().GetByIdAsync(id);
         if (snack == null) return Ok(new ApiResponse(404, "Snack not found"));
 

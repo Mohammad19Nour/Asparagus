@@ -1,7 +1,12 @@
-﻿using AsparagusN.Data.Entities.Identity;
+﻿using System.ComponentModel.DataAnnotations;
+using AsparagusN.Data.Entities.Identity;
 using AsparagusN.DTOs;
+using AsparagusN.DTOs.EmployeeDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
+using AsparagusN.Interfaces;
+using AsparagusN.Specifications;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,22 +17,31 @@ namespace AsparagusN.Controllers.Dashboard;
 
 public class RolesController : BaseApiController
 {
+    private readonly IMapper _mapper;
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<AppRole> _roleManager;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public RolesController(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
+    public RolesController(IMapper mapper, UserManager<AppUser> userManager, RoleManager<AppRole> roleManager,
+        IUnitOfWork unitOfWork)
     {
+        _mapper = mapper;
         _userManager = userManager;
         _roleManager = roleManager;
+        _unitOfWork = unitOfWork;
     }
 
     [HttpGet]
     public async Task<ActionResult> GetRoles()
     {
         var roles = (await _roleManager.Roles.ToListAsync()).Select(r => r.Name).ToList();
-       roles =  roles.Except(Enum.GetNames(typeof(Roles))).ToList();
+        roles = roles.Except(Enum.GetNames(typeof(Roles))).ToList();
         return Ok(new ApiOkResponse<List<string>>(roles));
     }
+
+   
+
+   
 /*
     [HttpGet("drivers")]
     public async Task<ActionResult> GetDriversWithRoles()

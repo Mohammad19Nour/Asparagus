@@ -6,10 +6,10 @@ namespace AsparagusN.DTOs.CarDtos;
 
 public class UpdateCarDto
 {
-    [RegularExpression(@"^(\d{1,2}):(\d{1,2})$")]
+    [RegularExpression(@"^(0?\d|1[0-9]|2[0-3]):[0-5][0-9]$")]
     public string? WorkingStartHour { get; set; }
 
-    [RegularExpression(@"^(\d{1,2}):(\d{1,2})$")]
+    [RegularExpression(@"^(0?\d|1[0-9]|2[0-3]):[0-5][0-9]$")]
     public string? WorkingEndHour { get; set; }
 
     [MinLength(7, ErrorMessage = "WorkingDays list must have a length of 7 "),

@@ -229,25 +229,41 @@ public class AdminDriverController : BaseApiController
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteDriver(int id)
     {
-        try
+        using (var transaction = _unitOfWork.BeginTransaction())
         {
-            var driver = await _unitOfWork.Repository<Driver>().GetByIdAsync(id);
+            try
+            {
+                var driver = await _unitOfWork.Repository<Driver>().GetByIdAsync(id);
 
-            if (driver == null)
-                return Ok(new ApiResponse(404, "Driver not found"));
+                if (driver == null)
+                    return Ok(new ApiResponse(404, "Driver not found"));
 
-            _unitOfWork.Repository<Driver>().Delete(driver);
+                var userDriver =
+                    await _userManager.Users.FirstOrDefaultAsync(c => c.Email.ToLower() == driver.Email.ToLower());
+        
+                if (userDriver == null)
+                    return  Ok(new ApiResponse(404, "Driver not found"));
+                
+                _unitOfWork.Repository<AppUser>().Delete(userDriver);
+                _unitOfWork.Repository<Driver>().Delete(driver);
 
-            if (await _unitOfWork.SaveChanges())
-                return Ok(new ApiResponse(200));
-            return Ok(new ApiResponse(400, "Failed to delete driver"));
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return Ok(new ApiResponse(400, "Exception happened.. failed to add driver"));
+                if (await _unitOfWork.SaveChanges())
+                {
+                    await transaction.CommitAsync();
+                    return Ok(new ApiResponse(200));
+                }
 
-            throw;
+                await transaction.RollbackAsync();
+                return Ok(new ApiResponse(400, "Failed to delete driver"));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                await transaction.RollbackAsync();
+                return Ok(new ApiResponse(400, "Exception happened.. failed to add driver"));
+
+                throw;
+            }
         }
     }
 
@@ -278,7 +294,7 @@ public class AdminDriverController : BaseApiController
 
         if (driver == null)
             return Ok(new ApiResponse(404, "Driver not found"));
-
+        
         driver.IsActive = !driver.IsActive;
         _unitOfWork.Repository<Driver>().Update(driver);
 

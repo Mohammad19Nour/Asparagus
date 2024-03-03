@@ -62,6 +62,7 @@ public partial class UserPlanController : BaseApiController
             if (allowedMeals - usedMeal <= 0)
                 return Ok(new ApiResponse(400, "You have already reached your day limit "));
 
+            
             var adminMealSpec =
                 new AdminPlanDaysWithMealsSpecification(dayDate: planDay.Day, planDay.UserPlan.PlanType);
 
@@ -71,17 +72,30 @@ public partial class UserPlanController : BaseApiController
 
             if (planDay.Day != adminDay.AvailableDate)
                 return Ok(new ApiResponse(400, "Meal not found in this day"));
-
+            
             if (planDay.UserPlan.PlanType != adminDay.PlanType)
                 return Ok(new ApiResponse(400, "user plan type not as same as admin plan type"));
 
 
-            var meal = adminDay.Meals.FirstOrDefault(x => x.Id == adminMealId);
-            if (((planDay.UserPlan.PlanType == PlanTypeEnum.CustomMealPlan) && (meal != null)) ||
-                (meal == null) && (planDay.UserPlan.PlanType != PlanTypeEnum.CustomMealPlan))
+            Meal? mal;
+            if (planDay.UserPlan.PlanType == PlanTypeEnum.CustomMealPlan)
             {
-                return Ok(new ApiResponse(404, "Meal not found"));
+                var meal = adminDay.Meals.FirstOrDefault(x => x.MealId == adminMealId);
+                if (meal != null)
+                    return Ok(new ApiResponse(400, "Meal not found"));
+
+                mal = await _unitOfWork.Repository<Meal>().GetByIdAsync(adminMealId);
+                if (mal == null) return Ok(new ApiResponse(400, "Meal not found"));
+
             }
+            else
+            {
+                var meal = adminDay.Meals.FirstOrDefault(x => x.Id == adminMealId);
+                if (meal == null)
+                    return Ok(new ApiResponse(400, "Meal not found"));
+                mal = meal.Meal;
+            }
+           
 
             var mealToAdd = new UserSelectedMeal
             {
@@ -89,10 +103,10 @@ public partial class UserPlanController : BaseApiController
                 UserPlanDayId = planDay.Id
             };
 
-            _mapper.Map(meal.Meal, mealToAdd);
+            _mapper.Map(mal, mealToAdd);
             var ingredients = await _unitOfWork.Repository<MealIngredient>().GetQueryable()
                 .Include(x => x.Ingredient)
-                .Where(x => x.MealId == meal.MealId).ToListAsync();
+                .Where(x => x.MealId == mal.Id).ToListAsync();
 
             var carb = ingredients.FirstOrDefault(x => x.Ingredient.TypeOfIngredient == IngredientType.Carb);
 
@@ -105,7 +119,7 @@ public partial class UserPlanController : BaseApiController
 
             mealToAdd.ChangedCarb = carbSelected;
 
-            mealToAdd.OriginalMealId = meal.MealId;
+            mealToAdd.OriginalMealId = mal.Id;
             if (planDay.UserPlan.PlanType == PlanTypeEnum.CustomMealPlan)
             {
                 mealToAdd.PricePerCarb = 0;

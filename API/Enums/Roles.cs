@@ -8,5 +8,6 @@ public enum Roles
     [EnumMember(Value = "Driver")]
     Driver,
     Cashier,
-    User
+    User,
+    Employee
 }

@@ -33,19 +33,27 @@ public class CarService : ICarService
 
     public async Task<(Car? car, string Message)> UpdateCar(UpdateCarDto dto, int carId)
     {
-        if (dto.WorkingStartHour != null && dto.WorkingEndHour != null &&
-            TimeSpan.Parse(dto.WorkingStartHour) > TimeSpan.Parse(dto.WorkingEndHour))
-            return (null, "start working hour should be less than end working hour");
-        var car = await GetCarByIdAsync(carId);
-        if (car == null) return (null, "Car not found");
-        _mapper.Map(dto, car);
+        try
+        {
+            if (dto.WorkingStartHour != null && dto.WorkingEndHour != null &&
+                TimeSpan.Parse(dto.WorkingStartHour) > TimeSpan.Parse(dto.WorkingEndHour))
+                return (null, "start working hour should be less than end working hour");
+            var car = await GetCarByIdAsync(carId);
+            if (car == null) return (null, "Car not found");
+            _mapper.Map(dto, car);
 
-        if (dto.WorkingStartHour != null) car.WorkingStartHour = TimeSpan.Parse(dto.WorkingStartHour);
-        if (dto.WorkingEndHour != null) car.WorkingEndHour = TimeSpan.Parse(dto.WorkingEndHour);
-        _unitOfWork.Repository<Car>().Update(car);
-        if (await _unitOfWork.SaveChanges())
-            return (car, "Done");
-        return (null, "Failed to update. Something happened during updating car");
+            if (dto.WorkingStartHour != null) car.WorkingStartHour = TimeSpan.Parse(dto.WorkingStartHour);
+            if (dto.WorkingEndHour != null) car.WorkingEndHour = TimeSpan.Parse(dto.WorkingEndHour);
+            _unitOfWork.Repository<Car>().Update(car);
+            if (await _unitOfWork.SaveChanges())
+                return (car, "Done");
+            return (null, "Failed to update. Something happened during updating car");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<Car?> GetCarByIdAsync(int carId, bool include = false)
