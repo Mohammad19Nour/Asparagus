@@ -5,6 +5,7 @@ using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers;
@@ -20,6 +21,7 @@ public class CategoryController : BaseApiController
         _mapper = mapper;
     }
 
+    [Authorize]
     [HttpPost("add-category")]
     public async Task<ActionResult<CategoryDto>> AddCategory(NewCategoryDto dto)
     {
@@ -47,7 +49,7 @@ public class CategoryController : BaseApiController
 
         return Ok(category == null ? new ApiResponse(404, messageEN:"category not found") : new ApiOkResponse<CategoryDto>(_mapper.Map<CategoryDto>(category)));
     }
-
+[Authorize]
     [HttpPut("update/{categoryId:int}")]
     public async Task<ActionResult<CategoryDto>> UpdateCategory( int categoryId,[FromBody] UpdateCategoryDto dto)
     {
@@ -63,7 +65,7 @@ public class CategoryController : BaseApiController
 
         return Ok(new ApiResponse(400, messageEN:"Failed to update category"));
     }
-
+[Authorize]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteCategory(int id)
     {

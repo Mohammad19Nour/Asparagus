@@ -72,6 +72,7 @@ public class AdminAccountsController : BaseApiController
             adminDto.Name = driver.Name;
             adminDto.PictureUrl = driver.PictureUrl;
             adminDto.PhoneNumber = driver.PhoneNumber;
+            if (!driver.IsActive) return Ok(new ApiResponse(400, "driver not active"));
         }
         else if (adminDto.Role.ToLower() == Roles.Driver.GetDisplayName().ToLower())
         {
@@ -81,8 +82,17 @@ public class AdminAccountsController : BaseApiController
             adminDto.PictureUrl = cashier.PictureUrl;
             adminDto.PhoneNumber = cashier.PhoneNumber;
         }
+        else if (adminDto.Role.ToLower() == Roles.Employee.GetDisplayName().ToLower())
+        {
+            var employee = await _unitOfWork.Repository<Employee>().GetQueryable()
+                .Where(c => c.Email.ToLower() == adminDto.Email.ToLower()).FirstAsync();
+           
+                adminDto.Name = employee.FullName;
+            adminDto.PictureUrl = "No Photo";
+            adminDto.PhoneNumber = employee.PhoneNumber;
+        }
 
-        return Ok(new ApiOkResponse<AdminAccountDto>(adminDto));
+        return Ok(new ApiResponse(404, "Not found"));
     }
 
     [Authorize]
@@ -92,9 +102,9 @@ public class AdminAccountsController : BaseApiController
         var email = User.GetEmail();
         var user = await _unitOfWork.Repository<AppUser>().GetQueryable().Where(u => u.Email.ToLower() == email)
             .FirstAsync();
-        var roles = (await _userManager.GetRolesAsync(user)).Select(c=>c.ToLower()).ToList();
+        var roles = (await _userManager.GetRolesAsync(user)).Select(c => c.ToLower()).ToList();
 
-        
+
         if (roles.Contains(Roles.Cashier.GetDisplayName().ToLower()))
         {
             var spec = new CashierWithBranchSpecification(email.ToLower());

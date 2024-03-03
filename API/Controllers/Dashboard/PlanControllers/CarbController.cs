@@ -5,12 +5,14 @@ using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Specifications;
 using AsparagusN.Specifications.AdminPlanSpecifications;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.Dashboard.PlanControllers;
 
 public partial class PlanController : BaseApiController
 {
+    [Authorize]
     [HttpPost("carb")]
     public async Task<ActionResult<List<CarbDto>>> AddCarb(List<int> ids, PlanTypeEnum planType)
     {
@@ -58,6 +60,7 @@ public partial class PlanController : BaseApiController
         return Ok(new ApiOkResponse<List<CarbDto>>(res));
     }
 
+    [Authorize]
     [HttpDelete("carb/{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {

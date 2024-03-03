@@ -9,6 +9,8 @@ public class Cashier
     public string PhoneNumber { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
+    public bool AllowLoyal { get; set; }
+    public bool AllowOrder { get; set; }
     public bool IsActive { get; set; } = true;
     public Branch Branch { get; set; }
     public int BranchId { get; set; }

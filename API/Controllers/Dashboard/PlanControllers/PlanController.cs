@@ -84,7 +84,7 @@ public partial class PlanController : BaseApiController
     private async Task<List<MealWithIngredientsDto>> _getAdminSelectedMeals(AdminPlanDay planDay)
     {
         var meals = await _unitOfWork.Repository<Meal>().ListAllAsync();
-        meals = meals.Where(meal => planDay.Meals.All(d => d.MealId != meal.Id)).ToList();
+        meals = meals.Where(meal => planDay.Meals.All(d => d.MealId != meal.Id) && meal.IsMealPlan).ToList();
 
         return _mapper.Map<List<MealWithIngredientsDto>>(meals);
 

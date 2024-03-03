@@ -41,17 +41,11 @@ public class EmployeesController : BaseApiController
 
                 var employee = _mapper.Map<Employee>(newEmployeeDto);
 
-                var img = await _mediaService.AddPhotoAsync(newEmployeeDto.Image);
-                if (!img.Success) return Ok(new ApiResponse(400, img.Message));
-
-                employee.PictureUrl = img.Url;
-
                 var employeeUser = new AppUser
                 {
                     UserName = newEmployeeDto.Email,
                     Email = newEmployeeDto.Email,
                     FullName = newEmployeeDto.FullName,
-                    PictureUrl = img.Url
                 };
 
                 var result = await _userManager.CreateAsync(employeeUser, newEmployeeDto.Password);
@@ -206,13 +200,6 @@ public class EmployeesController : BaseApiController
                 if (employeeUser == null) return Ok(new ApiResponse(404, "Employee not found"));
 
                 _mapper.Map(updateEmployeeDto, employee);
-
-                if (updateEmployeeDto.Image != null)
-                {
-                    var img = await _mediaService.AddPhotoAsync(updateEmployeeDto.Image);
-                    if (!img.Success) return Ok(new ApiResponse(400, img.Message));
-                    employee.PictureUrl = img.Url;
-                }
 
                 if (updateEmployeeDto.Password != null && !string.IsNullOrEmpty(updateEmployeeDto.Password.Trim()) &&
                     employee.Password != updateEmployeeDto.Password)

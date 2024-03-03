@@ -7,10 +7,11 @@ using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Specifications.AdminPlanSpecifications;
 using AsparagusN.Specifications.UserSpecifications;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.User.UserPlanControllers;
-
+[Authorize]
 public partial class UserPlanController
 {
     [HttpGet("snacks/{dayId:int}")]

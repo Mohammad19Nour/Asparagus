@@ -67,7 +67,7 @@ public class CouponController : BaseApiController
             return Ok(new ApiOkResponse<CouponDto>(_mapper.Map<CouponDto>(coupon)));
         return Ok(new ApiResponse(400, "Failed to update coupon"));
     }
-
+[Authorize]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteCoupon(int id)
     {
@@ -92,6 +92,6 @@ public class CouponController : BaseApiController
             return Ok(new ApiResponse(400, "Coupon not exist"));
 
 
-        return Ok(new ApiResponse(200, "Valid"));
+        return Ok(new ApiOkResponse<CouponDto>(_mapper.Map<CouponDto>(exist)));
     }
 }

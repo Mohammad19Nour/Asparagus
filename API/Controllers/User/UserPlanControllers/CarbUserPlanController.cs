@@ -4,6 +4,7 @@ using AsparagusN.DTOs.CarbDtos;
 using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Errors;
 using AsparagusN.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,7 @@ public partial class UserPlanController
         }
     }
 
-
+[Authorize]
     [HttpPost("carb/{mealId:int}")]
     public async Task<ActionResult> EditCarbOfMeal(int mealId, int adminCarbId)
     {

@@ -9,12 +9,13 @@ using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers;
-
+[Authorize]
 public class BasketController : BaseApiController
 {
     private readonly IMapper _mapper;

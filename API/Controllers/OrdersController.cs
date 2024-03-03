@@ -7,6 +7,7 @@ using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ public class OrdersController : BaseApiController
         _userManager = userManager;
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult> CreateOrder(NewOrderInfoDto newOrderInfo)
     {
@@ -44,7 +46,6 @@ public class OrdersController : BaseApiController
 
         return Ok(new ApiOkResponse<OrderDto>(_mapper.Map<OrderDto>(result.Order)));
     }
-
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetOrders(OrderStatus status)
     {

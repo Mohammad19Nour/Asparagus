@@ -39,7 +39,8 @@ public class DriversController : BaseApiController
             .Where(c => c.Email.ToLower() == email.ToLower()).FirstOrDefaultAsync();
 
         if (driver == null) return Ok(new ApiResponse(404, "driver not found"));
-
+        if ( !driver.IsActive) return Ok(new ApiResponse(404, "driver not active"));
+            
         var users = await _unitOfWork.Repository<AppUser>().ListAllAsync();
 
         var spec = new PlanDayOrdersForDriverWithStatusSpecification(driver.Id, PlanOrderStatus.Ready);
@@ -66,6 +67,7 @@ public class DriversController : BaseApiController
 
         if (driver == null) return Ok(new ApiResponse(404, "driver not found"));
 
+        if ( !driver.IsActive) return Ok(new ApiResponse(404, "driver not active"));
         driver.Status = DriverStatus.Delivering;
         _unitOfWork.Repository<Driver>().Update(driver);
 
@@ -83,6 +85,8 @@ public class DriversController : BaseApiController
 
         if (driver == null) return Ok(new ApiResponse(404, "driver not found"));
 
+        if ( !driver.IsActive) return Ok(new ApiResponse(404, "driver not active"));
+        
         var orderSpec = new PlanDayOrderWithDriverSpecification(orderId);
         var order = await _unitOfWork.Repository<UserPlanDay>().GetEntityWithSpec(orderSpec);
 

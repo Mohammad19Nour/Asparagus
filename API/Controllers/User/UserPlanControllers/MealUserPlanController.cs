@@ -9,11 +9,12 @@ using AsparagusN.Helpers;
 using AsparagusN.Specifications;
 using AsparagusN.Specifications.AdminPlanSpecifications;
 using AsparagusN.Specifications.UserSpecifications;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.User.UserPlanControllers;
-
+[Authorize]
 public partial class UserPlanController : BaseApiController
 {
     [HttpGet("meals/{dayId:int}")]

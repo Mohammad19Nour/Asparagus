@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240303120552_Initial")]
+    [Migration("20240303140713_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -230,6 +230,12 @@ namespace AsparagusN.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("AllowLoyal")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("AllowOrder")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("BranchId")
                         .HasColumnType("INTEGER");
 
@@ -415,7 +421,7 @@ namespace AsparagusN.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PictureUrl")
+                    b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

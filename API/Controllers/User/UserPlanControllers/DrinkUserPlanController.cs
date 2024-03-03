@@ -4,10 +4,11 @@ using AsparagusN.DTOs.UserDtos;
 using AsparagusN.Errors;
 using AsparagusN.Specifications;
 using AsparagusN.Specifications.UserSpecifications;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.User.UserPlanControllers;
-
+[Authorize]
 public partial class UserPlanController
 {
     [HttpGet("drinks/{dayId:int}")]

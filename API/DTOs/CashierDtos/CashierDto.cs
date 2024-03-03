@@ -12,4 +12,6 @@ public class CashierDto
     public bool IsActive { get; set; }
     public string Period { get; set; }
     public BranchDto Branch { get; set; }
+    public bool AllowLoyal { get; set; }
+    public bool AllowOrder { get; set; }
 }

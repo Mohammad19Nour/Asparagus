@@ -227,6 +227,12 @@ namespace AsparagusN.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("AllowLoyal")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("AllowOrder")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("BranchId")
                         .HasColumnType("INTEGER");
 
@@ -412,7 +418,7 @@ namespace AsparagusN.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PictureUrl")
+                    b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

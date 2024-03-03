@@ -17,12 +17,24 @@ namespace AsparagusN.Helpers.MappingProfiles
                 .ForMember(dest => dest.WorkingDays, opt => opt.MapFrom(c => GetCarWorkingDays(c.WorkingDays)))
                 .ForAllMembers(dest => dest.Condition((src, b, member) => member != default));
             CreateMap<Car, CatInfoDto>()
+                .ForMember(dest => dest.WorkingEndHour, opt => opt.MapFrom(src => FormatDate(src.WorkingEndHour)))
+                .ForMember(dest => dest.WorkingStartHour, opt => opt.MapFrom(src => FormatDate(src.WorkingStartHour)))
+                
                 .ForMember(dest => dest.WorkingDays, opt => opt.MapFrom(src => GetCatInfoDtoWorkingDays(src.WorkingDays)));
 
             CreateMap<Booking, BookingDto>()
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.FullName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
                 .ForMember(dest => dest.phoneNumber, opt => opt.MapFrom(src => src.User.PhoneNumber));
+        }
+
+        private string FormatDate(TimeSpan srcWorkingEndHour)
+        {
+            DateTime dateTime = DateTime.Today.Add(srcWorkingEndHour);
+            
+          
+           return dateTime.ToString("hh:mm:ss tt");
+           
         }
 
         private List<bool> GetCatInfoDtoWorkingDays(List<CarWorkingDay> srcWorkingDays)

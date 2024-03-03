@@ -49,6 +49,13 @@ public class CashiersController : BaseApiController
     [HttpPut("orders/{orderId:int}")]
     public async Task<ActionResult> ChangeOrder(int orderId)
     {
+        var email = User.GetEmail();
+        var cashier = await _unitOfWork.Repository<Cashier>().GetQueryable().
+            Where(c => c.Email.ToLower() == email)
+            .FirstOrDefaultAsync();
+
+        if (cashier == null || cashier.AllowLoyal)
+            return Ok(new ApiException(401, "Can't access to this resource"));
         var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId);
 
         if (order == null) return Ok(new ApiResponse(400, "Order not found"));
@@ -65,6 +72,11 @@ public class CashiersController : BaseApiController
     public async Task<ActionResult> ChangeOrder(int mealId, string userEmail)
     {
         var email = User.GetEmail();
+        var cashier = await _unitOfWork.Repository<Cashier>().GetQueryable().Where(c => c.Email.ToLower() == email)
+            .FirstOrDefaultAsync();
+
+        if (cashier == null || cashier.AllowLoyal)
+            return Ok(new ApiException(401, "Can't access to this resource"));
         var result = await _orderService.CreateCashierOrderAsync(userEmail, mealId, email);
 
 

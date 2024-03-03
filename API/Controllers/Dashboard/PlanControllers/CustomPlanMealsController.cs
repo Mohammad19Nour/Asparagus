@@ -26,16 +26,11 @@ public partial class PlanController
     {
         var spec = new AdminPlanDaysWithMealsSpecification(dayId);
         var unavailableMeals = (await _unitOfWork.Repository<AdminPlanDay>().GetEntityWithSpec(spec))?.Meals;
-        var meals = await _unitOfWork.Repository<Meal>().ListAllAsync();
+      //  var meals = (await _unitOfWork.Repository<Meal>().ListAllAsync()).Where(m=>m.IsMealPlan).ToList();
 
-        var mealsToReturn = _mapper.Map<List<MealIfoForCustomPlanDto>>(meals);
-
-        foreach (var ml in mealsToReturn)
-        {
-            if (unavailableMeals != null) 
-                ml.IsAvailable = unavailableMeals.All(c => c.MealId != ml.Id);
-        }
-
+      //  meals = meals.Where(c => !unavailableMeals.Select(v => v.MealId).ToList().Contains(c.Id)).ToList();
+        var mealsToReturn = _mapper.Map<List<MealIfoForCustomPlanDto>>(unavailableMeals.Select(g=>g.Meal).ToList());
+        
         return mealsToReturn;
     }
 }

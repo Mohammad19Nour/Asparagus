@@ -2,10 +2,11 @@
 using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Errors;
 using AsparagusN.Specifications.UserSpecifications;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.User.UserPlanControllers;
-
+[Authorize]
 public partial class UserPlanController
 {
     [HttpGet("extras/{dayId:int}")]

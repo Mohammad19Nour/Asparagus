@@ -238,8 +238,8 @@ public class AdminCashiersController : BaseApiController
                 var userCashier =
                     await _userManager.Users.FirstOrDefaultAsync(c => c.Email.ToLower() == cashier.Email.ToLower());
                 if (userCashier == null)
-                    return  Ok(new ApiResponse(404, "Cashier not found"));
-                
+                    return Ok(new ApiResponse(404, "Cashier not found"));
+
                 _unitOfWork.Repository<AppUser>().Delete(userCashier);
                 _unitOfWork.Repository<Cashier>().Delete(cashier);
 
@@ -258,6 +258,45 @@ public class AdminCashiersController : BaseApiController
                 await transaction.RollbackAsync();
                 return Ok(new ApiResponse(400, "Exception happened.. failed to add cashier"));
 
+                throw;
+            }
+        }
+    }
+
+    [HttpPut("change")]
+    public async Task<ActionResult> Change(int cashierId, bool allowLoyal, bool allowOrder)
+    {
+        using (var transaction = _unitOfWork.BeginTransaction())
+        {
+            try
+            {
+                var cashier = await _unitOfWork.Repository<Cashier>().GetByIdAsync(cashierId);
+
+                if (cashier == null)
+                    return Ok(new ApiResponse(404, "Cashier not found"));
+
+                var userCashier =
+                    await _userManager.Users.FirstOrDefaultAsync(c => c.Email.ToLower() == cashier.Email.ToLower());
+                if (userCashier == null)
+                    return Ok(new ApiResponse(404, "Cashier not found"));
+
+                cashier.AllowLoyal = allowLoyal;
+                cashier.AllowOrder = allowOrder;
+                _unitOfWork.Repository<Cashier>().Update(cashier);
+
+                if (await _unitOfWork.SaveChanges())
+                {
+                    await transaction.CommitAsync();
+                    return Ok(new ApiResponse(200, "Done"));
+                }
+
+                await transaction.RollbackAsync();
+                return Ok(new ApiResponse(400, "Failed to change roles"));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                await transaction.RollbackAsync();
                 throw;
             }
         }

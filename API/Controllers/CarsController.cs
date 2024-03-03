@@ -25,6 +25,7 @@ public class CarsController : BaseApiController
         _mapper = mapper;
         _carService = carService;
     }
+    [Authorize]
 
     [HttpGet("booking")]
     public async Task<ActionResult> GetBooking()
@@ -44,12 +45,15 @@ public class CarsController : BaseApiController
         return Ok(new ApiOkResponse<CatInfoDto>(_mapper.Map<CatInfoDto>(car)));
     }
 
-
+[Authorize]
     [HttpPost]
     public async Task<ActionResult> UpdateCar(UpdateCarDto dto)
     {
         var res = await _carService.UpdateCar(dto, 1);
-        return Ok(new ApiResponse(200));
+        if (res.car == null)
+            return Ok(new ApiResponse(400, res.Message));
+        
+        return Ok(new ApiOkResponse<CatInfoDto>(_mapper.Map<CatInfoDto>(res.car)));
     }
 
     [Authorize]
