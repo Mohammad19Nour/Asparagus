@@ -46,8 +46,12 @@ public partial class PlanController
 
 
     [HttpDelete("extras/{id:int}")]
-    public async Task<ActionResult> DeleteExtra(int id)
+    public async Task<ActionResult> DeleteExtra(int id,[FromQuery]PlanTypeEnum planType)
     {
+        if (planType == PlanTypeEnum.CustomMealPlan)
+        {
+            return Ok(new ApiResponse(400, "Can't delete from custom plan"));
+        }
         var extra = await _unitOfWork.Repository<AdminSelectedExtraOption>().GetByIdAsync(id);
 
         if (extra == null)

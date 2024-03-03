@@ -49,14 +49,14 @@ public class CustomSubscriptionService : ICustomSubscriptionService
             !HelperFunctions.CheckExistAddress(user.WorkAddress))
             return (null, "You have to provide at least one address");
 
-       
+
         plan = new UserPlan();
         var result = await Add(subscriptionDto, user, plan);
         if (!result.Succes) return (null, result.Message);
         user!.IsMealPlanMember = true;
         user!.IsNormalUser = false;
         plan.NumberOfRemainingSnacks = plan.NumberOfSnacks;
-       
+
         _unitOfWork.Repository<UserPlan>().Add(plan);
 
         if (await _unitOfWork.SaveChanges()) return (plan, "Success");
@@ -96,6 +96,7 @@ public class CustomSubscriptionService : ICustomSubscriptionService
             throw;
         }
     }
+
     public async Task<(decimal? Price, string Message)> GetPriceForUpdate(UpdateSubscriptionDto subscription,
         AppUser user)
     {
@@ -118,7 +119,8 @@ public class CustomSubscriptionService : ICustomSubscriptionService
         }
     }
 
-    public async Task<(decimal? Price, string Message)> GetPriceForCreate(NewCustomSubscriptionDto subscription, AppUser user)
+    public async Task<(decimal? Price, string Message)> GetPriceForCreate(NewCustomSubscriptionDto subscription,
+        AppUser user)
     {
         try
         {
@@ -247,7 +249,7 @@ public class CustomSubscriptionService : ICustomSubscriptionService
             plan.Price += plan.Duration * plan.NumberOfMealPerDay * 10;
 
             plan.Price += 300; // for subscribe
-            plan.Price += CalcPriceOfAddedProteinAndCarb(subscriptionDto.CarbPerMeal,subscriptionDto.ProteinPerMeal);
+            plan.Price += CalcPriceOfAddedProteinAndCarb(subscriptionDto.CarbPerMeal, subscriptionDto.ProteinPerMeal);
             return (true, "ok");
         }
         catch (Exception e)
@@ -258,7 +260,8 @@ public class CustomSubscriptionService : ICustomSubscriptionService
         }
     }
 
-    private decimal CalcPriceOfAddedProteinAndCarb(decimal? subscriptionDtoCarbPerMeal, decimal? subscriptionDtoProteinPerMeal)
+    private decimal CalcPriceOfAddedProteinAndCarb(decimal? subscriptionDtoCarbPerMeal,
+        decimal? subscriptionDtoProteinPerMeal)
     {
         var addedCarb = subscriptionDtoCarbPerMeal.Value - 120;
         var addedProtein = subscriptionDtoProteinPerMeal.Value - 120;
@@ -455,13 +458,7 @@ public class CustomSubscriptionService : ICustomSubscriptionService
             plan.Price +=
                 numberOfUpdatedMealsPerDay * updatedPlanDays.Count * 10; // update meals per day for previous days
 
-            plan.Days.Add(new UserPlanDay
-            {
-                Day = DateTime.Today,
-                DeliveryLocation = HelperFunctions.CheckExistAddress(user.HomeAddress)
-                    ? user.HomeAddress
-                    : user.WorkAddress
-            });
+
             if (numberOfUpdatedDays > 0)
                 plan.Price += numberOfUpdatedDays * plan.NumberOfMealPerDay * 10;
 
@@ -469,6 +466,9 @@ public class CustomSubscriptionService : ICustomSubscriptionService
 
             foreach (var day in tmpDays)
             {
+                day.DeliveryLocation = HelperFunctions.CheckExistAddress(user.HomeAddress)
+                    ? user.HomeAddress
+                    : user.WorkAddress;
                 foreach (var drink in day.SelectedDrinks)
                     plan.Price += drink.Price;
 
@@ -499,6 +499,7 @@ public class CustomSubscriptionService : ICustomSubscriptionService
                         : user.WorkAddress;
                     plan.Days.Add(day);
                 }
+
             return (true, "ok");
         }
         catch (Exception e)

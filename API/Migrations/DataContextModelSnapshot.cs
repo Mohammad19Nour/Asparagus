@@ -963,23 +963,6 @@ namespace AsparagusN.Migrations
                     b.ToTable("PlanTypes");
                 });
 
-            modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.AdminPlans.UnavailableMeal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AdminDayId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MealId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UnvailableMeals");
-                });
-
             modelBuilder.Entity("AsparagusN.Data.Entities.MealPlan.UserPlan.UserMealCarb", b =>
                 {
                     b.Property<int>("Id")

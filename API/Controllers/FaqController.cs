@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers;
 
-[Authorize]
 public class FaqController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -57,6 +56,7 @@ public class FaqController : BaseApiController
         return Ok(new ApiOkResponse<List<FaqDto>>(result));
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult> AddTitle(string title)
     {
@@ -72,6 +72,7 @@ public class FaqController : BaseApiController
         return Ok(new ApiResponse(400, "Failed to add"));
     }
 
+    [Authorize]
     [HttpPost("question/{id:int}")]
     public async Task<ActionResult> AddTitle(int id, string question, string answer)
     {
@@ -93,6 +94,7 @@ public class FaqController : BaseApiController
         return Ok(new ApiResponse(400, "Failed to add"));
     }
 
+    [Authorize]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> AddTitle(int id, string text)
     {
@@ -109,6 +111,7 @@ public class FaqController : BaseApiController
         return Ok(new ApiResponse(400, "Failed to add"));
     }
 
+    [Authorize]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteTitle(int id)
     {

@@ -51,11 +51,7 @@ public static class ApplicationServiceExtensions
         //  services.AddDbContext<DataContext>(opt => { opt.UseSqlServer(config.GetConnectionString("DefaultConnection")); });
 
         services.AddDbContext<DataContext>(opt => { opt.UseSqlite(config.GetConnectionString("SqliteConnection")); });
-        services.AddSingleton<IConnectionMultiplexer>(c =>
-        {
-            var configuration = ConfigurationOptions.Parse(config.GetConnectionString("Redis"), true);
-            return ConnectionMultiplexer.Connect(configuration);
-        });
+       
         services.AddControllersWithViews()
             .AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -64,19 +60,20 @@ public static class ApplicationServiceExtensions
         {
             opt.InvalidModelStateResponseFactory = actionContext =>
             {
-                var errors = actionContext.ModelState.Where(e => e.Value.Errors.Count > 0)
-                    .SelectMany(x => x.Value.Errors)
-                    .Select(x => x.ErrorMessage).ToArray();
+                var errors = actionContext.ModelState
+                    .Where(e => e.Value.Errors.Count > 0)
+                    .SelectMany(x => x.Value.Errors.Select(y => new 
+                    {
+                        Field = x.Key,
+                        Message = y.ErrorMessage
+                    }))
+                    .ToArray();
 
-                foreach (var e in errors)
-                {
-                    Console.WriteLine(e);
-                }
-
-                var errorResponse = new ApiValidationErrorResponse
+                var errorResponse = new 
                 {
                     Errors = errors
                 };
+
                 return new OkObjectResult(errorResponse);
             };
         });

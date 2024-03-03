@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240302055210_Initial")]
+    [Migration("20240303082919_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -758,9 +758,6 @@ namespace AsparagusN.Migrations
 
                     b.Property<double>("Fibers")
                         .HasColumnType("REAL");
-
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");

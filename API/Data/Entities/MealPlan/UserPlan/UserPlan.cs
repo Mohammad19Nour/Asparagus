@@ -25,7 +25,7 @@ public class UserPlan
 
     public DateTime EndDate()
     {
-        return StartDate.AddDays(Duration + 1);
+        return StartDate.AddDays(Duration);
     }
 
     public UserPlan()

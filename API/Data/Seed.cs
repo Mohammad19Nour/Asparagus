@@ -161,7 +161,30 @@ public static class Seed
     {
         if (await context.Cars.AnyAsync()) return;
 
-        context.Cars.Add(new Car());
+        context.Cars.Add(new Car
+        {
+            WorkingStartHour = TimeSpan.FromHours(5)
+            ,WorkingEndHour = TimeSpan.FromHours(17),
+            WorkingDays = new List<CarWorkingDay>
+            {
+                new CarWorkingDay
+                {
+                    Day = DayOfWeek.Friday,
+                },
+                
+                new CarWorkingDay
+                {
+                    Day = DayOfWeek.Thursday,
+                },
+                
+                new CarWorkingDay
+                {
+                    
+                    Day = DayOfWeek.Monday,
+                }
+                
+            }
+        });
         await context.SaveChangesAsync();
     }
 

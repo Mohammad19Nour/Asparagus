@@ -159,7 +159,7 @@ public class CarService : ICarService
         var carSpec = new CarSpecification();
         var cars = await _unitOfWork.Repository<Car>().ListWithSpecAsync(carSpec);
 
-        for (int j = 1; j < 2; j++)
+        for (int j = 0; j < 3; j++)
         {
             var day = DateTime.Now.Date.AddDays(j);
             var availableInDay = new List<(DateTime Start, DateTime End)>();

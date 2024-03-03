@@ -51,17 +51,11 @@ public partial class PlanController : BaseApiController
         result.Days = _mapper.Map<List<AdminPlanDayDto>>(days);
         if (PlanTypeEnum.CustomMealPlan == planType)
         {
-           
-            var meals = await _unitOfWork.Repository<Meal>().ListAllAsync();
-            
-
+            int c = 0;
             foreach (var day in result.Days)
             {
-                var specUn = new UnavailableMealsInAdminDaySpecification(day.Id);
-                var unavailableMeals = await _unitOfWork.Repository<UnavailableMeal>().ListWithSpecAsync(specUn);
-
-                var mls =  meals.Where(m => unavailableMeals.All(un => un.MealId != m.Id)).ToList();
-                day.Meals = _mapper.Map<List<MealWithIngredientsDto>>(mls);
+                day.Meals = await _getAdminSelectedMeals(days[c]);
+                c++;
             }
         }
 
@@ -69,7 +63,7 @@ public partial class PlanController : BaseApiController
         var response = new ApiOkResponse<PlanDetailsDto>(result);
         return Ok(response);
     }
-    
+
 
     [HttpGet("day")]
     public async Task<ActionResult<AdminPlanDayDto>> GetPlanDay([FromQuery] int dayId)
@@ -79,8 +73,21 @@ public partial class PlanController : BaseApiController
         var plan = await _unitOfWork.Repository<AdminPlanDay>().GetEntityWithSpec(spec);
 
         if (plan == null) return Ok(new ApiResponse(404, messageEN: "Plan not found"));
+        var res = _mapper.Map<AdminPlanDayDto>(plan);
 
-        return Ok(new ApiOkResponse<AdminPlanDayDto>(_mapper.Map<AdminPlanDayDto>(plan)));
+        if (plan.PlanType == PlanTypeEnum.CustomMealPlan)
+            res.Meals = await _getAdminSelectedMeals(plan);
+
+        return Ok(new ApiOkResponse<AdminPlanDayDto>(res));
+    }
+
+    private async Task<List<MealWithIngredientsDto>> _getAdminSelectedMeals(AdminPlanDay planDay)
+    {
+        var meals = await _unitOfWork.Repository<Meal>().ListAllAsync();
+        meals = meals.Where(meal => planDay.Meals.All(d => d.MealId != meal.Id)).ToList();
+
+        return _mapper.Map<List<MealWithIngredientsDto>>(meals);
+
     }
 
     [HttpPut("updatePoint")]

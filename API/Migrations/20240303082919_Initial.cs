@@ -452,7 +452,6 @@ namespace AsparagusN.Migrations
                     Fibers = table.Column<double>(type: "REAL", nullable: false),
                     PricePerProtein = table.Column<double>(type: "REAL", nullable: false),
                     PricePerCarb = table.Column<double>(type: "REAL", nullable: false),
-                    IsAvailable = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

@@ -52,9 +52,9 @@ public partial class UserPlanController : BaseApiController
 
             if (planDay == null) return Ok(new ApiResponse(404, "Plan day not found"));
 
-            
             if (!HelperFunctions.CanUpdate(planDay.Day.Date))
-                return Ok(new ApiResponse(403,"Can't update before two days or less"));
+                return Ok(new ApiResponse(403, "Can't update before two days or less"));
+
 
             var allowedMeals = planDay.UserPlan.NumberOfMealPerDay;
             var usedMeal = planDay.SelectedMeals.Count;
@@ -75,16 +75,20 @@ public partial class UserPlanController : BaseApiController
             if (planDay.UserPlan.PlanType != adminDay.PlanType)
                 return Ok(new ApiResponse(400, "user plan type not as same as admin plan type"));
 
-          
+
             var meal = adminDay.Meals.FirstOrDefault(x => x.Id == adminMealId);
-            if (meal == null) return Ok(new ApiResponse(404, "Meal not found"));
+            if (((planDay.UserPlan.PlanType == PlanTypeEnum.CustomMealPlan) && (meal != null)) ||
+                (meal == null) && (planDay.UserPlan.PlanType != PlanTypeEnum.CustomMealPlan))
+            {
+                return Ok(new ApiResponse(404, "Meal not found"));
+            }
 
             var mealToAdd = new UserSelectedMeal
             {
                 UserPlanDay = planDay,
                 UserPlanDayId = planDay.Id
             };
-            
+
             _mapper.Map(meal.Meal, mealToAdd);
             var ingredients = await _unitOfWork.Repository<MealIngredient>().GetQueryable()
                 .Include(x => x.Ingredient)
@@ -96,12 +100,19 @@ public partial class UserPlanController : BaseApiController
             if (carb != null)
             {
                 _mapper.Map(carb.Ingredient, carbSelected);
-                HelperFunctions.CalcNewPropertyForCarbOfMeal(carbSelected,carb.Weight,carb.Ingredient.Weight);
+                HelperFunctions.CalcNewPropertyForCarbOfMeal(carbSelected, carb.Weight, carb.Ingredient.Weight);
             }
 
             mealToAdd.ChangedCarb = carbSelected;
 
             mealToAdd.OriginalMealId = meal.MealId;
+            if (planDay.UserPlan.PlanType == PlanTypeEnum.CustomMealPlan)
+            {
+                mealToAdd.PricePerCarb = 0;
+                mealToAdd.PricePerProtein = 0;
+                mealToAdd.Protein = planDay.UserPlan.ProteinPerMealForCustomPlan;
+                mealToAdd.Carbs = planDay.UserPlan.CarbPerMealForCustomPlan;
+            }
             planDay.SelectedMeals.Add(mealToAdd);
 
             _unitOfWork.Repository<UserPlanDay>().Update(planDay);
@@ -118,57 +129,57 @@ public partial class UserPlanController : BaseApiController
         }
     }
 
-   /* [HttpPut("meals/{dayId:int}")]
-    public async Task<ActionResult> UpdateMeal(int dayId, UpdateUserMealDto updatedMeal)
-    {
-        try
-        {
-            var user = await _getUser();
-            if (user == null) return (Ok(new ApiResponse(401)));
+    /* [HttpPut("meals/{dayId:int}")]
+     public async Task<ActionResult> UpdateMeal(int dayId, UpdateUserMealDto updatedMeal)
+     {
+         try
+         {
+             var user = await _getUser();
+             if (user == null) return (Ok(new ApiResponse(401)));
 
-            var spec = new UserPlanDayWithMealsOnlySpecification(user.Id, dayId);
-            var planDay = await _unitOfWork.Repository<UserPlanDay>().GetEntityWithSpec(spec);
+             var spec = new UserPlanDayWithMealsOnlySpecification(user.Id, dayId);
+             var planDay = await _unitOfWork.Repository<UserPlanDay>().GetEntityWithSpec(spec);
 
-            if (planDay == null) return Ok(new ApiResponse(404, "Plan day not found"));
+             if (planDay == null) return Ok(new ApiResponse(404, "Plan day not found"));
 
-            var oldMeal = planDay.SelectedMeals.FirstOrDefault(x => x.Id == updatedMeal.OldUserMealId);
-            if (oldMeal == null) return Ok(new ApiResponse(404, "Meal not found in user selections"));
+             var oldMeal = planDay.SelectedMeals.FirstOrDefault(x => x.Id == updatedMeal.OldUserMealId);
+             if (oldMeal == null) return Ok(new ApiResponse(404, "Meal not found in user selections"));
 
-            var adminMealSpec =
-                new AdminPlanDaysWithMealsSpecification(dayDate: planDay.Day, planDay.UserPlan.PlanType);
+             var adminMealSpec =
+                 new AdminPlanDaysWithMealsSpecification(dayDate: planDay.Day, planDay.UserPlan.PlanType);
 
-            var adminDay = await _unitOfWork.Repository<AdminPlanDay>().GetEntityWithSpec(adminMealSpec);
+             var adminDay = await _unitOfWork.Repository<AdminPlanDay>().GetEntityWithSpec(adminMealSpec);
 
-            if (adminDay == null) return Ok(new ApiResponse(400, "Admin day not found"));
+             if (adminDay == null) return Ok(new ApiResponse(400, "Admin day not found"));
 
-            if (planDay.UserPlan.PlanType != adminDay.PlanType)
-                return Ok(new ApiResponse(400, "user plan type not as same as admin plan type"));
+             if (planDay.UserPlan.PlanType != adminDay.PlanType)
+                 return Ok(new ApiResponse(400, "user plan type not as same as admin plan type"));
 
-            var newMeal = adminDay.Meals.FirstOrDefault(x => x.Id == updatedMeal.AdminMealId);
-            if (newMeal == null) return Ok(new ApiResponse(404, "New meal not found"));
+             var newMeal = adminDay.Meals.FirstOrDefault(x => x.Id == updatedMeal.AdminMealId);
+             if (newMeal == null) return Ok(new ApiResponse(404, "New meal not found"));
 
-            var mealToAdd = new UserSelectedMeal
-            {
-                UserPlanDay = planDay,
-                UserPlanDayId = planDay.Id
-            };
+             var mealToAdd = new UserSelectedMeal
+             {
+                 UserPlanDay = planDay,
+                 UserPlanDayId = planDay.Id
+             };
 
-            var dbId = oldMeal.Id;
-            _mapper.Map(newMeal.Meal, oldMeal);
-            oldMeal.Id = dbId;
+             var dbId = oldMeal.Id;
+             _mapper.Map(newMeal.Meal, oldMeal);
+             oldMeal.Id = dbId;
 
-            _unitOfWork.Repository<UserPlanDay>().Update(planDay);
-            if (await _unitOfWork.SaveChanges())
-                return Ok(new ApiOkResponse<UserSelectedMealDto>(_mapper.Map<UserSelectedMealDto>(oldMeal)));
+             _unitOfWork.Repository<UserPlanDay>().Update(planDay);
+             if (await _unitOfWork.SaveChanges())
+                 return Ok(new ApiOkResponse<UserSelectedMealDto>(_mapper.Map<UserSelectedMealDto>(oldMeal)));
 
-            return Ok(new ApiResponse(400, "Failed to add meal"));
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }*/
+             return Ok(new ApiResponse(400, "Failed to add meal"));
+         }
+         catch (Exception e)
+         {
+             Console.WriteLine(e);
+             throw;
+         }
+     }*/
 
     [HttpDelete("meals/{dayId:int}")]
     public async Task<ActionResult> DeleteMeal(int dayId, int mealId)
@@ -181,9 +192,9 @@ public partial class UserPlanController : BaseApiController
 
         if (planDay == null) return Ok(new ApiResponse(404, "Plan day not found"));
 
-        
+
         if (!HelperFunctions.CanUpdate(planDay.Day.Date))
-            return Ok(new ApiResponse(403,"Can't update before two days or less"));
+            return Ok(new ApiResponse(403, "Can't update before two days or less"));
 
         var meal = planDay.SelectedMeals.FirstOrDefault(x => x.Id == mealId);
         if (meal == null) return Ok(new ApiResponse(404, "Meal not found"));

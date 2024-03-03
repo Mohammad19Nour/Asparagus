@@ -104,7 +104,7 @@ public class SubscriptionService : ISubscriptionService
             throw;
         }
     }
-    
+
 
     public async Task<(UserPlan? createdPlan, string Message)> CreateSubscriptionAsync(
         NewSubscriptionDto subscriptionDto, AppUser user)
@@ -151,7 +151,6 @@ public class SubscriptionService : ISubscriptionService
     {
         try
         {
-            
             if (subscriptionDto.PlanType == PlanTypeEnum.CustomMealPlan)
                 return (null, "Can't update custom plan");
             var plan = await GetUserSubscriptionAsync(user, subscriptionDto.PlanType);
@@ -436,13 +435,7 @@ public class SubscriptionService : ISubscriptionService
             plan.Price +=
                 numberOfUpdatedMealsPerDay * updatedPlanDays.Count * 10; // update meals per day for previous days
 
-            plan.Days.Add(new UserPlanDay
-            {
-                Day = DateTime.Today,
-                DeliveryLocation = HelperFunctions.CheckExistAddress(user.HomeAddress)
-                    ? user.HomeAddress
-                    : user.WorkAddress
-            });
+
             if (numberOfUpdatedDays > 0)
                 plan.Price += numberOfUpdatedDays * plan.NumberOfMealPerDay * 10;
 
@@ -450,6 +443,9 @@ public class SubscriptionService : ISubscriptionService
 
             foreach (var day in tmpDays)
             {
+                day.DeliveryLocation = HelperFunctions.CheckExistAddress(user.HomeAddress)
+                    ? user.HomeAddress
+                    : user.WorkAddress;
                 foreach (var drink in day.SelectedDrinks)
                     plan.Price += drink.Price;
 
@@ -504,7 +500,7 @@ public class SubscriptionService : ISubscriptionService
             subscriptionDto.StartDate = subscriptionDto.StartDate.Date;
             if (DateTime.Today.AddDays(2).Date >= subscriptionDto.StartDate.Date)
                 subscriptionDto.StartDate = DateTime.Today.AddDays(3).Date;
-            
+
             _mapper.Map(subscriptionDto, plan);
 
             plan.User = user;
