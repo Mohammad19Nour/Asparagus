@@ -8,9 +8,11 @@ using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AsparagusN.Specifications.UserSpecifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.Dashboard;
+[Authorize(Roles = nameof(DashboardRoles.Packaging) + ","+nameof(Roles.Admin))]
 
 public class PackagingController : BaseApiController
 {

@@ -11,7 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.User.UserPlanControllers;
-[Authorize]
+
+[Authorize(Roles = nameof(Roles.User))]
 public partial class UserPlanController
 {
     [HttpGet("snacks/{dayId:int}")]

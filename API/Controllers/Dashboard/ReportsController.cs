@@ -1,11 +1,14 @@
 ﻿using AsparagusN.DTOs.OrderDtos;
 using AsparagusN.DTOs.ReportDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.Dashboard;
+[Authorize(Roles = nameof(DashboardRoles.Export) + ","+nameof(Roles.Admin))]
 
 public class ReportsController : BaseApiController
 {

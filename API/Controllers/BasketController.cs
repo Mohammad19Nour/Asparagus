@@ -4,6 +4,7 @@ using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.Meal;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.BasketDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
@@ -15,7 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers;
-[Authorize]
+[Authorize(Roles = nameof(Roles.User))]
 public class BasketController : BaseApiController
 {
     private readonly IMapper _mapper;
@@ -32,21 +33,30 @@ public class BasketController : BaseApiController
     [HttpGet]
     public async Task<ActionResult<CustomerBasketDto>> GetBasketForUser()
     {
-        var user = await _getUser();
-        if (user == null) return Ok(new ApiResponse(404, "User not found"));
-
-
-        var spec = new BasketSpecification(user.Id);
-        var basket = await _unitOfWork.Repository<CustomerBasket>().GetEntityWithSpec(spec);
-
-        if (basket == null)
+        try
         {
-            basket = new CustomerBasket { Id = user.Id };
-            _unitOfWork.Repository<CustomerBasket>().Add(basket);
-            await _unitOfWork.SaveChanges();
-        }
+            var user = await _getUser();
+            if (user == null) return Ok(new ApiResponse(404, "User not found"));
 
-        return Ok(new ApiOkResponse<CustomerBasketDto>(_mapper.Map<CustomerBasketDto>(basket)));
+
+            var spec = new BasketSpecification(user.Id);
+            var basket = await _unitOfWork.Repository<CustomerBasket>().GetEntityWithSpec(spec);
+
+            if (basket == null)
+            {
+                basket = new CustomerBasket { Id = user.Id };
+                _unitOfWork.Repository<CustomerBasket>().Add(basket);
+                await _unitOfWork.SaveChanges();
+            }
+
+            return Ok(new ApiOkResponse<CustomerBasketDto>(_mapper.Map<CustomerBasketDto>(basket)));
+        }
+        catch (Exception e)
+        {
+          //  _logger.LogInformation("Exception happened at basket controller");
+         //  _logger.LogError(e,"An error occurred: {ErrorMessage}"," e.Message");
+            throw;
+        }
     }
 
     [HttpPost]

@@ -9,12 +9,14 @@ using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AsparagusN.Specifications.OrdersSpecifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Extensions;
 
 namespace AsparagusN.Controllers.Dashboard;
+
 public class AdminDriverController : BaseApiController
 {
     private readonly IMediaService _mediaService;
@@ -34,6 +36,7 @@ public class AdminDriverController : BaseApiController
         _userManager = userManager;
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.Drivers) + "," + nameof(Roles.Admin))]
     [HttpPost("add")]
     public async Task<ActionResult<AdminDriverDto>> AddDriver([FromForm] NewDriverDto newDriverDto)
     {
@@ -71,7 +74,7 @@ public class AdminDriverController : BaseApiController
                 }
 
                 IdentityResult roleResult =
-                    await _userManager.AddToRoleAsync(driverUser, Roles.Driver.GetDisplayName().ToLower());
+                    await _userManager.AddToRoleAsync(driverUser, Roles.Driver.GetDisplayName());
 
                 if (!roleResult.Succeeded)
                 {
@@ -139,6 +142,7 @@ public class AdminDriverController : BaseApiController
         }
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.Drivers) + "," + nameof(Roles.Admin))]
     [HttpPut("{id:int}")]
     public async Task<ActionResult<AdminDriverDto>> UpdateDriver(int id, [FromForm] UpdateDriverDto updateDriverDto)
     {
@@ -226,6 +230,7 @@ public class AdminDriverController : BaseApiController
         }
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.Drivers) + "," + nameof(Roles.Admin))]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteDriver(int id)
     {
@@ -240,10 +245,10 @@ public class AdminDriverController : BaseApiController
 
                 var userDriver =
                     await _userManager.Users.FirstOrDefaultAsync(c => c.Email.ToLower() == driver.Email.ToLower());
-        
+
                 if (userDriver == null)
-                    return  Ok(new ApiResponse(404, "Driver not found"));
-                
+                    return Ok(new ApiResponse(404, "Driver not found"));
+
                 _unitOfWork.Repository<AppUser>().Delete(userDriver);
                 _unitOfWork.Repository<Driver>().Delete(driver);
 
@@ -267,6 +272,7 @@ public class AdminDriverController : BaseApiController
         }
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.MealPlanOrder) + "," + nameof(Roles.Admin))]
     [HttpPost("assign")]
     public async Task<ActionResult> AssignOrder([FromQuery] int orderId, [FromQuery] int driverId,
         [FromQuery] int priority)
@@ -286,15 +292,16 @@ public class AdminDriverController : BaseApiController
 
         return Ok(new ApiOkResponse<List<OrderUserPlanDayDto>>(_mapper.Map<List<OrderUserPlanDayDto>>(orders)));
     }
-    [HttpPut("change")]
 
+    [Authorize(Roles = nameof(DashboardRoles.Drivers) + "," + nameof(Roles.Admin))]
+    [HttpPut("change")]
     public async Task<ActionResult> Active(int driverId)
     {
         var driver = await _unitOfWork.Repository<Driver>().GetByIdAsync(driverId);
 
         if (driver == null)
             return Ok(new ApiResponse(404, "Driver not found"));
-        
+
         driver.IsActive = !driver.IsActive;
         _unitOfWork.Repository<Driver>().Update(driver);
 

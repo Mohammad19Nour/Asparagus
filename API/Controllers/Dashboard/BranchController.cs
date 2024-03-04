@@ -1,11 +1,13 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.DTOs.BranchDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -56,6 +58,7 @@ public class BranchController : BaseApiController
             return Ok(new ApiOkResponse<BranchDto>(result));
         return Ok(new ApiResponse(400, "Failed to update branch"));
     }
+    [Authorize(Roles = nameof(DashboardRoles.Branches) + ","+nameof(Roles.Admin))]
 
     [HttpPost("add")]
     public async Task<ActionResult<BranchDto>> AddBranch(NewBranchDto newBranchDto)
@@ -66,6 +69,7 @@ public class BranchController : BaseApiController
         if (await _unitOfWork.SaveChanges()) return Ok(new ApiOkResponse<BranchDto>(_mapper.Map<BranchDto>(branch)));
         return Ok(new ApiResponse(400, "Failed to add branch"));
     }
+    [Authorize(Roles = nameof(DashboardRoles.Branches) + ","+nameof(Roles.Admin))]
 
     [HttpPost("update/{id:int}")]
     public async Task<ActionResult<BranchDto>> UpdateBranch(int id, UpdateBranchDto updateBranchDto)
@@ -80,6 +84,7 @@ public class BranchController : BaseApiController
         if (await _unitOfWork.SaveChanges()) return Ok(new ApiOkResponse<BranchDto>(_mapper.Map<BranchDto>(branch)));
         return Ok(new ApiResponse(400, "Failed to add branch"));
     }
+    [Authorize(Roles = nameof(DashboardRoles.Branches) + ","+nameof(Roles.Admin))]
 
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteBranch(int id)

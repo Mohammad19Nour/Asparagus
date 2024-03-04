@@ -65,7 +65,7 @@ public class AdminAccountsController : BaseApiController
         adminDto.Token = _tokenService.CreateToken(user);
         var roles = await _userManager.GetRolesAsync(user);
         adminDto.Role = roles.First() ?? "No role";
-        if (adminDto.Role.ToLower() == Roles.Cashier.GetDisplayName().ToLower())
+        if (adminDto.Role.ToLower() == Roles.Driver.GetDisplayName().ToLower())
         {
             var driverSpec = new DriverSpecification(adminDto.Email.ToLower());
             var driver = await _unitOfWork.Repository<Driver>().GetEntityWithSpec(driverSpec);
@@ -74,7 +74,7 @@ public class AdminAccountsController : BaseApiController
             adminDto.PhoneNumber = driver.PhoneNumber;
             if (!driver.IsActive) return Ok(new ApiResponse(400, "driver not active"));
         }
-        else if (adminDto.Role.ToLower() == Roles.Driver.GetDisplayName().ToLower())
+        else if (adminDto.Role.ToLower() == Roles.Cashier.GetDisplayName().ToLower())
         {
             var cashierSpec = new CashierWithBranchSpecification(adminDto.Email.ToLower());
             var cashier = await _unitOfWork.Repository<Cashier>().GetEntityWithSpec(cashierSpec);
@@ -86,13 +86,24 @@ public class AdminAccountsController : BaseApiController
         {
             var employee = await _unitOfWork.Repository<Employee>().GetQueryable()
                 .Where(c => c.Email.ToLower() == adminDto.Email.ToLower()).FirstAsync();
-           
-                adminDto.Name = employee.FullName;
+
+            adminDto.Name = employee.FullName;
             adminDto.PictureUrl = "No Photo";
             adminDto.PhoneNumber = employee.PhoneNumber;
         }
+        else if (adminDto.Role.ToLower() == Roles.Admin.GetDisplayName().ToLower())
+        {
+            adminDto.Name =user.FullName;
+            adminDto.PictureUrl = "No Photo";
+            adminDto.PhoneNumber = user.PhoneNumber;
+        }
+        else
+        {
+            Console.WriteLine(roles[0]);
+            return Ok(new ApiResponse(404, "Not found"));
+        }
 
-        return Ok(new ApiResponse(404, "Not found"));
+        return Ok(new ApiOkResponse<AdminAccountDto>(adminDto));
     }
 
     [Authorize]

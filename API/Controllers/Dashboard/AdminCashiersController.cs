@@ -6,6 +6,7 @@ using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ public class AdminCashiersController : BaseApiController
         _userManager = userManager;
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.Cashier) + "," + nameof(Roles.Admin))]
     [HttpPost("add")]
     public async Task<ActionResult<AdminCashierDto>> AddCashier([FromForm] NewCashierDto newCashierDto)
     {
@@ -66,7 +68,7 @@ public class AdminCashiersController : BaseApiController
                 }
 
                 IdentityResult roleResult =
-                    await _userManager.AddToRoleAsync(cashierUser, Roles.Cashier.GetDisplayName().ToLower());
+                    await _userManager.AddToRoleAsync(cashierUser, Roles.Cashier.GetDisplayName());
 
                 if (!roleResult.Succeeded)
                 {
@@ -134,6 +136,7 @@ public class AdminCashiersController : BaseApiController
         }
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.Cashier) + "," + nameof(Roles.Admin))]
     [HttpPut("{id:int}")]
     public async Task<ActionResult<AdminCashierDto>> UpdateCashier(int id, [FromForm] UpdateCashierDto updateCashierDto)
     {
@@ -223,6 +226,7 @@ public class AdminCashiersController : BaseApiController
         }
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.Cashier) + "," + nameof(Roles.Admin))]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteCashier(int id)
     {
@@ -263,6 +267,7 @@ public class AdminCashiersController : BaseApiController
         }
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.Cashier) + "," + nameof(Roles.Admin))]
     [HttpPut("change")]
     public async Task<ActionResult> Change(int cashierId, bool allowLoyal, bool allowOrder)
     {

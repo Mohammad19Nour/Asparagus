@@ -56,7 +56,7 @@ public static class IdentityServiceExtensions
                             }
                             else
                             {
-                                var user = await userManager.Users.FirstOrDefaultAsync(x=>x.Email == email);
+                                var user = await userManager.Users.FirstOrDefaultAsync(x=>x.Email.ToLower() == email.ToLower());
                                 if (user == null)
                                 {
                                     context.Fail("Unauthorized");
@@ -68,7 +68,7 @@ public static class IdentityServiceExtensions
 
                                     // Add the custom claim to the bearer token
                                     var identity = new ClaimsIdentity();
-                                    identity.AddClaims(roles.Select(r => new Claim(ClaimTypes.Role, r.ToLower())));
+                                    identity.AddClaims(roles.Select(r => new Claim(ClaimTypes.Role, r)));
                                     context.Principal?.AddIdentity(identity);
                                 }
 

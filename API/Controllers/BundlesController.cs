@@ -1,5 +1,6 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.DTOs.BundleDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AutoMapper;
@@ -26,7 +27,8 @@ public class BundlesController : BaseApiController
         var bundles = _mapper.Map<List<BundleDto>>(result);
         return Ok(new ApiOkResponse<List<BundleDto>>(bundles));
     }
-[Authorize]
+
+    [Authorize(Roles = nameof(Roles.Admin))]
     [HttpPost]
     public async Task<ActionResult<BundleDto>> AddBundle(NewBundleDto dto)
     {
@@ -39,7 +41,7 @@ public class BundlesController : BaseApiController
         return Ok(new ApiResponse(400, "Failed to add bundle"));
     }
 
-[Authorize]
+    [Authorize(Roles = nameof(Roles.Admin))]
     [HttpPut("{id:int}")]
     public async Task<ActionResult<BundleDto>> UpdateBundle(UpdateBundleDto dto, int id)
     {
@@ -55,8 +57,8 @@ public class BundlesController : BaseApiController
 
         return Ok(new ApiResponse(400, "Failed to update bundle"));
     }
-    [Authorize]
 
+    [Authorize(Roles = nameof(Roles.Admin))]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult<bool>> DeleteBundle(int id)
     {

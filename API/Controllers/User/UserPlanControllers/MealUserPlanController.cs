@@ -14,7 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.User.UserPlanControllers;
-[Authorize]
+
+[Authorize(Roles = nameof(Roles.User))]
 public partial class UserPlanController : BaseApiController
 {
     [HttpGet("meals/{dayId:int}")]

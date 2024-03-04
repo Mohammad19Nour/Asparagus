@@ -23,6 +23,7 @@ public class CouponController : BaseApiController
         _mapper = mapper;
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.CouponCode) + "," + nameof(Roles.Admin))]
     [HttpGet]
     public async Task<ActionResult<List<CouponDto>>> GetAll()
     {
@@ -30,6 +31,7 @@ public class CouponController : BaseApiController
         return Ok(new ApiOkResponse<List<CouponDto>>(_mapper.Map<List<CouponDto>>(coupons.ToList())));
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.CouponCode) + "," + nameof(Roles.Admin))]
     [HttpPost]
     public async Task<ActionResult<CouponDto>> AddCoupon(NewCouponDto newCoupon)
     {
@@ -49,6 +51,7 @@ public class CouponController : BaseApiController
         return Ok(new ApiResponse(400, "Failed to add coupon"));
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.CouponCode) + "," + nameof(Roles.Admin))]
     [HttpPut("{id:int}")]
     public async Task<ActionResult<CouponDto>> UpdateCoupon(int id, UpdateCouponDto dto)
 
@@ -67,7 +70,8 @@ public class CouponController : BaseApiController
             return Ok(new ApiOkResponse<CouponDto>(_mapper.Map<CouponDto>(coupon)));
         return Ok(new ApiResponse(400, "Failed to update coupon"));
     }
-[Authorize]
+
+    [Authorize(Roles = nameof(DashboardRoles.CouponCode) + "," + nameof(Roles.Admin))]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteCoupon(int id)
     {

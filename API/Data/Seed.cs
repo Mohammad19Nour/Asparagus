@@ -381,8 +381,8 @@ public static class Seed
 
         var user = new AppUser
         {
-            Email = "admin",
-            UserName = "admin",
+            Email = "admin@admin.com",
+            UserName = "admin@admin.com",
             FullName = "admin",
             EmailConfirmed = true,
         };

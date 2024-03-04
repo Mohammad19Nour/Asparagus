@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AsparagusN.Data.Entities;
 using AsparagusN.DTOs;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
@@ -56,7 +57,7 @@ public class FaqController : BaseApiController
         return Ok(new ApiOkResponse<List<FaqDto>>(result));
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(DashboardRoles.UserQuestion) + "," + nameof(Roles.Admin))]
     [HttpPost]
     public async Task<ActionResult> AddTitle(string title)
     {
@@ -72,7 +73,7 @@ public class FaqController : BaseApiController
         return Ok(new ApiResponse(400, "Failed to add"));
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(DashboardRoles.UserQuestion) + "," + nameof(Roles.Admin))]
     [HttpPost("question/{id:int}")]
     public async Task<ActionResult> AddTitle(int id, string question, string answer)
     {
@@ -94,7 +95,7 @@ public class FaqController : BaseApiController
         return Ok(new ApiResponse(400, "Failed to add"));
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(DashboardRoles.UserQuestion) + "," + nameof(Roles.Admin))]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> AddTitle(int id, string text)
     {
@@ -111,7 +112,7 @@ public class FaqController : BaseApiController
         return Ok(new ApiResponse(400, "Failed to add"));
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(DashboardRoles.UserQuestion) + "," + nameof(Roles.Admin))]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteTitle(int id)
     {

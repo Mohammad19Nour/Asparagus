@@ -30,7 +30,7 @@ public class OrdersController : BaseApiController
         _userManager = userManager;
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(Roles.User))]
     [HttpPost]
     public async Task<ActionResult> CreateOrder(NewOrderInfoDto newOrderInfo)
     {
@@ -39,13 +39,15 @@ public class OrdersController : BaseApiController
 
         if (newOrderInfo.PaymentType == PaymentType.Gift)
             return Ok(new ApiResponse(400, "Wrong payment type"));
-        
+
         var result = await _orderService.CreateOrderAsync(user.Email, user.Id, newOrderInfo);
 
         if (result.Order == null) return Ok(new ApiResponse(400, result.Message));
 
         return Ok(new ApiOkResponse<OrderDto>(_mapper.Map<OrderDto>(result.Order)));
     }
+
+    [Authorize(Roles = nameof(DashboardRoles.Order) + "," + nameof(Roles.Admin))]
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetOrders(OrderStatus status)
     {

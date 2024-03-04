@@ -1,9 +1,11 @@
 ﻿using AsparagusN.Data.Entities.Meal;
 using AsparagusN.DTOs.IngredientDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.Dashboard;
@@ -51,6 +53,7 @@ public class IngredientController : BaseApiController
             throw;
         }
     }
+    [Authorize(Roles = nameof(DashboardRoles.SubMeal) + ","+nameof(Roles.Admin))]
 
     [HttpPost("add")]
     public async Task<ActionResult<IngredientDto>> AddNewIngredient(NewIngredientDto newIngredientDto)
@@ -73,6 +76,7 @@ public class IngredientController : BaseApiController
             throw;
         }
     }
+    [Authorize(Roles = nameof(DashboardRoles.SubMeal) + ","+nameof(Roles.Admin))]
 
     [HttpPut("{id:int}")]
     public async Task<ActionResult<IngredientDto>> UpdateIngredient(int id, UpdateIngredientDto updateIngredientDto)
@@ -98,6 +102,7 @@ public class IngredientController : BaseApiController
             throw;
         }
     }
+    [Authorize(Roles = nameof(DashboardRoles.SubMeal) + ","+nameof(Roles.Admin))]
 
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteIngredient(int id)

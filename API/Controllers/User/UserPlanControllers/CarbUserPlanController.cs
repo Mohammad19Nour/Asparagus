@@ -2,6 +2,7 @@
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs.CarbDtos;
 using AsparagusN.DTOs.UserPlanDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Helpers;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.User.UserPlanControllers;
 
+[Authorize(Roles = nameof(Roles.User))]
 public partial class UserPlanController
 {
     [HttpGet("carb/{mealId:int}")]
@@ -35,7 +37,6 @@ public partial class UserPlanController
         }
     }
 
-[Authorize]
     [HttpPost("carb/{mealId:int}")]
     public async Task<ActionResult> EditCarbOfMeal(int mealId, int adminCarbId)
     {

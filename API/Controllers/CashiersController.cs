@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers;
-[Authorize]
+
 public class CashiersController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -30,6 +30,7 @@ public class CashiersController : BaseApiController
         _orderService = orderService;
     }
 
+    [Authorize(Roles = nameof(Roles.Cashier))]
     [HttpGet("orders")]
     public async Task<ActionResult<List<OrderDto>>> GetOrders(OrderStatus status)
     {
@@ -46,15 +47,15 @@ public class CashiersController : BaseApiController
         return Ok(new ApiOkResponse<List<OrderDto>>(_mapper.Map<List<OrderDto>>(orders)));
     }
 
+    [Authorize(Roles = nameof(Roles.Cashier))]
     [HttpPut("orders/{orderId:int}")]
     public async Task<ActionResult> ChangeOrder(int orderId)
     {
         var email = User.GetEmail();
-        var cashier = await _unitOfWork.Repository<Cashier>().GetQueryable().
-            Where(c => c.Email.ToLower() == email)
+        var cashier = await _unitOfWork.Repository<Cashier>().GetQueryable().Where(c => c.Email.ToLower() == email)
             .FirstOrDefaultAsync();
 
-        if (cashier == null || cashier.AllowLoyal)
+        if (cashier == null || !cashier.AllowOrder)
             return Ok(new ApiException(401, "Can't access to this resource"));
         var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId);
 
@@ -68,6 +69,7 @@ public class CashiersController : BaseApiController
         return Ok(new ApiResponse(400, "Failed to update order status"));
     }
 
+    [Authorize(Roles = nameof(Roles.Cashier))]
     [HttpPut("points")]
     public async Task<ActionResult> ChangeOrder(int mealId, string userEmail)
     {
@@ -75,7 +77,7 @@ public class CashiersController : BaseApiController
         var cashier = await _unitOfWork.Repository<Cashier>().GetQueryable().Where(c => c.Email.ToLower() == email)
             .FirstOrDefaultAsync();
 
-        if (cashier == null || cashier.AllowLoyal)
+        if (cashier == null || !cashier.AllowLoyal)
             return Ok(new ApiException(401, "Can't access to this resource"));
         var result = await _orderService.CreateCashierOrderAsync(userEmail, mealId, email);
 

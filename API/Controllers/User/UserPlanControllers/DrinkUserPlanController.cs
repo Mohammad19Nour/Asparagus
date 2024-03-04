@@ -1,6 +1,7 @@
 ﻿using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AsparagusN.DTOs.DrinksDtos;
 using AsparagusN.DTOs.UserDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Specifications;
 using AsparagusN.Specifications.UserSpecifications;
@@ -8,7 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.User.UserPlanControllers;
-[Authorize]
+
+[Authorize(Roles = nameof(Roles.User))]
 public partial class UserPlanController
 {
     [HttpGet("drinks/{dayId:int}")]

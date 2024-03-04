@@ -1,10 +1,12 @@
 ﻿using AsparagusN.Data.Entities.Meal;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.MealDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +47,7 @@ public class LoyaltyController : BaseApiController
         var result = _mapper.Map<List<MealLoyaltyPointDto>>(meals);
         return Ok(new ApiOkResponse<List<MealLoyaltyPointDto>>(result));
     }
+    [Authorize(Roles = nameof(DashboardRoles.MealPoint) + ","+nameof(Roles.Admin))]
 
     [HttpPost]
     public async Task<ActionResult<MealLoyaltyPointDto>> AddMeal(int mealId, int points)
@@ -59,6 +62,7 @@ public class LoyaltyController : BaseApiController
         return Ok(new ApiResponse(400, "Failed to add points"));
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.MealPoint) + ","+nameof(Roles.Admin))]
 
     [HttpDelete]
     public async Task<ActionResult> Delete(int mealId)

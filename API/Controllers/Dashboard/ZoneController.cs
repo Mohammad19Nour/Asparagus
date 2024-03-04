@@ -1,5 +1,7 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.DTOs.ZoneDtos;
+using AsparagusN.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AsparagusN.Controllers.Dashboard;
 using DTOs.ZoneDtos;
@@ -9,6 +11,7 @@ using AsparagusN.Specifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
+[Authorize(Roles = nameof(DashboardRoles.DeliveryZone) + ","+nameof(Roles.Admin))]
 public class ZoneController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;

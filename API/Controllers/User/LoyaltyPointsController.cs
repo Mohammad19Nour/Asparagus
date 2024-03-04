@@ -1,6 +1,7 @@
 ﻿using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.Meal;
 using AsparagusN.DTOs;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
@@ -54,7 +55,8 @@ public class LoyaltyPointsController : BaseApiController
         return Ok(new ApiOkResponse<List<MealLoyaltyPointDto>>(result));
     }
 
-    [Authorize]
+    
+    [Authorize(Roles = nameof(Roles.User))]
     [HttpPost]
     public async Task<ActionResult<MealLoyaltyPointDto>> Replace(int mealId)
     {

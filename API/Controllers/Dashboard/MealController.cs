@@ -3,12 +3,14 @@ using AsparagusN.Data.Entities.Meal;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.MealDtos;
 using AsparagusN.DTOs.PackageDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AsparagusN.Specifications.UserSpecifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.Dashboard;
@@ -56,6 +58,7 @@ public class MealController : BaseApiController
 
         return Ok(new ApiOkResponse<IReadOnlyList<SnackDto>>(snackDtos));
     }
+    [Authorize(Roles = nameof(DashboardRoles.Menu) + ","+nameof(Roles.Admin))]
 
     [HttpPut("update/{id:int}")]
     public async Task<ActionResult> Update(int id, [FromForm] UpdateMealDto updateMealDto)
@@ -106,6 +109,7 @@ public class MealController : BaseApiController
             return Ok(new ApiOkResponse<MealWithIngredientsDto>(_mapper.Map<MealWithIngredientsDto>(meal)));
         return Ok(new ApiResponse(400, "baaad"));
     }
+    [Authorize(Roles = nameof(DashboardRoles.Menu) + ","+nameof(Roles.Admin))]
 
 
     [HttpPost("add")]
@@ -181,6 +185,7 @@ public class MealController : BaseApiController
         meal.Ingredients = mg;
         return true;
     }
+    [Authorize(Roles = nameof(DashboardRoles.Menu) + ","+nameof(Roles.Admin))]
 
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)

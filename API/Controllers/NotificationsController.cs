@@ -24,7 +24,7 @@ public class NotificationsController : BaseApiController
         _notificationService = notificationService;
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(Roles.User))]
     [HttpGet]
     public async Task<ActionResult<List<NotificationDto>>> GetAllUserNotifications()
     {
@@ -34,6 +34,8 @@ public class NotificationsController : BaseApiController
         var notifications = _mapper.Map<List<NotificationDto>>(result);
         return Ok(new ApiOkResponse<List<NotificationDto>>(notifications));
     }
+
+    [Authorize(Roles = nameof(DashboardRoles.Notification) + "," + nameof(Roles.Admin))]
 
     [HttpPost]
     public async Task<ActionResult<NotificationDto>> SendNotification(NotificationType type, NewNotificationDto dto)

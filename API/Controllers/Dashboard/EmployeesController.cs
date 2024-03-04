@@ -57,7 +57,7 @@ public class EmployeesController : BaseApiController
                 }
 
                 IdentityResult roleResult =
-                    await _userManager.AddToRoleAsync(employeeUser, Roles.Employee.GetDisplayName().ToLower());
+                    await _userManager.AddToRoleAsync(employeeUser, Roles.Employee.GetDisplayName());
 
                 if (!roleResult.Succeeded)
                 {
@@ -145,7 +145,7 @@ public class EmployeesController : BaseApiController
 
                 var cantEditRoles = new List<string>();
 
-                foreach (DashboardRoles role in Enum.GetValues(typeof(DashboardRoles)))
+                foreach (Roles role in Enum.GetValues(typeof(Roles)))
                 {
                     var roleName = role.GetDisplayName().ToLower();
                     cantEditRoles.Add(roleName);

@@ -4,6 +4,7 @@ using AsparagusN.Data.Entities.Identity;
 using AsparagusN.DTOs;
 using AsparagusN.DTOs.AddressDtos;
 using AsparagusN.DTOs.UserDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
@@ -16,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.User;
 
-[Authorize]
+[Authorize(Roles = nameof(Roles.User))]
 public class UserController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;

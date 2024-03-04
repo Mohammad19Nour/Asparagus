@@ -4,6 +4,7 @@ using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -62,6 +63,7 @@ public class ExtraController : BaseApiController
 
         return Ok(new ApiOkResponse<ExtraOptionDto>(_mapper.Map<ExtraOptionDto>(extraOpt)));
     }
+    [Authorize(Roles = nameof(DashboardRoles.Extra) + ","+nameof(Roles.Admin))]
 
     [HttpPost("add")]
     public async Task<ActionResult<ExtraOptionDto>> Add([FromForm] NewExtraOptionDto newExtraOptionDto)
@@ -88,6 +90,7 @@ public class ExtraController : BaseApiController
             throw;
         }
     }
+    [Authorize(Roles = nameof(DashboardRoles.Extra) + ","+nameof(Roles.Admin))]
 
     [HttpPost("update/{id:int}")]
     public async Task<ActionResult<ExtraOptionDto>> Update(int id, [FromForm] UpdateExtraOptionDto updateExtraOptionDto)
@@ -123,6 +126,7 @@ public class ExtraController : BaseApiController
             throw;
         }
     }
+    [Authorize(Roles = nameof(DashboardRoles.Extra) + ","+nameof(Roles.Admin))]
 
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)

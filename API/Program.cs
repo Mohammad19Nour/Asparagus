@@ -10,11 +10,21 @@ using AsparagusN.SignalR;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://localhost:5257", "http://*:5257");
 // Add services to the container.
-
+/*
+string logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "log.txt");
+var logger = new LoggerConfiguration()
+    .MinimumLevel.Information() 
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+*/
 builder.Services.AddControllers().AddNewtonsoftJson(opt =>
 {
     opt.SerializerSettings.Converters.Add(new RoundedNumberConverter(2));
@@ -37,6 +47,7 @@ builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityService(builder.Configuration);
 builder.Services.AddSwaggerAuthorization();
 builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -2,9 +2,11 @@
 using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Meal;
 using AsparagusN.DTOs;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +22,7 @@ public class GiftsController : BaseApiController
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
+    [Authorize(Roles = nameof(DashboardRoles.Gift) + ","+nameof(Roles.Admin))]
 
     [HttpPost("{month:int}")]
     public async Task<ActionResult> AddOrUpdateGiftToMonth(
@@ -56,6 +59,7 @@ public class GiftsController : BaseApiController
             return Ok(new ApiResponse(200, "Added successfully"));
         return Ok(new ApiResponse(400, "Failed to add gift"));
     }
+    [Authorize(Roles = nameof(DashboardRoles.Gift) + ","+nameof(Roles.Admin))]
 
     [HttpDelete("{month:int}")]
     public async Task<ActionResult> DeleteGiftToMonth(

@@ -1,9 +1,11 @@
 ﻿using AsparagusN.Data.Entities.Identity;
 using AsparagusN.DTOs;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.Dashboard;
@@ -18,6 +20,7 @@ public class AdminUsersController : BaseApiController
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
+    [Authorize(Roles = nameof(DashboardRoles.Users) + ","+nameof(Roles.Admin))]
 
     [HttpGet]
     public async Task<ActionResult<List<AdminUserDto>>> GetUsers()

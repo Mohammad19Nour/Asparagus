@@ -1,8 +1,10 @@
 ﻿using AsparagusN.Data.Entities;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.Dashboard;
@@ -19,6 +21,7 @@ public class SplashController : BaseApiController
         _mediaService = mediaService;
         _mapper = mapper;
     }
+    [Authorize(Roles = nameof(DashboardRoles.Splash) + ","+nameof(Roles.Admin))]
 
     [HttpPost("add")]
     [DisableRequestSizeLimit]
@@ -57,6 +60,7 @@ public class SplashController : BaseApiController
             ? new ApiResponse(404, messageEN: "Video not found")
             : new ApiOkResponse<string>(media.Url));
     }
+    [Authorize(Roles = nameof(DashboardRoles.Splash) + ","+nameof(Roles.Admin))]
 
     [HttpDelete]
     public async Task<ActionResult> DeleteSplashVideo()

@@ -1,8 +1,10 @@
 ﻿using AsparagusN.Data.Entities.Meal;
 using AsparagusN.DTOs.AllergyDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.Dashboard;
@@ -19,6 +21,8 @@ public class AllergyController : BaseApiController
         _mapper = mapper;
         _mediaService = mediaService;
     }
+    [Authorize(Roles=nameof(Roles.Admin))]
+
 
     [HttpPost("add")]
     public async Task<ActionResult<AllergyDto>> Add([FromForm]NewAllergyDto newAllergyDto)
@@ -55,6 +59,8 @@ public class AllergyController : BaseApiController
             ? new ApiResponse(404, "Allergy not found")
             : new ApiOkResponse<AllergyDto>(_mapper.Map<AllergyDto>(allergy)));
     }
+    [Authorize(Roles=nameof(Roles.Admin))]
+
 
     [HttpPost("update/{id:int}")]
     public async Task<ActionResult<AllergyDto>> Update(int id,[FromForm] UpdateAllergyDto updateAllergyDto)
@@ -79,6 +85,7 @@ public class AllergyController : BaseApiController
             return Ok(new ApiOkResponse<AllergyDto>(_mapper.Map<AllergyDto>(allergy)));
         return Ok(new ApiResponse(400, "Failed to add allergy"));
     }
+    [Authorize(Roles=nameof(Roles.Admin))]
 
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)

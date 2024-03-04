@@ -2,6 +2,7 @@
 using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.DTOs.CarDtos;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
@@ -25,8 +26,10 @@ public class CarsController : BaseApiController
         _mapper = mapper;
         _carService = carService;
     }
-    [Authorize]
 
+
+    [Authorize(Roles = nameof(DashboardRoles.Car) + ","+nameof(Roles.Admin))]
+    
     [HttpGet("booking")]
     public async Task<ActionResult> GetBooking()
     {
@@ -45,18 +48,19 @@ public class CarsController : BaseApiController
         return Ok(new ApiOkResponse<CatInfoDto>(_mapper.Map<CatInfoDto>(car)));
     }
 
-[Authorize]
+    //[Authorize(Roles = nameof(Roles.Admin))]
+    [Authorize(Roles = nameof(DashboardRoles.Car) + ","+nameof(Roles.Admin))]
     [HttpPost]
     public async Task<ActionResult> UpdateCar(UpdateCarDto dto)
     {
         var res = await _carService.UpdateCar(dto, 1);
         if (res.car == null)
             return Ok(new ApiResponse(400, res.Message));
-        
+
         return Ok(new ApiOkResponse<CatInfoDto>(_mapper.Map<CatInfoDto>(res.car)));
     }
 
-    [Authorize]
+    [Authorize(Roles = nameof(Roles.User))]
     [HttpPost("book")]
     public async Task<ActionResult> MakeBooking(DateTime start)
     {

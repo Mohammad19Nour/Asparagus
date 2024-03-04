@@ -15,7 +15,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.User;
 
-[Authorize]
+
+[Authorize(Roles = nameof(Roles.User))]
 public class SubscriptionsController : BaseApiController
 {
     private readonly ISubscriptionService _subscriptionService;

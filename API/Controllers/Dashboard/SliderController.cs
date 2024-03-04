@@ -1,9 +1,11 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.DTOs;
+using AsparagusN.Enums;
 using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.Dashboard;
@@ -20,6 +22,8 @@ public class SliderController : BaseApiController
         _mediaService = mediaService;
         _mapper = mapper;
     }
+    [Authorize
+        (Roles = nameof(DashboardRoles.Slider) + ","+nameof(Roles.Admin))]
 
     [HttpPost("add-photo")]
     public async Task<ActionResult> AddPhoto(IFormFile file)
