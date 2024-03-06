@@ -1,7 +1,6 @@
 ﻿using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
 using AutoMapper;
-using Stripe;
 using Address = AsparagusN.Data.Entities.Address;
 
 namespace AsparagusN.Helpers;

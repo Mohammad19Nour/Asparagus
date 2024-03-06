@@ -8,7 +8,6 @@ using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Stripe.Climate;
 using Order = AsparagusN.Data.Entities.OrderAggregate.Order;
 
 namespace AsparagusN.Services;

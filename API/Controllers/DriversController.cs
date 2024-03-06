@@ -88,6 +88,8 @@ public class DriversController : BaseApiController
 
         if (!driver.IsActive) return Ok(new ApiResponse(404, "driver not active"));
 
+        if (driver.Status != DriverStatus.Delivering)
+            return Ok(new ApiResponse(400, "You have to be On delivery status"));
         var orderSpec = new PlanDayOrderWithDriverSpecification(orderId);
         var order = await _unitOfWork.Repository<UserPlanDay>().GetEntityWithSpec(orderSpec);
 

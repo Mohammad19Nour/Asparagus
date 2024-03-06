@@ -1,6 +1,4 @@
 ﻿using AsparagusN.DTOs.AddressDtos;
-using Stripe;
-using Address = AsparagusN.Data.Entities.Address;
 
 namespace AsparagusN.Interfaces;
 

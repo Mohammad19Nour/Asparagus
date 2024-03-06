@@ -34,6 +34,13 @@ public class PaymentController : BaseApiController
 
         return Ok(new ApiOkResponse<object?>( await _paymentService.CreatePaymentIntent(order.Id)));
     }
+
+    [HttpPost("webhook")]
+    public async Task<ActionResult> FoloosiWebhook()
+    {
+        var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+        return Ok();
+    }
     private async Task<AppUser?> _getUser()
     {
         var email = HttpContext.User.GetEmail();

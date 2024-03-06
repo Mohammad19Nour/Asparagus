@@ -1,6 +1,5 @@
 ﻿using AsparagusN.Data.Entities;
 using AsparagusN.Interfaces;
-using StackExchange.Redis;
 using Stripe;
 using Order = AsparagusN.Data.Entities.OrderAggregate.Order;
 
