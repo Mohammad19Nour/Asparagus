@@ -44,7 +44,27 @@ public static class Seed
         await SeedCar(context);
         await SeedBundles(context);
         await SeedSubscription(context, subscriptionService, mapper);
-        await SeedAssign(context);
+        await SeedCoupon(context);
+    }
+
+    private static async Task SeedCoupon(DataContext context)
+    {
+        if (await context.AppCoupons.AnyAsync()) return;
+        context.AppCoupons.Add(new AppCoupon
+        {
+            Name = "test 1",
+            Code = "Fsgrd3",
+            Value = 50,
+            Type = AppCouponType.Percent
+        });
+        context.AppCoupons.Add(new AppCoupon
+        {
+            Name = "test 2",
+            Code = "SDfvt8f",
+            Value = 120,
+            Type = AppCouponType.FixedAmount
+        });
+        await context.SaveChangesAsync();
     }
 
     private static async Task SeedAssign(DataContext context)
@@ -99,29 +119,29 @@ public static class Seed
                         DeliveryCity = "Test",
                         PlanType = plan
                     };
-                    var result = await subscriptionService.CreateSubscriptionAsync(sub, user);
+                    var result = await subscriptionService.CreateSubscriptionAsync(sub, user, true);
                 }
             }
         }
+
         await context.SaveChangesAsync();
         var days = await context.UserPlanDays.ToListAsync();
         var adminMeals = await context.AdminSelectedMeals
             .Include(y => y.Meal).ToListAsync();
-     //   var adminDrinks = await context.AdminSelectedDrinks.ToListAsync();
-     var ingredients = await context.MealIngredients
-         .Include(x => x.Ingredient)
-         .Where(x => x.MealId == adminMeals[0].MealId).ToListAsync();
+        //   var adminDrinks = await context.AdminSelectedDrinks.ToListAsync();
+        var ingredients = await context.MealIngredients
+            .Include(x => x.Ingredient)
+            .Where(x => x.MealId == adminMeals[0].MealId).ToListAsync();
 
-     var carb = ingredients.FirstOrDefault(x => x.Ingredient.TypeOfIngredient == IngredientType.Carb);
+        var carb = ingredients.FirstOrDefault(x => x.Ingredient.TypeOfIngredient == IngredientType.Carb);
 
-     var carbSelected = new UserMealCarb();
-     if (carb != null)
-     {
-         mapper.Map(carb.Ingredient, carbSelected);
-         HelperFunctions.CalcNewPropertyForCarbOfMeal(carbSelected,carb.Weight,carb.Ingredient.Weight);
-     }
+        var carbSelected = new UserMealCarb();
+        if (carb != null)
+        {
+            mapper.Map(carb.Ingredient, carbSelected);
+            HelperFunctions.CalcNewPropertyForCarbOfMeal(carbSelected, carb.Weight, carb.Ingredient.Weight);
+        }
 
-    
         foreach (var day in days)
         {
             var meal = mapper.Map<UserSelectedMeal>(adminMeals[0].Meal);
@@ -134,7 +154,7 @@ public static class Seed
             await context.SaveChangesAsync();
         }
 
-        
+        await SeedAssign(context);
     }
 
 
@@ -163,28 +183,40 @@ public static class Seed
 
         context.Cars.Add(new Car
         {
-            WorkingStartHour = TimeSpan.FromHours(5)
-            ,WorkingEndHour = TimeSpan.FromHours(17),
+            WorkingStartHour = TimeSpan.FromHours(5), WorkingEndHour = TimeSpan.FromHours(17),
             WorkingDays = new List<CarWorkingDay>
             {
                 new CarWorkingDay
                 {
                     Day = DayOfWeek.Friday,
                 },
-                
+
                 new CarWorkingDay
                 {
                     Day = DayOfWeek.Thursday,
                 },
-                
+
                 new CarWorkingDay
                 {
-                    
                     Day = DayOfWeek.Monday,
                 }
-                
             }
         });
+        await context.SaveChangesAsync();
+        var bookings = new[]
+        {
+            new Booking { CarId = 1, UserId = 3, StartTime = DateTime.UtcNow, EndTime = DateTime.UtcNow.AddHours(2) },
+            new Booking
+            {
+                CarId = 1, UserId = 2, StartTime = DateTime.UtcNow.AddDays(1),
+                EndTime = DateTime.UtcNow.AddDays(1).AddHours(4)
+            }
+            // Add more bookings as needed
+        };
+
+        // Add bookings to context and save changes
+        context.Bookings.AddRange(bookings);
+        context.SaveChanges();
         await context.SaveChangesAsync();
     }
 
@@ -350,8 +382,8 @@ public static class Seed
     }
 
     private static async Task SeedRoles(RoleManager<AppRole> roleManager)
-    {  
-       // await roleManager.CreateAsync(new() { Name = Roles.Employee.GetDisplayName() });
+    {
+        // await roleManager.CreateAsync(new() { Name = Roles.Employee.GetDisplayName() });
         if (await roleManager.Roles.AnyAsync()) return;
 
         var roles = new List<AppRole>
@@ -614,7 +646,7 @@ public static class Seed
                 Points = 40,
                 PlanTypeE = PlanTypeEnum.FutureLeader
             },
-             new PlanType
+            new PlanType
             {
                 Points = 40,
                 PlanTypeE = PlanTypeEnum.CustomMealPlan
@@ -1059,7 +1091,7 @@ public static class Seed
 
         foreach (var day in days)
         {
-            if (day.PlanType == PlanTypeEnum.CustomMealPlan)continue;
+            if (day.PlanType == PlanTypeEnum.CustomMealPlan) continue;
             day.Meals.Add(new AdminSelectedMeal { MealId = cnt++ });
             if (cnt == 5) cnt = 1;
 

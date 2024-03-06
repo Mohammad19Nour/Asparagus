@@ -56,7 +56,7 @@ public class CashiersController : BaseApiController
             .FirstOrDefaultAsync();
 
         if (cashier == null || !cashier.AllowOrder)
-            return Ok(new ApiException(401, "Can't access to this resource"));
+            return Ok(new ApiException(401, "Can't access to this resource... you don't have permission to change order status"));
         var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId);
 
         if (order == null) return Ok(new ApiResponse(400, "Order not found"));
@@ -78,7 +78,7 @@ public class CashiersController : BaseApiController
             .FirstOrDefaultAsync();
 
         if (cashier == null || !cashier.AllowLoyal)
-            return Ok(new ApiException(401, "Can't access to this resource"));
+            return Ok(new ApiException(401, "Can't access to this resource... you don't have permission to replace meals with points"));
         var result = await _orderService.CreateCashierOrderAsync(userEmail, mealId, email);
 
 

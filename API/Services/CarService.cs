@@ -40,10 +40,16 @@ public class CarService : ICarService
                 return (null, "start working hour should be less than end working hour");
             var car = await GetCarByIdAsync(carId);
             if (car == null) return (null, "Car not found");
+
             _mapper.Map(dto, car);
+
 
             if (dto.WorkingStartHour != null) car.WorkingStartHour = TimeSpan.Parse(dto.WorkingStartHour);
             if (dto.WorkingEndHour != null) car.WorkingEndHour = TimeSpan.Parse(dto.WorkingEndHour);
+
+            if (car.WorkingStartHour > car.WorkingEndHour)
+                return (null, "start working hour should be less than end working hour");
+
             _unitOfWork.Repository<Car>().Update(car);
             if (await _unitOfWork.SaveChanges())
                 return (car, "Done");
@@ -90,7 +96,7 @@ public class CarService : ICarService
     public bool IsCarAvailable(Car car, DateTime startTime, DateTime endTime)
     {
         if (startTime.DayOfWeek != endTime.DayOfWeek) return false;
-        if (car.WorkingStartHour> startTime.TimeOfDay ||
+        if (car.WorkingStartHour > startTime.TimeOfDay ||
             car.WorkingEndHour < endTime.TimeOfDay)
             return false;
 

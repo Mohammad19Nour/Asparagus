@@ -15,7 +15,9 @@ namespace AsparagusN.Helpers.MappingProfiles
             CreateMap<NewCarDto, Car>();
             CreateMap<UpdateCarDto, Car>()
                 .ForMember(dest => dest.WorkingDays, opt => opt.MapFrom(c => GetCarWorkingDays(c.WorkingDays)))
-                .ForAllMembers(dest => dest.Condition((src, b, member) => member != default));
+                .ForMember(dest => dest.WorkingStartHour, opt => opt.Ignore())
+                .ForMember(dest => dest.WorkingEndHour, opt => opt.Ignore());
+           
             CreateMap<Car, CatInfoDto>()
                 .ForMember(dest => dest.WorkingEndHour, opt => opt.MapFrom(src => FormatDate(src.WorkingEndHour)))
                 .ForMember(dest => dest.WorkingStartHour, opt => opt.MapFrom(src => FormatDate(src.WorkingStartHour)))

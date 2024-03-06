@@ -78,6 +78,7 @@ public class SubscriptionsController : BaseApiController
         else
             (plan, message) = await _customSubscriptionService.CreateSubscriptionAsync(subscriptionDto, user);
 
+        Console.WriteLine(message);
         if (plan == null)
             return Ok(new ApiResponse(400, message));
 

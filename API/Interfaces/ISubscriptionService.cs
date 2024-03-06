@@ -7,7 +7,7 @@ namespace AsparagusN.Interfaces;
 
 public interface ISubscriptionService
 {
-    Task<(UserPlan? createdPlan, string Message)> CreateSubscriptionAsync(NewSubscriptionDto newSubscriptionDto, AppUser user);
+    Task<(UserPlan? createdPlan, string Message)> CreateSubscriptionAsync(NewSubscriptionDto newSubscriptionDto, AppUser user,bool seed = false);
     public Task<(UserPlan?, string Message)> UpdateSubscription(UpdateSubscriptionDto subscriptionDto, AppUser user);
     Task<UserPlan?> GetUserSubscriptionAsync(AppUser user, PlanTypeEnum planTypeEnum);
     Task<List<UserPlan>> GetAllUserSubscriptionsAsync(AppUser user);

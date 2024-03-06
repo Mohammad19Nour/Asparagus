@@ -10,8 +10,10 @@ public class PlanDayOrdersWithItemsAndDriverSpecification : BaseSpecification<Us
     public PlanDayOrdersWithItemsAndDriverSpecification(PlanOrderStatus status, DateTime day)
         : base(x => x.DayOrderStatus == status && x.Day.Date == day.Date)
     {
+        AddInclude(c=>c.Include(d=>d.DeliveryLocation));
         AddInclude(c=>c.Include(d=>d.Driver));
         AddInclude(x => x.Include(y => y.UserPlan).ThenInclude(p=>p.Allergies));
+        AddInclude(x => x.Include(y => y.UserPlan).ThenInclude(p=>p.User));
         AddInclude(x => x.Include(y => y.SelectedDrinks));
         AddInclude(x => x.Include(y => y.SelectedExtraOptions));
         AddInclude(x => x.Include(y => y.SelectedSnacks));

@@ -41,7 +41,7 @@ namespace AsparagusN.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Booking");
+                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("AsparagusN.Data.Entities.Address", b =>

@@ -6,7 +6,7 @@ namespace AsparagusN.DTOs.UserPlanDtos;
 public class NewSubscriptionDto
 {
     public PlanTypeEnum PlanType { get; set; }
-    public DateTime StartDate { get; set; }
+    public DateTime StartDate { get; set; } = DateTime.Today;
    [Range(1,30)]
     public int Duration { get; set; }
     [Range(1,25)]

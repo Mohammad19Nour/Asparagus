@@ -107,7 +107,7 @@ public class SubscriptionService : ISubscriptionService
 
 
     public async Task<(UserPlan? createdPlan, string Message)> CreateSubscriptionAsync(
-        NewSubscriptionDto subscriptionDto, AppUser user)
+        NewSubscriptionDto subscriptionDto, AppUser user, bool seed = false)
     {
         try
         {
@@ -126,12 +126,15 @@ public class SubscriptionService : ISubscriptionService
             var planPoints = (await _unitOfWork.Repository<PlanType>().ListAllAsync())
                 .First(x => x.PlanTypeE == subscriptionDto.PlanType).Points;
             plan = new UserPlan();
+            if (seed)
+                plan.CreatedDate = DateTime.Today.AddDays(-3);
 
-            var result = await Add(subscriptionDto, user, plan);
+            var result = await Add(subscriptionDto, user, plan, seed);
             if (!result.Succes) return (null, result.Message);
             user!.IsMealPlanMember = true;
             user!.IsNormalUser = false;
             plan.NumberOfRemainingSnacks = plan.NumberOfSnacks;
+
             plan.User.LoyaltyPoints += planPoints;
             _unitOfWork.Repository<UserPlan>().Add(plan);
 
@@ -489,17 +492,17 @@ public class SubscriptionService : ISubscriptionService
     }
 
     private async Task<(bool Succes, string Message)> Add(NewSubscriptionDto subscriptionDto, AppUser user,
-        UserPlan plan)
+        UserPlan plan, bool seed = false)
     {
         try
         {
             var validate = await _validationService.IsValidSubscriptionDto(subscriptionDto);
             if (!validate.Success)
                 return (false, validate.Message);
-
             subscriptionDto.StartDate = subscriptionDto.StartDate.Date;
-            if (DateTime.Today.AddDays(2).Date >= subscriptionDto.StartDate.Date)
+            if (DateTime.Today.AddDays(2).Date >= subscriptionDto.StartDate.Date && !seed)
                 subscriptionDto.StartDate = DateTime.Today.AddDays(3).Date;
+            else if (seed) subscriptionDto.StartDate = DateTime.Now.AddDays(-1);
 
             _mapper.Map(subscriptionDto, plan);
 

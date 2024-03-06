@@ -98,6 +98,7 @@ public class AdminCashiersController : BaseApiController
         }
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.Cashier) + "," + nameof(Roles.Admin))]
     [HttpGet]
     public async Task<ActionResult<List<AdminCashierDto>>> GetAllCashier()
     {
@@ -116,6 +117,7 @@ public class AdminCashiersController : BaseApiController
         }
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.Cashier) + "," + nameof(Roles.Admin))]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<AdminCashierDto>> GetCashier(int id)
     {

@@ -103,7 +103,7 @@ public class AdminDriverController : BaseApiController
             }
         }
     }
-
+    [Authorize(Roles = nameof(DashboardRoles.Drivers) + "," + nameof(Roles.Admin))]
     [HttpGet]
     public async Task<ActionResult<List<AdminDriverDto>>> GetAllDriver()
     {
@@ -121,7 +121,7 @@ public class AdminDriverController : BaseApiController
             throw;
         }
     }
-
+    [Authorize(Roles = nameof(DashboardRoles.Drivers) + "," + nameof(Roles.Admin))]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<AdminDriverDto>> GetDriver(int id)
     {
@@ -290,7 +290,20 @@ public class AdminDriverController : BaseApiController
         var spec = new PlanDayOrdersWithItemsAndDriverSpecification(status, resultDateTime);
         var orders = await _unitOfWork.Repository<UserPlanDay>().ListWithSpecAsync(spec);
 
-        return Ok(new ApiOkResponse<List<OrderUserPlanDayDto>>(_mapper.Map<List<OrderUserPlanDayDto>>(orders)));
+        var userSpec = new CustomersSpecification();
+        var users = await _unitOfWork.Repository<AppUser>().ListWithSpecAsync(userSpec);
+
+        var resultList = new List<OrderUserPlanDayDto>();
+        foreach (var order in orders)
+        {
+            var tmp = _mapper.Map<OrderUserPlanDayDto>(order);
+            var user = users.First(c => c.Id == order.UserPlan.AppUserId);
+
+            tmp.Username = user.FullName;
+            tmp.PhoneNumber = user.PhoneNumber;
+            resultList.Add(tmp);
+        }
+        return Ok(new ApiOkResponse<List<OrderUserPlanDayDto>>(resultList));
     }
 
     [Authorize(Roles = nameof(DashboardRoles.Drivers) + "," + nameof(Roles.Admin))]
