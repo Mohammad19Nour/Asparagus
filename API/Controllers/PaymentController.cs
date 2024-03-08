@@ -1,4 +1,5 @@
-﻿using AsparagusN.Data.Entities.Identity;
+﻿using AsparagusN.Data.Entities;
+using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
 using AsparagusN.Interfaces;
@@ -14,12 +15,15 @@ public class PaymentController : BaseApiController
     private readonly IPaymentService _paymentService;
     private readonly UserManager<AppUser> _userManager;
     private readonly IOrderService _orderService;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public PaymentController(IPaymentService paymentService,UserManager<AppUser>userManager,IOrderService orderService)
+    public PaymentController(IPaymentService paymentService, UserManager<AppUser> userManager,
+        IOrderService orderService,IUnitOfWork unitOfWork)
     {
         _paymentService = paymentService;
         _userManager = userManager;
         _orderService = orderService;
+        _unitOfWork = unitOfWork;
     }
 
     [Authorize]
@@ -32,15 +36,26 @@ public class PaymentController : BaseApiController
         var order = await _orderService.GetOrderByIdAsync(user.Id, user.Email);
         if (order == null) return Ok(new ApiResponse(404, "No order found"));
 
-        return Ok(new ApiOkResponse<object?>( await _paymentService.CreatePaymentIntent(order.Id)));
+        return Ok(new ApiOkResponse<object?>(await _paymentService.CreatePaymentIntent(order.Id)));
     }
 
     [HttpPost("webhook")]
     public async Task<ActionResult> FoloosiWebhook()
     {
         var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-        return Ok();
+        
+        var not = new Notification
+        {
+            UserEmail = "u@u.u",
+            ArabicContent = "test hook",
+            EnglishContent =json,
+
+        };
+         _unitOfWork.Repository<Notification>().Add(not);
+        await _unitOfWork.SaveChanges();
+        return Ok(not);
     }
+
     private async Task<AppUser?> _getUser()
     {
         var email = HttpContext.User.GetEmail();

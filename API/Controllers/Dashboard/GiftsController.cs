@@ -22,8 +22,8 @@ public class GiftsController : BaseApiController
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
-    [Authorize(Roles = nameof(DashboardRoles.Gift) + ","+nameof(Roles.Admin))]
 
+    [Authorize(Roles = nameof(DashboardRoles.Gift) + "," + nameof(Roles.Admin))]
     [HttpPost("{month:int}")]
     public async Task<ActionResult> AddOrUpdateGiftToMonth(
         [Range(1, 12, ErrorMessage = "Month should be a number between 1-12")]
@@ -59,8 +59,8 @@ public class GiftsController : BaseApiController
             return Ok(new ApiResponse(200, "Added successfully"));
         return Ok(new ApiResponse(400, "Failed to add gift"));
     }
-    [Authorize(Roles = nameof(DashboardRoles.Gift) + ","+nameof(Roles.Admin))]
 
+    [Authorize(Roles = nameof(DashboardRoles.Gift) + "," + nameof(Roles.Admin))]
     [HttpDelete("{month:int}")]
     public async Task<ActionResult> DeleteGiftToMonth(
         [Range(1, 12, ErrorMessage = "Month should be a number between 1-12")]

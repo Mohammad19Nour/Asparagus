@@ -55,7 +55,7 @@ public class LoyaltyPointsController : BaseApiController
         return Ok(new ApiOkResponse<List<MealLoyaltyPointDto>>(result));
     }
 
-    
+
     [Authorize(Roles = nameof(Roles.User))]
     [HttpPost]
     public async Task<ActionResult<MealLoyaltyPointDto>> Replace(int mealId)

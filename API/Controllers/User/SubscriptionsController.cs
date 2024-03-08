@@ -15,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.User;
 
-
 [Authorize(Roles = nameof(Roles.User))]
 public class SubscriptionsController : BaseApiController
 {
@@ -128,7 +127,7 @@ public class SubscriptionsController : BaseApiController
         NewSubscriptionDto normal = null;
         if (dto.PlanType != PlanTypeEnum.CustomMealPlan)
             normal = _mapper.Map<NewSubscriptionDto>(dto);
-        
+
         if (dto.PlanType != PlanTypeEnum.CustomMealPlan)
             (price, message) = await _subscriptionService.GetPriceForCreate(normal, user);
         else (price, message) = await _customSubscriptionService.GetPriceForCreate(dto, user);

@@ -62,6 +62,7 @@ public class NotificationService : INotificationService
 
     public async Task<bool> NotifyAllMealPlanUsers(string arabicContent, string englishContent)
     {
+        Console.WriteLine("test");
         List<string> userEmails = await _unitOfWork.Repository<AppUser>().GetQueryable().Where(x => x.IsMealPlanMember)
             .Select(x => x.Email.ToLower()).ToListAsync();
 

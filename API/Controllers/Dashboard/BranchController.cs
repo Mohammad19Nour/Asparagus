@@ -34,6 +34,7 @@ public class BranchController : BaseApiController
         var branches = _mapper.Map<IReadOnlyList<BranchCasherDto>>(results);
         return Ok(new ApiOkResponse<IReadOnlyList<BranchCasherDto>>(branches));
     }
+
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<BranchDto>>> GetAllBranches()
     {
@@ -58,8 +59,8 @@ public class BranchController : BaseApiController
             return Ok(new ApiOkResponse<BranchDto>(result));
         return Ok(new ApiResponse(400, "Failed to update branch"));
     }
-    [Authorize(Roles = nameof(DashboardRoles.Branches) + ","+nameof(Roles.Admin))]
 
+    [Authorize(Roles = nameof(DashboardRoles.Branches) + "," + nameof(Roles.Admin))]
     [HttpPost("add")]
     public async Task<ActionResult<BranchDto>> AddBranch(NewBranchDto newBranchDto)
     {
@@ -69,8 +70,8 @@ public class BranchController : BaseApiController
         if (await _unitOfWork.SaveChanges()) return Ok(new ApiOkResponse<BranchDto>(_mapper.Map<BranchDto>(branch)));
         return Ok(new ApiResponse(400, "Failed to add branch"));
     }
-    [Authorize(Roles = nameof(DashboardRoles.Branches) + ","+nameof(Roles.Admin))]
 
+    [Authorize(Roles = nameof(DashboardRoles.Branches) + "," + nameof(Roles.Admin))]
     [HttpPost("update/{id:int}")]
     public async Task<ActionResult<BranchDto>> UpdateBranch(int id, UpdateBranchDto updateBranchDto)
     {
@@ -84,8 +85,8 @@ public class BranchController : BaseApiController
         if (await _unitOfWork.SaveChanges()) return Ok(new ApiOkResponse<BranchDto>(_mapper.Map<BranchDto>(branch)));
         return Ok(new ApiResponse(400, "Failed to add branch"));
     }
-    [Authorize(Roles = nameof(DashboardRoles.Branches) + ","+nameof(Roles.Admin))]
 
+    [Authorize(Roles = nameof(DashboardRoles.Branches) + "," + nameof(Roles.Admin))]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteBranch(int id)
     {
@@ -102,15 +103,15 @@ public class BranchController : BaseApiController
     public async Task<ActionResult<List<BranchDto>>> GetSuggestedBranch(double latitude, double longitude)
     {
         //var user = await _getUser();
-      //  if (user == null) return Ok(new ApiResponse(404, "User not found"));
+        //  if (user == null) return Ok(new ApiResponse(404, "User not found"));
 
         var spec = new BranchWithAddressSpecification();
         var branches = await _unitOfWork.Repository<Branch>().ListWithSpecAsync(spec);
         var id = await _distanceService.GetClosestBranch((decimal)latitude, (decimal)longitude);
 
         var orderedBranches = new List<Branch>();
-        orderedBranches.Add(branches.First(c=>c.Id == id));
-        orderedBranches.AddRange(branches.Where(c=>c.Id != id).ToList());
+        orderedBranches.Add(branches.First(c => c.Id == id));
+        orderedBranches.AddRange(branches.Where(c => c.Id != id).ToList());
         return Ok(new ApiOkResponse<List<BranchDto>>(_mapper.Map<List<BranchDto>>(orderedBranches)));
     }
 

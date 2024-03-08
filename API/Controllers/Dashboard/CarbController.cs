@@ -26,7 +26,7 @@ public class CarbController : BaseApiController
     {
         var carbs = (await _unitOfWork.Repository<Ingredient>().ListAllAsync()).ToList();
         carbs = carbs.Where(x => x.TypeOfIngredient == IngredientType.Carb).ToList();
-        
+
         return Ok(new ApiOkResponse<List<CarbDto>>(_mapper.Map<List<CarbDto>>(carbs)));
     }
 }

@@ -6,5 +6,4 @@ namespace AsparagusN.Controllers;
 [Route("api/[controller]")]
 public class BaseApiController : ControllerBase
 {
-    
 }

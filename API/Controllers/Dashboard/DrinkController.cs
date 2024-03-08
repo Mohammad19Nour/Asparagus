@@ -40,8 +40,8 @@ public class DrinkController : BaseApiController
 
         return Ok(new ApiOkResponse<List<DrinkDto>>(_mapper.Map<List<DrinkDto>>(drinks)));
     }
-    [Authorize(Roles = nameof(DashboardRoles.Drink) + ","+nameof(Roles.Admin))]
 
+    [Authorize(Roles = nameof(DashboardRoles.Drink) + "," + nameof(Roles.Admin))]
     [HttpPost("add")]
     public async Task<ActionResult> Add([FromForm] NewDrinkDto newDrinkDto)
     {
@@ -58,8 +58,8 @@ public class DrinkController : BaseApiController
 
         return Ok(new ApiResponse(400, "Failed to add drink"));
     }
-    [Authorize(Roles = nameof(DashboardRoles.Drink) + ","+nameof(Roles.Admin))]
 
+    [Authorize(Roles = nameof(DashboardRoles.Drink) + "," + nameof(Roles.Admin))]
     [HttpPost("update/{id:int}")]
     public async Task<ActionResult> Update(int id, [FromForm] UpdateDrinkDto updateDrinkDto)
     {
@@ -85,8 +85,8 @@ public class DrinkController : BaseApiController
 
         return Ok(new ApiResponse(400, "Failed to update drink"));
     }
-    [Authorize(Roles = nameof(DashboardRoles.Drink) + ","+nameof(Roles.Admin))]
 
+    [Authorize(Roles = nameof(DashboardRoles.Drink) + "," + nameof(Roles.Admin))]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {

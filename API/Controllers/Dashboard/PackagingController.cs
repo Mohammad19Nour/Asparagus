@@ -12,8 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.Dashboard;
-[Authorize(Roles = nameof(DashboardRoles.Packaging) + ","+nameof(Roles.Admin))]
 
+[Authorize(Roles = nameof(DashboardRoles.Packaging) + "," + nameof(Roles.Admin))]
 public class PackagingController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;

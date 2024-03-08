@@ -15,25 +15,24 @@ public class AllergyController : BaseApiController
     private readonly IMapper _mapper;
     private readonly IMediaService _mediaService;
 
-    public AllergyController(IUnitOfWork unitOfWork, IMapper mapper,IMediaService mediaService)
+    public AllergyController(IUnitOfWork unitOfWork, IMapper mapper, IMediaService mediaService)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _mediaService = mediaService;
     }
-    [Authorize(Roles=nameof(Roles.Admin))]
 
-
+    [Authorize(Roles = nameof(Roles.Admin))]
     [HttpPost("add")]
-    public async Task<ActionResult<AllergyDto>> Add([FromForm]NewAllergyDto newAllergyDto)
+    public async Task<ActionResult<AllergyDto>> Add([FromForm] NewAllergyDto newAllergyDto)
     {
         var allergy = _mapper.Map<Allergy>(newAllergyDto);
         var result = await _mediaService.AddPhotoAsync(newAllergyDto.Image);
 
         if (!result.Success) return Ok(new ApiResponse(400, result.Message));
-        
+
         allergy.PictureUrl = result.Url;
-        
+
         _unitOfWork.Repository<Allergy>().Add(allergy);
 
         if (await _unitOfWork.SaveChanges())
@@ -59,11 +58,10 @@ public class AllergyController : BaseApiController
             ? new ApiResponse(404, "Allergy not found")
             : new ApiOkResponse<AllergyDto>(_mapper.Map<AllergyDto>(allergy)));
     }
-    [Authorize(Roles=nameof(Roles.Admin))]
 
-
+    [Authorize(Roles = nameof(Roles.Admin))]
     [HttpPost("update/{id:int}")]
-    public async Task<ActionResult<AllergyDto>> Update(int id,[FromForm] UpdateAllergyDto updateAllergyDto)
+    public async Task<ActionResult<AllergyDto>> Update(int id, [FromForm] UpdateAllergyDto updateAllergyDto)
     {
         var allergy = await _unitOfWork.Repository<Allergy>().GetByIdAsync(id);
         if (allergy == null)
@@ -76,17 +74,18 @@ public class AllergyController : BaseApiController
             var result = await _mediaService.AddPhotoAsync(updateAllergyDto.Image);
 
             if (!result.Success) return Ok(new ApiResponse(400, result.Message));
-        
+
             allergy.PictureUrl = result.Url;
         }
+
         _unitOfWork.Repository<Allergy>().Update(allergy);
 
         if (await _unitOfWork.SaveChanges())
             return Ok(new ApiOkResponse<AllergyDto>(_mapper.Map<AllergyDto>(allergy)));
         return Ok(new ApiResponse(400, "Failed to add allergy"));
     }
-    [Authorize(Roles=nameof(Roles.Admin))]
 
+    [Authorize(Roles = nameof(Roles.Admin))]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {

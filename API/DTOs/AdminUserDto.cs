@@ -16,6 +16,8 @@ public class AdminUserDto
     public AddressDto HomeAddress { get; set; }
     public AddressDto WorkAddress { get; set; }
     public bool IsNormalUser { get; set; } = true;
+    public int ReminingSnack { get; set; }
+    public int ReminingMeals { get; set; }
 
     public int GetAge;
 }

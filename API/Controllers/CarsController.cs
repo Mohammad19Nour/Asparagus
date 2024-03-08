@@ -28,8 +28,7 @@ public class CarsController : BaseApiController
     }
 
 
-    [Authorize(Roles = nameof(DashboardRoles.Car) + ","+nameof(Roles.Admin))]
-    
+    [Authorize(Roles = nameof(DashboardRoles.Car) + "," + nameof(Roles.Admin))]
     [HttpGet("booking")]
     public async Task<ActionResult> GetBooking()
     {
@@ -49,7 +48,7 @@ public class CarsController : BaseApiController
     }
 
     //[Authorize(Roles = nameof(Roles.Admin))]
-    [Authorize(Roles = nameof(DashboardRoles.Car) + ","+nameof(Roles.Admin))]
+    [Authorize(Roles = nameof(DashboardRoles.Car) + "," + nameof(Roles.Admin))]
     [HttpPost]
     public async Task<ActionResult> UpdateCar(UpdateCarDto dto)
     {

@@ -22,9 +22,9 @@ public class SliderController : BaseApiController
         _mediaService = mediaService;
         _mapper = mapper;
     }
-    [Authorize
-        (Roles = nameof(DashboardRoles.Slider) + ","+nameof(Roles.Admin))]
 
+    [Authorize
+        (Roles = nameof(DashboardRoles.Slider) + "," + nameof(Roles.Admin))]
     [HttpPost("add-photo")]
     public async Task<ActionResult> AddPhoto(IFormFile file)
     {

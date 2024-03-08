@@ -36,7 +36,6 @@ public class NotificationsController : BaseApiController
     }
 
     [Authorize(Roles = nameof(DashboardRoles.Notification) + "," + nameof(Roles.Admin))]
-
     [HttpPost]
     public async Task<ActionResult<NotificationDto>> SendNotification(NotificationType type, NewNotificationDto dto)
     {
@@ -59,7 +58,7 @@ public class NotificationsController : BaseApiController
             else result = await _notificationService.NotifyAllMealPlanUsers(dto.ArabicContent, dto.EnglishContent);
         }
 
-        if (result) return Ok(new ApiResponse(400, ""));
+        if (!result) return Ok(new ApiResponse(400, ""));
 
         return Ok(new ApiOkResponse<bool>(result));
     }

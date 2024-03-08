@@ -84,7 +84,7 @@ public class UserController : BaseApiController
     }
 
     [HttpPut("info")]
-    public async Task<ActionResult> UpdateUser([FromForm]UpdateUserInfoDto dto)
+    public async Task<ActionResult> UpdateUser([FromForm] UpdateUserInfoDto dto)
     {
         try
         {

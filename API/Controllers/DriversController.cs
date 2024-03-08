@@ -29,8 +29,7 @@ public class DriversController : BaseApiController
         _mapper = mapper;
     }
 
-    [Authorize(Roles =nameof(Roles.Driver))]
-
+    [Authorize(Roles = nameof(Roles.Driver))]
     [HttpGet("orders")]
     public async Task<ActionResult> PlanOrders()
     {
@@ -57,7 +56,8 @@ public class DriversController : BaseApiController
 
         return Ok(new ApiOkResponse<List<OrderUserPlanDayDto>>(orderToReturn));
     }
-    [Authorize(Roles =nameof(Roles.Driver))]
+
+    [Authorize(Roles = nameof(Roles.Driver))]
     [HttpPut]
     public async Task<ActionResult> ChangeDriverStatus()
     {
@@ -76,7 +76,7 @@ public class DriversController : BaseApiController
         return Ok(new ApiResponse(400, "Failed to update status of driver"));
     }
 
-    [Authorize(Roles =nameof(Roles.Driver))]
+    [Authorize(Roles = nameof(Roles.Driver))]
     [HttpPut("delivered")]
     public async Task<ActionResult> UpdateOrderStatus([FromQuery] int orderId)
     {

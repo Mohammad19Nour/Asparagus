@@ -21,7 +21,7 @@ public partial class UserPlanController
         if (user == null)
             return Ok(new ApiResponse(401));
 
-        var spec = new UserPlanDayWithDrinksOnlySpecification(user.Id,dayId:dayId);
+        var spec = new UserPlanDayWithDrinksOnlySpecification(user.Id, dayId: dayId);
         var planDay = (await _unitOfWork.Repository<UserPlanDay>().ListWithSpecAsync(spec)).ToList();
 
         return Ok(new ApiOkResponse<List<UserSelectedDrinkDto>>(_mapper.Map<List<UserSelectedDrinkDto>>(planDay)));

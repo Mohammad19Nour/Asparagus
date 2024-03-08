@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AsparagusN.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240305082527_Initial")]
+    [Migration("20240307105826_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

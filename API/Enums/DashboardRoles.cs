@@ -55,7 +55,9 @@ namespace AsparagusN.Enums
         [EnumMember(Value = "BookingCar")]
         BookingCar = 24,
         [EnumMember(Value = "Meal Plan Order")]
-        MealPlanOrder = 25
+        MealPlanOrder = 25,
+        [EnumMember(Value = "Employee")]
+        Employee = 26
     }
     public static class DashboardRolesExtensions
     {

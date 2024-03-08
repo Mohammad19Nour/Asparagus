@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers;
+
 [Authorize(Roles = nameof(Roles.User))]
 public class BasketController : BaseApiController
 {
@@ -53,8 +54,8 @@ public class BasketController : BaseApiController
         }
         catch (Exception e)
         {
-          //  _logger.LogInformation("Exception happened at basket controller");
-         //  _logger.LogError(e,"An error occurred: {ErrorMessage}"," e.Message");
+            //  _logger.LogInformation("Exception happened at basket controller");
+            //  _logger.LogError(e,"An error occurred: {ErrorMessage}"," e.Message");
             throw;
         }
     }
@@ -97,8 +98,8 @@ public class BasketController : BaseApiController
 
         Console.WriteLine(basketItem.Quantity);
         if (oldItem.Quantity <= 0)
-            return Ok(new ApiResponse(400,"Quantity should be greater than zero"));
-        
+            return Ok(new ApiResponse(400, "Quantity should be greater than zero"));
+
         if (!basketCreated)
             _unitOfWork.Repository<CustomerBasket>().Update(dbBasket);
         else
@@ -136,6 +137,7 @@ public class BasketController : BaseApiController
             return Ok(new ApiOkResponse<CustomerBasketDto>(_mapper.Map<CustomerBasketDto>(dbBasket)));
         return Ok(new ApiResponse(400, "Failed to update item"));
     }
+
     [HttpDelete]
     public async Task<ActionResult> DeleteBasketItem(int mealId)
     {

@@ -24,10 +24,10 @@ public partial class UserPlanController
                 .Include(x => x.ChangedCarb)
                 .Where(c => c.Id == mealId)
                 .FirstOrDefaultAsync();
-            
+
             if (meal == null)
                 return Ok(new ApiResponse(404, "Meal not found"));
-         
+
             return Ok(new ApiOkResponse<UserMealCarbDto>(_mapper.Map<UserMealCarbDto>(meal.ChangedCarb)));
         }
         catch (Exception e)
@@ -44,8 +44,8 @@ public partial class UserPlanController
         {
             var meal = await _unitOfWork.Repository<UserSelectedMeal>()
                 .GetQueryable()
-                .Include(c=>c.ChangedCarb)
-                .Where(m=>m.Id == mealId).FirstOrDefaultAsync();
+                .Include(c => c.ChangedCarb)
+                .Where(m => m.Id == mealId).FirstOrDefaultAsync();
 
             if (meal == null)
                 return Ok(new ApiResponse(404, "Meal not found"));
@@ -56,11 +56,11 @@ public partial class UserPlanController
 
             if (carb == null) return Ok(new ApiResponse(404, "Carb not found"));
 
-           HelperFunctions.CalcNewPropertyForCarb(meal,carb.Carb);
+            HelperFunctions.CalcNewPropertyForCarb(meal, carb.Carb);
             _unitOfWork.Repository<UserSelectedMeal>().Update(meal);
             if (await _unitOfWork.SaveChanges())
                 return Ok(new ApiOkResponse<UserSelectedMealDto>(_mapper.Map<UserSelectedMealDto>(meal)));
-            
+
             return Ok(new ApiResponse(400, "Failed to update carb"));
         }
         catch (Exception e)

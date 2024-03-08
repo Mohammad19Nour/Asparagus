@@ -64,7 +64,7 @@ public partial class UserPlanController : BaseApiController
             if (allowedMeals - usedMeal <= 0)
                 return Ok(new ApiResponse(400, "You have already reached your day limit "));
 
-            
+
             var adminMealSpec =
                 new AdminPlanDaysWithMealsSpecification(dayDate: planDay.Day, planDay.UserPlan.PlanType);
 
@@ -74,7 +74,7 @@ public partial class UserPlanController : BaseApiController
 
             if (planDay.Day != adminDay.AvailableDate)
                 return Ok(new ApiResponse(400, "Meal not found in this day"));
-            
+
             if (planDay.UserPlan.PlanType != adminDay.PlanType)
                 return Ok(new ApiResponse(400, "user plan type not as same as admin plan type"));
 
@@ -88,7 +88,6 @@ public partial class UserPlanController : BaseApiController
 
                 mal = await _unitOfWork.Repository<Meal>().GetByIdAsync(adminMealId);
                 if (mal == null) return Ok(new ApiResponse(400, "Meal not found"));
-
             }
             else
             {
@@ -97,7 +96,7 @@ public partial class UserPlanController : BaseApiController
                     return Ok(new ApiResponse(400, "Meal not found"));
                 mal = meal.Meal;
             }
-           
+
 
             var mealToAdd = new UserSelectedMeal
             {
@@ -129,6 +128,7 @@ public partial class UserPlanController : BaseApiController
                 mealToAdd.Protein = planDay.UserPlan.ProteinPerMealForCustomPlan;
                 mealToAdd.Carbs = planDay.UserPlan.CarbPerMealForCustomPlan;
             }
+
             planDay.SelectedMeals.Add(mealToAdd);
 
             _unitOfWork.Repository<UserPlanDay>().Update(planDay);

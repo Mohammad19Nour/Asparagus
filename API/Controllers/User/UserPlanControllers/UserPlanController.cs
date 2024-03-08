@@ -19,7 +19,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.User.UserPlanControllers;
 
-
 [Authorize(Roles = nameof(Roles.User))]
 public partial class UserPlanController : BaseApiController
 {

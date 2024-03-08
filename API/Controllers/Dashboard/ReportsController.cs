@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.Dashboard;
-[Authorize(Roles = nameof(DashboardRoles.Export) + ","+nameof(Roles.Admin))]
 
+[Authorize(Roles = nameof(DashboardRoles.Export) + "," + nameof(Roles.Admin))]
 public class ReportsController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -82,8 +82,8 @@ public class ReportsController : BaseApiController
         var result = await _reportService.GenerateOrdersReport(start.Value, end.Value);
         return Ok(new ApiOkResponse<List<OrderReportDto>>(result));
     }
-    [HttpGet("pointOrders")]
 
+    [HttpGet("pointOrders")]
     public async Task<ActionResult<List<OrderReportDto>>> GetPointOrdersReport(DateTime? start, DateTime? end)
     {
         start ??= DateTime.MinValue;

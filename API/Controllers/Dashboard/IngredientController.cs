@@ -15,7 +15,7 @@ public class IngredientController : BaseApiController
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public IngredientController(IUnitOfWork unitOfWork,IMapper mapper)
+    public IngredientController(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
@@ -37,7 +37,7 @@ public class IngredientController : BaseApiController
             throw;
         }
     }
-    
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult<IngredientDto>> GetIngredientById(int id)
     {
@@ -45,7 +45,9 @@ public class IngredientController : BaseApiController
         {
             var spec = new IngredientNotDeletedSpecification(id);
             var ingredient = await _unitOfWork.Repository<Ingredient>().GetEntityWithSpec(spec);
-            return Ok(ingredient == null ? new ApiResponse(404, "Ingredient not found") : new ApiOkResponse<IngredientDto>(_mapper.Map<IngredientDto>(ingredient)));
+            return Ok(ingredient == null
+                ? new ApiResponse(404, "Ingredient not found")
+                : new ApiOkResponse<IngredientDto>(_mapper.Map<IngredientDto>(ingredient)));
         }
         catch (Exception e)
         {
@@ -53,8 +55,8 @@ public class IngredientController : BaseApiController
             throw;
         }
     }
-    [Authorize(Roles = nameof(DashboardRoles.SubMeal) + ","+nameof(Roles.Admin))]
 
+    [Authorize(Roles = nameof(DashboardRoles.SubMeal) + "," + nameof(Roles.Admin))]
     [HttpPost("add")]
     public async Task<ActionResult<IngredientDto>> AddNewIngredient(NewIngredientDto newIngredientDto)
     {
@@ -76,8 +78,8 @@ public class IngredientController : BaseApiController
             throw;
         }
     }
-    [Authorize(Roles = nameof(DashboardRoles.SubMeal) + ","+nameof(Roles.Admin))]
 
+    [Authorize(Roles = nameof(DashboardRoles.SubMeal) + "," + nameof(Roles.Admin))]
     [HttpPut("{id:int}")]
     public async Task<ActionResult<IngredientDto>> UpdateIngredient(int id, UpdateIngredientDto updateIngredientDto)
     {
@@ -85,10 +87,10 @@ public class IngredientController : BaseApiController
         {
             var ingredient = await _unitOfWork.Repository<Ingredient>().GetByIdAsync(id);
 
-            if (ingredient == null || ingredient.IsDeleted) return Ok(new ApiResponse(404,"Ingredient not found"));
+            if (ingredient == null || ingredient.IsDeleted) return Ok(new ApiResponse(404, "Ingredient not found"));
 
-            _mapper.Map(updateIngredientDto,ingredient);
-            
+            _mapper.Map(updateIngredientDto, ingredient);
+
             _unitOfWork.Repository<Ingredient>().Update(ingredient);
 
             if (await _unitOfWork.SaveChanges())
@@ -102,8 +104,8 @@ public class IngredientController : BaseApiController
             throw;
         }
     }
-    [Authorize(Roles = nameof(DashboardRoles.SubMeal) + ","+nameof(Roles.Admin))]
 
+    [Authorize(Roles = nameof(DashboardRoles.SubMeal) + "," + nameof(Roles.Admin))]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteIngredient(int id)
     {
@@ -111,7 +113,7 @@ public class IngredientController : BaseApiController
         {
             var ingredient = await _unitOfWork.Repository<Ingredient>().GetByIdAsync(id);
             if (ingredient == null || ingredient.IsDeleted) return Ok(new ApiResponse(404, "Ingredient not found"));
-         
+
             ingredient.IsDeleted = true;
             _unitOfWork.Repository<Ingredient>().Delete(ingredient);
 

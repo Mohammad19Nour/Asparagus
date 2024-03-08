@@ -103,6 +103,7 @@ public class AdminDriverController : BaseApiController
             }
         }
     }
+
     [Authorize(Roles = nameof(DashboardRoles.Drivers) + "," + nameof(Roles.Admin))]
     [HttpGet]
     public async Task<ActionResult<List<AdminDriverDto>>> GetAllDriver()
@@ -121,6 +122,7 @@ public class AdminDriverController : BaseApiController
             throw;
         }
     }
+
     [Authorize(Roles = nameof(DashboardRoles.Drivers) + "," + nameof(Roles.Admin))]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<AdminDriverDto>> GetDriver(int id)
@@ -303,6 +305,7 @@ public class AdminDriverController : BaseApiController
             tmp.PhoneNumber = user.PhoneNumber;
             resultList.Add(tmp);
         }
+
         return Ok(new ApiOkResponse<List<OrderUserPlanDayDto>>(resultList));
     }
 

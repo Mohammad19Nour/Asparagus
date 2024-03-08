@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using AsparagusN.Data.Entities;
+﻿using AsparagusN.Data.Entities;
 using AsparagusN.DTOs;
 using AsparagusN.Enums;
 using AsparagusN.Errors;

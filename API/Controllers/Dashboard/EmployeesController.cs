@@ -7,6 +7,7 @@ using AsparagusN.Errors;
 using AsparagusN.Interfaces;
 using AsparagusN.Specifications;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,8 +31,9 @@ public class EmployeesController : BaseApiController
         _userManager = userManager;
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.Employee) + "," + nameof(Roles.Admin))]
     [HttpPost("add")]
-    public async Task<ActionResult<EmployeeDto>> AddEmployee([FromForm] NewEmployeeDto newEmployeeDto)
+    public async Task<ActionResult<EmployeeDto>> AddEmployee(NewEmployeeDto newEmployeeDto)
     {
         using (var transaction = _unitOfWork.BeginTransaction())
         {
@@ -86,6 +88,8 @@ public class EmployeesController : BaseApiController
             }
         }
     }
+
+    [Authorize(Roles = nameof(DashboardRoles.Employee) + "," + nameof(Roles.Admin))]
     [HttpGet]
     public async Task<ActionResult> GetEmployees()
     {
@@ -124,8 +128,8 @@ public class EmployeesController : BaseApiController
         return Ok(new ApiOkResponse<List<EmployeeDto>>(resultList));
     }
 
-
-     [HttpPut("roles")]
+    [Authorize(Roles = nameof(DashboardRoles.Role) + "," + nameof(Roles.Admin))]
+    [HttpPut("roles")]
     public async Task<ActionResult> UpdateEmployeeRoles(Dictionary<string, bool> rolesDto,
         [EmailAddress] string employeeEmail)
     {
@@ -184,8 +188,10 @@ public class EmployeesController : BaseApiController
             }
         }
     }
+
+    [Authorize(Roles = nameof(DashboardRoles.Employee) + "," + nameof(Roles.Admin))]
     [HttpPut("{id:int}")]
-    public async Task<ActionResult<EmployeeDto>> UpdateEmployee(int id, [FromForm] UpdateEmployeeDto updateEmployeeDto)
+    public async Task<ActionResult<EmployeeDto>> UpdateEmployee(int id, UpdateEmployeeDto updateEmployeeDto)
     {
         using (var transaction = _unitOfWork.BeginTransaction())
         {
@@ -256,6 +262,7 @@ public class EmployeesController : BaseApiController
         }
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.Employee) + "," + nameof(Roles.Admin))]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteEmployee(int id)
     {

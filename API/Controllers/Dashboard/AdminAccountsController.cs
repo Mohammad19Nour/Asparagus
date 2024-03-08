@@ -93,7 +93,7 @@ public class AdminAccountsController : BaseApiController
         }
         else if (adminDto.Role.ToLower() == Roles.Admin.GetDisplayName().ToLower())
         {
-            adminDto.Name =user.FullName;
+            adminDto.Name = user.FullName;
             adminDto.PictureUrl = "No Photo";
             adminDto.PhoneNumber = user.PhoneNumber;
         }

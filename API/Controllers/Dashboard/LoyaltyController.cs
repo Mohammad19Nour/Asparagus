@@ -26,7 +26,8 @@ public class LoyaltyController : BaseApiController
     [HttpGet("meals")]
     public async Task<ActionResult<List<MealLoyaltyPointDto>>> GetMeals()
     {
-        var spec = new BaseSpecification<Meal>(x => x.LoyaltyPoints == null && x.IsMainMenu && !x.Category.NameEN.ToLower().StartsWith("snack"));
+        var spec = new BaseSpecification<Meal>(x =>
+            x.LoyaltyPoints == null && x.IsMainMenu && !x.Category.NameEN.ToLower().StartsWith("snack"));
         spec.AddInclude(x => x.Include(y => y.Allergies));
         spec.AddInclude(x => x.Include(y => y.Category));
 
@@ -35,10 +36,12 @@ public class LoyaltyController : BaseApiController
         var result = _mapper.Map<List<MealLoyaltyPointDto>>(meals);
         return Ok(new ApiOkResponse<List<MealLoyaltyPointDto>>(result));
     }
+
     [HttpGet("snacks")]
     public async Task<ActionResult<List<MealLoyaltyPointDto>>> GetSnacks()
     {
-        var spec = new BaseSpecification<Meal>(x => x.LoyaltyPoints == null && x.IsMainMenu && x.Category.NameEN.ToLower().StartsWith("snack"));
+        var spec = new BaseSpecification<Meal>(x =>
+            x.LoyaltyPoints == null && x.IsMainMenu && x.Category.NameEN.ToLower().StartsWith("snack"));
         spec.AddInclude(x => x.Include(y => y.Allergies));
         spec.AddInclude(x => x.Include(y => y.Category));
 
@@ -47,8 +50,8 @@ public class LoyaltyController : BaseApiController
         var result = _mapper.Map<List<MealLoyaltyPointDto>>(meals);
         return Ok(new ApiOkResponse<List<MealLoyaltyPointDto>>(result));
     }
-    [Authorize(Roles = nameof(DashboardRoles.MealPoint) + ","+nameof(Roles.Admin))]
 
+    [Authorize(Roles = nameof(DashboardRoles.MealPoint) + "," + nameof(Roles.Admin))]
     [HttpPost]
     public async Task<ActionResult<MealLoyaltyPointDto>> AddMeal(int mealId, int points)
     {
@@ -62,8 +65,7 @@ public class LoyaltyController : BaseApiController
         return Ok(new ApiResponse(400, "Failed to add points"));
     }
 
-    [Authorize(Roles = nameof(DashboardRoles.MealPoint) + ","+nameof(Roles.Admin))]
-
+    [Authorize(Roles = nameof(DashboardRoles.MealPoint) + "," + nameof(Roles.Admin))]
     [HttpDelete]
     public async Task<ActionResult> Delete(int mealId)
     {
@@ -71,7 +73,7 @@ public class LoyaltyController : BaseApiController
         if (meal == null) return Ok(new ApiResponse(404, "Meal not found"));
 
         if (meal.LoyaltyPoints == null) return Ok(new ApiResponse(400, "Meal doesn't have loyalty points"));
-      
+
         meal.LoyaltyPoints = null;
         _unitOfWork.Repository<Meal>().Update(meal);
         if (await _unitOfWork.SaveChanges())
