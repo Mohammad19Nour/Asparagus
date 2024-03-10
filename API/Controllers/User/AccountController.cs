@@ -83,7 +83,8 @@ public class AccountController : BaseApiController
         {
             registerDto.Email = registerDto.Email.ToLower();
 
-            var user = await _userManager.FindByEmailAsync(registerDto.Email);
+            
+            var user = await _userManager.Users.FirstOrDefaultAsync(c=>c.Email.ToLower()==registerDto.Email);
             if (user != null)
             {
                 if (user.EmailConfirmed)
@@ -121,7 +122,7 @@ public class AccountController : BaseApiController
             roleResult = await _userManager.AddToRoleAsync(user, "User");
 
 
-            if (!roleResult.Succeeded) return BadRequest(new ApiResponse(400, "Failed to add roles"));
+            if (!roleResult.Succeeded) return Ok(new ApiResponse(400, string.Join(", ", res.Errors.Select(v=>v.Description).ToList())));
 
             var respons = await GenerateTokenAndSendEmailForUser(user);
 
@@ -143,39 +144,39 @@ public class AccountController : BaseApiController
 
     [HttpPost("forget-password")]
     public async Task<ActionResult> ForgetPassword(ForgetPasswordDto dto)
-    {
-        try
         {
-            var email = dto.Email?.ToLower();
-            if (email is null) return Ok(new ApiResponse(400, messageEN: "email must be provided"));
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == email);
-
-            if (user == null)
+            try
             {
-                return Ok(new ApiResponse(401, messageEN: "user was not found"));
+                var email = dto.Email?.ToLower();
+                if (email is null) return Ok(new ApiResponse(400, messageEN: "email must be provided"));
+                var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == email);
+
+                if (user == null)
+                {
+                    return Ok(new ApiResponse(401, messageEN: "user was not found"));
+                }
+
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                var code = ConfirmEmailService.GenerateCode(user.Id, token);
+
+                var confirmationLink = Url.Action("ResetPassword", "Account",
+                    new { userId = user.Id, token = token }, Request.Scheme);
+
+                var text = "<html><body> The code to reset your password is : " + code +
+                           "</body></html>";
+                var res = await _emailService.SendEmailAsync(user.Email, "Reset Password", text);
+
+                if (!res)
+                    return Ok(new ApiResponse(400, messageEN: "Failed to send email."));
+
+                return Ok(new ApiResponse(200, messageEN: "The Code was sent to your email"));
             }
-
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-            var code = ConfirmEmailService.GenerateCode(user.Id, token);
-
-            var confirmationLink = Url.Action("ResetPassword", "Account",
-                new { userId = user.Id, token = token }, Request.Scheme);
-
-            var text = "<html><body> The code to reset your password is : " + code +
-                       "</body></html>";
-            var res = await _emailService.SendEmailAsync(user.Email, "Reset Password", text);
-
-            if (!res)
-                return Ok(new ApiResponse(400, messageEN: "Failed to send email."));
-
-            return Ok(new ApiResponse(200, messageEN: "The Code was sent to your email"));
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
     }
 
     [HttpPost("reset-password")]

@@ -20,6 +20,7 @@ public class ExtraOption : ISoftDeletable
     public decimal Carb{ get; set; }
     public decimal Fat{ get; set; }
     public decimal Fiber{ get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
     public decimal GetCalories()
     {
         return Protein * 4 + Carb * 4 + Fat * 9;

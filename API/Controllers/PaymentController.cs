@@ -1,4 +1,4 @@
-﻿using AsparagusN.Data.Entities;
+﻿/*using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Errors;
 using AsparagusN.Extensions;
@@ -28,22 +28,17 @@ public class PaymentController : BaseApiController
 
     [Authorize]
     [HttpPost("checkout")]
-    public async Task<ActionResult> Checkout()
+    public async Task<ActionResult> Checkout(string t)
     {
-        var user = await _getUser();
-        if (user == null) return Ok(new ApiResponse(404, "User not found"));
-
-        var order = await _orderService.GetOrderByIdAsync(user.Id, user.Email);
-        if (order == null) return Ok(new ApiResponse(404, "No order found"));
-
-        return Ok(new ApiOkResponse<object?>(await _paymentService.CreatePaymentIntent(order.Id)));
+        var res = await _paymentService.CheckPaymentStatus(t);
+        return Ok();
     }
 
     [HttpPost("webhook")]
     public async Task<ActionResult> FoloosiWebhook()
     {
         var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-        
+
         var not = new Notification
         {
             UserEmail = "u@u.u",
@@ -61,4 +56,5 @@ public class PaymentController : BaseApiController
         var email = HttpContext.User.GetEmail();
         return await _userManager.Users.FirstOrDefaultAsync(x => x.Email == email);
     }
-}
+}*/
+

@@ -267,7 +267,7 @@ public class AdminDriverController : BaseApiController
             {
                 Console.WriteLine(e);
                 await transaction.RollbackAsync();
-                return Ok(new ApiResponse(400, "Exception happened.. failed to add driver"));
+                return Ok(new ApiResponse(400, "Exception happened.. failed to delete driver"));
 
                 throw;
             }

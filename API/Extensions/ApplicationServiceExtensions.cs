@@ -69,12 +69,15 @@ public static class ApplicationServiceExtensions
                     }))
                     .ToArray();
 
+                var tmp = errors.Select(c => $"{c.Field}: {c.Message}").ToArray();
+                var re = string.Join(", ", tmp);
+                
                 var errorResponse = new 
                 {
                     Errors = errors
                 };
 
-                return new OkObjectResult(errorResponse);
+                return new OkObjectResult(new ApiResponse(400,re));
             };
         });
         return services;

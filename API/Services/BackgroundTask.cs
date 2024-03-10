@@ -1,4 +1,5 @@
 ﻿using AsparagusN.Data;
+using AsparagusN.Data.Entities.MealPlan.AdminPlans;
 using AsparagusN.Enums;
 using AsparagusN.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -18,13 +19,22 @@ public class BackgroundTask : IHostedService, IDisposable
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-      //  _timer = new Timer(_addPlanDays, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+       // _addPlanDays(null);
+
+        var now = DateTime.Now;
+        var daysUntilNextThursday = ((int)DayOfWeek.Thursday - (int)now.DayOfWeek + 7) % 7;
+
+        var nextThursday = now.AddDays(daysUntilNextThursday).Date;
+
+        var timeUntilNextThursday = nextThursday - now;
+
+        _timer = new Timer(_addPlanDays, null, timeUntilNextThursday, TimeSpan.FromDays(7));
         return Task.CompletedTask;
     }
 
     private void _addPlanDays(object? state)
     {
-        /*Task.Run(async () =>
+        Task.Run(async () =>
         {
             try
             {
@@ -58,13 +68,13 @@ public class BackgroundTask : IHostedService, IDisposable
                         foreach (var planType in types)
                         {
                             if (planType == PlanTypeEnum.CustomMealPlan) continue;
-                            
+
                             for (var j = 2; j <= 8; j++)
                             {
                                 var newDay = new AdminPlanDay
                                 {
                                     AvailableDate = DateTime.Today.AddDays(j),
-                                    PlanTypeEnum = planType
+                                    PlanType = planType
                                 };
                                 unitOfWork.Repository<AdminPlanDay>().Add(newDay);
                             }
@@ -72,11 +82,36 @@ public class BackgroundTask : IHostedService, IDisposable
 
                         await unitOfWork.SaveChanges();
                         _added = true;
-                        Console.WriteLine("tt");
                     }
                     else
                     {
                     }
+                }
+                else // => _added = false
+                {
+                    var startDay = DateTime.Today;
+                    while (startDay.DayOfWeek != DayOfWeek.Saturday)
+                    {
+                        startDay = startDay.AddDays(-1);
+                    }
+
+                    foreach (var planType in types)
+                    {
+                        if (planType == PlanTypeEnum.CustomMealPlan) continue;
+
+                        for (var j = 0; j <= 6; j++)
+                        {
+                            var newDay = new AdminPlanDay
+                            {
+                                AvailableDate = startDay.AddDays(j),
+                                PlanType = planType
+                            };
+                            unitOfWork.Repository<AdminPlanDay>().Add(newDay);
+                        }
+                    }
+
+                    await unitOfWork.SaveChanges();
+                    _added = true;
                 }
             }
             catch (Exception e)
@@ -84,17 +119,17 @@ public class BackgroundTask : IHostedService, IDisposable
                 Console.WriteLine(e);
                 throw;
             }
-        });*/
+        });
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-       // _timer.Change(Timeout.Infinite, 0);
+        _timer.Change(Timeout.Infinite, 0);
         return Task.CompletedTask;
     }
 
     public void Dispose()
     {
-     //   _timer.Dispose();
+        _timer.Dispose();
     }
 }

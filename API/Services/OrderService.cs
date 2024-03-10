@@ -19,14 +19,16 @@ public class OrderService : IOrderService
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly INotificationService _notificationService;
+    private readonly IPaymentService _paymentService;
 
     public OrderService(ILocationService locationService, IMapper mapper, IUnitOfWork unitOfWork,
-        INotificationService notificationService)
+        INotificationService notificationService, IPaymentService paymentService)
     {
         _locationService = locationService;
         _mapper = mapper;
         _unitOfWork = unitOfWork;
         _notificationService = notificationService;
+        _paymentService = paymentService;
     }
 
     public async Task<Order?> GetOrderByIdAsync(int orderId, string buyerEmail)
@@ -63,11 +65,6 @@ public class OrderService : IOrderService
 
                 if (order == null) return (order, Message: message);
 
-                if (order.PaymentType == PaymentType.Card)
-                {
-                    // if payment through card failed then return from here
-                }
-
                 if (order.PaymentType == PaymentType.Points)
                 {
                     if (order.PointsPrice > user!.LoyaltyPoints)
@@ -81,6 +78,17 @@ public class OrderService : IOrderService
 
                 order.BuyerPhoneNumber = user.PhoneNumber;
                 order.BuyerId = user.Id;
+                if (order.PaymentType == PaymentType.Card)
+                {
+                    if (newOrderInfoDto.BillId == null)
+                        return (null, "Transaction_id must be provided");
+                    var paymentResult = await
+                        _paymentService.CheckPaymentStatus(newOrderInfoDto.BillId, (double)order.GetTotal());
+                    if (!paymentResult.Success)
+                        return (null, paymentResult.Message);
+                    order.BillId = newOrderInfoDto.BillId;
+                }
+
                 _unitOfWork.Repository<Order>().Add(order);
 
                 if (!(await _unitOfWork.SaveChanges()))
@@ -109,7 +117,8 @@ public class OrderService : IOrderService
             var meal = await _unitOfWork.Repository<Meal>().GetByIdAsync(mealId);
             var mealOrdered = _mapper.Map<MealItemOrdered>(meal);
             var items = new List<OrderItem> { new OrderItem { OrderedMeal = mealOrdered } };
-            var branchId = await _locationService.GetClosestBranch(user.HomeAddress.Latitude,user.HomeAddress.Longitude);
+            var branchId =
+                await _locationService.GetClosestBranch(user.HomeAddress.Latitude, user.HomeAddress.Longitude);
 
             if (branchId == 0) return (true, "ok");
             var order = new Order

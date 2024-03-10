@@ -161,7 +161,8 @@ namespace AsparagusN.Migrations
                     Protein = table.Column<double>(type: "REAL", nullable: false),
                     Carb = table.Column<double>(type: "REAL", nullable: false),
                     Fat = table.Column<double>(type: "REAL", nullable: false),
-                    Fiber = table.Column<double>(type: "REAL", nullable: false)
+                    Fiber = table.Column<double>(type: "REAL", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -201,7 +202,8 @@ namespace AsparagusN.Migrations
                     Protein = table.Column<double>(type: "REAL", nullable: false),
                     Carb = table.Column<double>(type: "REAL", nullable: false),
                     Fat = table.Column<double>(type: "REAL", nullable: false),
-                    Fiber = table.Column<double>(type: "REAL", nullable: false)
+                    Fiber = table.Column<double>(type: "REAL", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -588,7 +590,7 @@ namespace AsparagusN.Migrations
                         column: x => x.ZoneId,
                         principalTable: "Zones",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -975,7 +977,8 @@ namespace AsparagusN.Migrations
                     Priority = table.Column<int>(type: "INTEGER", nullable: true),
                     DayOrderStatus = table.Column<int>(type: "INTEGER", nullable: false),
                     IsCustomerInfoPrinted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    IsMealsInfoPrinted = table.Column<bool>(type: "INTEGER", nullable: false)
+                    IsMealsInfoPrinted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    DriverId1 = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -988,6 +991,12 @@ namespace AsparagusN.Migrations
                     table.ForeignKey(
                         name: "FK_UserPlanDays_Drivers_DriverId",
                         column: x => x.DriverId,
+                        principalTable: "Drivers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_UserPlanDays_Drivers_DriverId1",
+                        column: x => x.DriverId1,
                         principalTable: "Drivers",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -1321,6 +1330,11 @@ namespace AsparagusN.Migrations
                 name: "IX_UserPlanDays_DriverId",
                 table: "UserPlanDays",
                 column: "DriverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPlanDays_DriverId1",
+                table: "UserPlanDays",
+                column: "DriverId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserPlanDays_UserPlanId",

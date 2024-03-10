@@ -38,6 +38,7 @@ public class DrinkController : BaseApiController
         var drinks = await _unitOfWork.Repository<Drink>().ListAllAsync();
         drinks = drinks.Where(x => !x.IsDeleted).ToList();
 
+        drinks = drinks.OrderByDescending(c => c.CreatedAt).ToList();
         return Ok(new ApiOkResponse<List<DrinkDto>>(_mapper.Map<List<DrinkDto>>(drinks)));
     }
 

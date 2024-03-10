@@ -311,6 +311,9 @@ namespace AsparagusN.Migrations
                     b.Property<double>("Carb")
                         .HasColumnType("REAL");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<double>("Fat")
                         .HasColumnType("REAL");
 
@@ -435,6 +438,9 @@ namespace AsparagusN.Migrations
 
                     b.Property<double>("Carb")
                         .HasColumnType("REAL");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
 
                     b.Property<double>("Fat")
                         .HasColumnType("REAL");
@@ -1133,6 +1139,9 @@ namespace AsparagusN.Migrations
                     b.Property<int?>("DriverId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("DriverId1")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsCustomerInfoPrinted")
                         .HasColumnType("INTEGER");
 
@@ -1153,6 +1162,8 @@ namespace AsparagusN.Migrations
                     b.HasIndex("DeliveryLocationId");
 
                     b.HasIndex("DriverId");
+
+                    b.HasIndex("DriverId1");
 
                     b.HasIndex("UserPlanId");
 
@@ -1697,7 +1708,7 @@ namespace AsparagusN.Migrations
                     b.HasOne("AsparagusN.Data.Entities.Zone", "Zone")
                         .WithMany("Drivers")
                         .HasForeignKey("ZoneId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Zone");
@@ -1900,8 +1911,13 @@ namespace AsparagusN.Migrations
                         .IsRequired();
 
                     b.HasOne("AsparagusN.Data.Entities.Driver", "Driver")
+                        .WithMany()
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("AsparagusN.Data.Entities.Driver", null)
                         .WithMany("Orders")
-                        .HasForeignKey("DriverId");
+                        .HasForeignKey("DriverId1");
 
                     b.HasOne("AsparagusN.Data.Entities.MealPlan.UserPlan.UserPlan", "UserPlan")
                         .WithMany("Days")

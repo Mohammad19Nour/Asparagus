@@ -28,6 +28,7 @@ public class IngredientController : BaseApiController
         {
             var spec = new IngredientNotDeletedSpecification();
             var ingredients = await _unitOfWork.Repository<Ingredient>().ListWithSpecAsync(spec);
+            ingredients = ingredients.OrderByDescending(c => c.CreatedAt).ToList();
             return Ok(new ApiOkResponse<ICollection<IngredientDto>>
                 (_mapper.Map<ICollection<IngredientDto>>(ingredients)));
         }

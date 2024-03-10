@@ -90,6 +90,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
         builder.ApplyConfiguration(new GiftSelectionConfiguration());
         builder.ApplyConfiguration(new AppCouponConfiguration());
         builder.ApplyConfiguration(new DriverConfiguration());
+        builder.ApplyConfiguration(new ZoneConfiguration());
         builder.ApplyConfiguration(new OrderConfiguration());
         builder.ApplyConfiguration(new OrderItemConfiguration());
         builder.ApplyConfiguration(new MealConfiguration());

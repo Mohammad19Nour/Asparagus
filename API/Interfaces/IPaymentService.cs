@@ -4,5 +4,5 @@ namespace AsparagusN.Interfaces;
 
 public interface IPaymentService
 {
-    Task<CustomerBasket?> CreatePaymentIntent(int basketId);
+    Task<(bool Success,string Message)> CheckPaymentStatus(string transactionNo,double orderPrice);
 }

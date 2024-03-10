@@ -98,7 +98,7 @@ public class EmployeesController : BaseApiController
 
         var resultList = new List<EmployeeDto>();
         var cantEditRoles = new List<string>();
-        foreach (DashboardRoles role in Enum.GetValues(typeof(DashboardRoles)))
+        foreach (Roles role in Enum.GetValues(typeof(Roles)))
         {
             var roleName = role.GetDisplayName().ToLower();
             cantEditRoles.Add(roleName);
@@ -110,8 +110,8 @@ public class EmployeesController : BaseApiController
         {
             var map = new Dictionary<string, bool>();
 
-            var userRole = employee.UserRoles.Select(c => c.Role.Name.ToLower());
-            userRole = userRole.Except(cantEditRoles);
+            var userRole = employee.UserRoles.Select(c => c.Role.Name.ToLower()).ToList();
+            userRole = userRole.Except(cantEditRoles).ToList();
             foreach (DashboardRoles role in Enum.GetValues(typeof(DashboardRoles)))
             {
                 var roleName = role.GetDisplayName().ToLower();
