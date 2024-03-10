@@ -20,5 +20,6 @@ public class ReportProfile : Profile
             .ForMember(desr => desr.Zone, opt => opt.MapFrom(src => src.Zone.NameEN));
         CreateMap<AppUser, UserReportDto>();
         CreateMap<Order, OrderReportDto>();
+        CreateMap<AppUser,BookingReportDto>();
     }
 }

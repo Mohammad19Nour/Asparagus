@@ -20,5 +20,5 @@ public interface IOrderService
         NewOrderInfoDto newOrderInfoDto);
 
     public Task<ICollection<Order>> GetOrderWithStatus(OrderStatus status);
-    public Task<(Order? Order, string Message)> CreateCashierOrderAsync(string userEmail,int mealId,string cashierEmail);
+    public Task<(Order? Order, string Message)> CreateCashierOrderAsync(string userEmail,int mealId,string cashierEmail,int quantity);
 }

@@ -17,7 +17,8 @@ public class UserProfile : Profile
         CreateMap<AppUser, AccountDto>();
         
             CreateMap<AppUser, UserInfoDto>()
-            .ForMember(dest=>dest.WorkAddress,opt=>opt.MapFrom(y=>HelperFunctions.CheckExistAddress(y.WorkAddress) ? y.WorkAddress : null))
+                .ForMember(dest=>dest.Points,opt=>opt.MapFrom(y=>y.LoyaltyPoints))
+                .ForMember(dest=>dest.WorkAddress,opt=>opt.MapFrom(y=>HelperFunctions.CheckExistAddress(y.WorkAddress) ? y.WorkAddress : null))
             .ForMember(dest=>dest.HomeAddress,opt=>opt.MapFrom(y=>HelperFunctions.CheckExistAddress(y.HomeAddress) ? y.HomeAddress : null))
             .ForMember(dest=>dest.Gender,opt=>opt.MapFrom(src=>Enum.GetName(src.Gender)));
         CreateMap<UpdateUserInfoDto, AppUser>().

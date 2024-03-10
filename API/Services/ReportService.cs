@@ -1,4 +1,5 @@
 ﻿using System.Reflection.Metadata;
+using AsparagusN.Data;
 using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.MealPlan.UserPlan;
@@ -57,7 +58,7 @@ public class ReportService : IReportService
 
 
         var plans = await _unitOfWork.Repository<UserPlan>().ListAllAsync();
-        
+
 
         foreach (var user in uList)
         {
@@ -130,5 +131,27 @@ public class ReportService : IReportService
 
         var result = _mapper.Map<List<OrderReportDto>>(orders.ToList());
         return result;
+    }
+
+    public async Task<List<BookingReportDto>> GenerateBookingsReport(DateTime startDate, DateTime endDate)
+    {
+        var query = _unitOfWork.Repository<Booking>().GetQueryable();
+        query = query.Include(c => c.User);
+        query = query.Where(c => c.StartTime >= startDate && c.EndTime <= endDate);
+        query = query.OrderBy(c => c.StartTime);
+
+        var bookings = await query.ToListAsync();
+
+        var resultList = new List<BookingReportDto>();
+
+        foreach (var booking in bookings)
+        {
+            var tmp = _mapper.Map<BookingReportDto>(booking.User);
+            tmp.StartTime = booking.StartTime;
+            tmp.EndTime = booking.EndTime;
+            resultList.Add(tmp);
+        }
+
+        return resultList;
     }
 }

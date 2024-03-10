@@ -1,4 +1,5 @@
-﻿using AsparagusN.Data.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using AsparagusN.Data.Entities;
 using AsparagusN.Data.Entities.Identity;
 using AsparagusN.Data.Entities.Meal;
 using AsparagusN.Data.Entities.OrderAggregate;
@@ -72,7 +73,7 @@ public class CashiersController : BaseApiController
 
     [Authorize(Roles = nameof(Roles.Cashier))]
     [HttpPut("points")]
-    public async Task<ActionResult> ChangeOrder(int mealId, string userEmail)
+    public async Task<ActionResult> ChangeOrder(int mealId, string userEmail,[Range(1,int.MaxValue)]int quantity)
     {
         var email = User.GetEmail();
         var cashier = await _unitOfWork.Repository<Cashier>().GetQueryable().Where(c => c.Email.ToLower() == email)
@@ -81,7 +82,7 @@ public class CashiersController : BaseApiController
         if (cashier == null || !cashier.AllowLoyal)
             return Ok(new ApiException(401,
                 "Can't access to this resource... you don't have permission to replace meals with points"));
-        var result = await _orderService.CreateCashierOrderAsync(userEmail, mealId, email);
+        var result = await _orderService.CreateCashierOrderAsync(userEmail, mealId, email,quantity);
 
 
         if (result.Order != null) return Ok(new ApiResponse(200, "Order created"));

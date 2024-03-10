@@ -228,7 +228,7 @@ public class OrderService : IOrderService
     }
 
     public async Task<(Order? Order, string Message)> CreateCashierOrderAsync(string userEmail, int mealId,
-        string cashierEmail)
+        string cashierEmail,int quantity)
     {
         cashierEmail = cashierEmail.ToLower();
         userEmail = userEmail.ToLower();
@@ -248,14 +248,14 @@ public class OrderService : IOrderService
 
         if (meal.LoyaltyPoints == null) return (null, "You can't buy this meal");
 
-        if (user.LoyaltyPoints < meal.LoyaltyPoints) return (null, "User doesn't have enough points");
-        user.LoyaltyPoints -= meal.Points;
+        if (user.LoyaltyPoints < quantity * meal.LoyaltyPoints) return (null, "User doesn't have enough points");
+        user.LoyaltyPoints -= meal.LoyaltyPoints.Value * quantity ;
 
         var orderItem = new OrderItem();
         var mealOrdered = _mapper.Map<MealItemOrdered>(meal);
 
         orderItem.OrderedMeal = mealOrdered;
-        orderItem.Quantity = 1;
+        orderItem.Quantity = quantity;
         orderItem.PointsPrice = meal.LoyaltyPoints.Value;
 
         var order = new Order

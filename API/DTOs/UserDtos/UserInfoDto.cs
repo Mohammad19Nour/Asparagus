@@ -12,5 +12,5 @@ public class UserInfoDto
     public AddressDto? WorkAddress { get; set; }
     public string PictureUrl { get; set; }
     public string Gender { get; set; }
-    public int LoyaltyPoints { get; set; }
+    public int Points { get; set; }
 }

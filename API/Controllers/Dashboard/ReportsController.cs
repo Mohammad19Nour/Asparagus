@@ -92,4 +92,14 @@ public class ReportsController : BaseApiController
         var result = await _reportService.GeneratePointOrdersReport(start.Value, end.Value);
         return Ok(new ApiOkResponse<List<OrderReportDto>>(result));
     }
+    
+    [HttpGet("bookings")]
+    public async Task<ActionResult<List<BookingReportDto>>> BookingsReport(DateTime? start, DateTime? end)
+    {
+        start ??= DateTime.MinValue;
+        end ??= DateTime.Today;
+                                          
+        var result = await _reportService.GenerateBookingsReport(start.Value, end.Value);
+        return Ok(new ApiOkResponse<List<BookingReportDto>>(result));
+    }
 }

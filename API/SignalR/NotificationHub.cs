@@ -43,6 +43,7 @@ public class NotificationHub : Hub
 
     private async Task<List<NotificationDto>> getNewNotifications(string email)
     {
+      
         var nots = await _notificationService.GetUnsentNotificationsForUserAsync(email);
         await _notificationService.MarkSent(nots);
         return _mapper.Map<List<NotificationDto>>(nots);
