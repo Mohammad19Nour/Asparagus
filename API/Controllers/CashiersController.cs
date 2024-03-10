@@ -86,6 +86,6 @@ public class CashiersController : BaseApiController
 
 
         if (result.Order != null) return Ok(new ApiResponse(200, "Order created"));
-        return Ok(new ApiResponse(400, "Failed to create order"));
+        return Ok(new ApiResponse(400, result.Message));
     }
 }

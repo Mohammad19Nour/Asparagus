@@ -228,7 +228,7 @@ public class OrderService : IOrderService
     }
 
     public async Task<(Order? Order, string Message)> CreateCashierOrderAsync(string userEmail, int mealId,
-        string cashierEmail,int quantity)
+        string cashierEmail, int quantity)
     {
         cashierEmail = cashierEmail.ToLower();
         userEmail = userEmail.ToLower();
@@ -249,7 +249,7 @@ public class OrderService : IOrderService
         if (meal.LoyaltyPoints == null) return (null, "You can't buy this meal");
 
         if (user.LoyaltyPoints < quantity * meal.LoyaltyPoints) return (null, "User doesn't have enough points");
-        user.LoyaltyPoints -= meal.LoyaltyPoints.Value * quantity ;
+        user.LoyaltyPoints -= meal.LoyaltyPoints.Value * quantity;
 
         var orderItem = new OrderItem();
         var mealOrdered = _mapper.Map<MealItemOrdered>(meal);
@@ -270,7 +270,13 @@ public class OrderService : IOrderService
         };
         _unitOfWork.Repository<Order>().Add(order);
 
-        if (await _unitOfWork.SaveChanges()) return (order, "Done");
+        if (await _unitOfWork.SaveChanges())
+        {
+            await _notificationService.NotifyUserByEmail(user.Email, "تم اضافة الطلب", "Order added");
+
+            return (order, "Done");
+        }
+
         return (null, "Failed to make an order");
     }
 }
