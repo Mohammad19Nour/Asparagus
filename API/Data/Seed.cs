@@ -39,6 +39,7 @@ public static class Seed
         await SeedUsers(userManager);
         await SeedDrivers(context, userManager);
         await SeedCashiers(context, userManager);
+        await SeedEmployees(context, userManager);
         await SeedOrders(context, mapper);
         await SeedGifts(context);
         await SeedCar(context);
@@ -369,6 +370,45 @@ public static class Seed
         await context.Cashiers.AddRangeAsync(cashiers);
     }
 
+    private static async Task SeedEmployees(DataContext context, UserManager<AppUser> userManager)
+    {
+        if (await context.Employees.AnyAsync()) return;
+        var employees = new List<Employee>
+        {
+            new Employee
+            {
+                FullName = "John Doe",
+                PhoneNumber = "1234567890",
+                Email = "ee@t.com",
+                Password = "string",
+                IsActive = true,
+            },
+            new Employee
+            {
+                FullName = "Jane Smith",
+                PhoneNumber = "0987654321",
+                Email = "e@c.com",
+                Password = "string",
+                IsActive = true,
+            }
+        };
+
+        foreach (var employee in employees)
+        {
+            var user = new AppUser
+            {
+                Email = employee.Email,
+                UserName = employee.Email,
+                FullName = employee.FullName,
+                EmailConfirmed = true,
+            };
+            await userManager.CreateAsync(user, "string");
+            await userManager.AddToRoleAsync(user, Roles.Employeee.GetDisplayName());
+        }
+
+        await context.Employees.AddRangeAsync(employees);
+    }
+
     private static decimal CalculatePrice(SubscriptionDuration duration, int numberOfMeals)
     {
         return duration switch
@@ -392,7 +432,7 @@ public static class Seed
             new() { Name = Roles.Driver.GetDisplayName() },
             new() { Name = Roles.User.GetDisplayName() },
             new() { Name = Roles.Cashier.GetDisplayName() },
-            new() { Name = Roles.Employee.GetDisplayName() },
+            new() { Name = Roles.Employeee.GetDisplayName() },
         };
 
         foreach (var role in roles)

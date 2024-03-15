@@ -59,7 +59,7 @@ public class EmployeesController : BaseApiController
                 }
 
                 IdentityResult roleResult =
-                    await _userManager.AddToRoleAsync(employeeUser, Roles.Employee.GetDisplayName());
+                    await _userManager.AddToRoleAsync(employeeUser, Roles.Employeee.GetDisplayName());
 
                 if (!roleResult.Succeeded)
                 {

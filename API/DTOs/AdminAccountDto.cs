@@ -8,4 +8,5 @@ public class AdminAccountDto
     public string Name { get; set; }
     public string PhoneNumber { get; set; }
     public string PictureUrl { get; set; }
+    public Dictionary<string, bool> Roles { get; set; } = new Dictionary<string, bool>();
 }

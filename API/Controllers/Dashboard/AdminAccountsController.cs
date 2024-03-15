@@ -4,6 +4,7 @@ using AsparagusN.DTOs;
 using AsparagusN.DTOs.AccountDtos;
 using AsparagusN.DTOs.CashierDtos;
 using AsparagusN.DTOs.DriverDtos;
+using AsparagusN.DTOs.EmployeeDtos;
 using AsparagusN.DTOs.UserDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
@@ -82,7 +83,7 @@ public class AdminAccountsController : BaseApiController
             adminDto.PictureUrl = cashier.PictureUrl;
             adminDto.PhoneNumber = cashier.PhoneNumber;
         }
-        else if (adminDto.Role.ToLower() == Roles.Employee.GetDisplayName().ToLower())
+        else if (adminDto.Role.ToLower() == Roles.Employeee.GetDisplayName().ToLower())
         {
             var employee = await _unitOfWork.Repository<Employee>().GetQueryable()
                 .Where(c => c.Email.ToLower() == adminDto.Email.ToLower()).FirstAsync();
@@ -90,6 +91,17 @@ public class AdminAccountsController : BaseApiController
             adminDto.Name = employee.FullName;
             adminDto.PictureUrl = "No Photo";
             adminDto.PhoneNumber = employee.PhoneNumber;
+            var userRole = roles.Select(c => c.ToLower()).ToList();
+            var map = new Dictionary<string, bool>();
+
+            foreach (DashboardRoles role in Enum.GetValues(typeof(DashboardRoles)))
+            {
+                var roleName = role.GetDisplayName().ToLower();
+                if (userRole.Contains(roleName)) map[roleName] = true;
+                else map[roleName] = false;
+            }
+
+            adminDto.Roles = map;
         }
         else if (adminDto.Role.ToLower() == Roles.Admin.GetDisplayName().ToLower())
         {
@@ -114,8 +126,7 @@ public class AdminAccountsController : BaseApiController
         var user = await _unitOfWork.Repository<AppUser>().GetQueryable().Where(u => u.Email.ToLower() == email)
             .FirstAsync();
         var roles = (await _userManager.GetRolesAsync(user)).Select(c => c.ToLower()).ToList();
-
-
+        //Console.WriteLine(roles.Contains(Roles.Employee.GetDisplayName().ToLower()));
         if (roles.Contains(Roles.Cashier.GetDisplayName().ToLower()))
         {
             var spec = new CashierWithBranchSpecification(email.ToLower());
@@ -133,6 +144,29 @@ public class AdminAccountsController : BaseApiController
             if (driver == null) return Ok(new ApiResponse(404, "driver not found"));
 
             return Ok(new ApiOkResponse<DriverDto>(_mapper.Map<DriverDto>(driver)));
+        }
+
+        if (roles.Contains(Roles.Employeee.GetDisplayName().ToLower()))
+        {
+            Console.WriteLine("FFF");
+            var dto = new EmployeeDto();
+            var employee = await _unitOfWork.Repository<Employee>().GetQueryable()
+                .Where(c => c.Email.ToLower() == email.ToLower()).FirstAsync();
+
+            _mapper.Map(employee,dto);
+            var userRole = roles.Select(c => c.ToLower()).ToList();
+            var map = new Dictionary<string, bool>();
+
+            foreach (DashboardRoles role in Enum.GetValues(typeof(DashboardRoles)))
+            {
+                var roleName = role.GetDisplayName().ToLower();
+                if (userRole.Contains(roleName)) map[roleName] = true;
+                else map[roleName] = false;
+            }
+
+            dto.Roles = map;
+            return Ok(new ApiOkResponse<EmployeeDto>(dto));
+
         }
 
         return Ok(new ApiOkResponse<UserInfoDto>(_mapper.Map<UserInfoDto>(user)));
