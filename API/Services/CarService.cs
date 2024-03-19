@@ -22,7 +22,7 @@ public class CarService : ICarService
         _mapper = mapper;
     }
 
-    public async Task<(Car? car, string Message)> AddCar(NewCarDto carDto)
+    public async Task<(Car? car, string Message)> AddCar(NewCarDto carDto,string city)
     {
         var car = _mapper.Map<Car>(carDto);
         _unitOfWork.Repository<Car>().Add(car);
@@ -111,14 +111,14 @@ public class CarService : ICarService
         return booking == null;
     }
 
-    public async Task<(bool Success, string Message)> MakeBooking(int userId, DateTime startTime)
+    public async Task<(bool Success, string Message)> MakeBooking(int userId, DateTime startTime,string city)
     {
         DateTime endTime = startTime.AddHours(2);
         var user = await _unitOfWork.Repository<AppUser>().GetByIdAsync(userId);
 
         if (user == null) return (false, "User not found");
 
-        var available = await GetAvailableDates();
+        var available = await GetAvailableDates(city);
         var rangeList = available.FirstOrDefault(x => x.Any(t => t.Start == startTime && t.End == endTime));
         if (rangeList == null)
             return (false, "This time is not available");
@@ -167,10 +167,10 @@ public class CarService : ICarService
         }
     }
 
-    public async Task<List<List<(DateTime Start, DateTime End)>>> GetAvailableDates()
+    public async Task<List<List<(DateTime Start, DateTime End)>>> GetAvailableDates(string city)
     {
         var days = new List<List<(DateTime Start, DateTime End)>>();
-        var carSpec = new CarSpecification();
+        var carSpec = new CarSpecification(city);
         var cars = await _unitOfWork.Repository<Car>().ListWithSpecAsync(carSpec);
 
         for (int j = 0; j < 3; j++)

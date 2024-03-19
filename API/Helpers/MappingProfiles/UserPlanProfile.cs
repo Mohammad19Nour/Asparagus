@@ -17,7 +17,7 @@ public class UserPlanProfile : Profile
     {
         CreateMap<UserMealCarb, UserMealCarbDto>();
         CreateMap<Allergy, UserPlanAllergy>().ForMember(dest => dest.Id, opt => opt.Ignore());
-        CreateMap<UserSelectedSnack, UserSnackDto>();
+        CreateMap<UserSelectedSnack, UserSelectedMealDto>();
         CreateMap<UserSelectedMeal, UserSelectedMealDto>();
         CreateMap<UserSelectedExtraOption, UserSelectedExtraOptionDto>();
         CreateMap<UserSelectedDrink, UserSelectedDrinkDto>();
@@ -68,6 +68,7 @@ public class UserPlanProfile : Profile
             .ForMember(dest => dest.SelectedExtraOptions,
                 opt => opt.MapFrom(
                     x => x.SelectedExtraOptions.Where(y => y.OptionType == ExtraOptionType.Nuts).ToList()))
+           
             .ForMember(dest => dest.SelectedSalads,
                 opt => opt.MapFrom(
                     x => x.SelectedExtraOptions.Where(y => y.OptionType == ExtraOptionType.Salad).ToList()));

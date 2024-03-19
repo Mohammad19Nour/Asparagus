@@ -25,6 +25,7 @@ namespace AsparagusN.Helpers.MappingProfiles
                 .ForMember(dest => dest.WorkingDays, opt => opt.MapFrom(src => GetCatInfoDtoWorkingDays(src.WorkingDays)));
 
             CreateMap<Booking, BookingDto>()
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Car.City))
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.FullName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
                 .ForMember(dest => dest.phoneNumber, opt => opt.MapFrom(src => src.User.PhoneNumber));

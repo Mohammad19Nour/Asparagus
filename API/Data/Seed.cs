@@ -184,6 +184,50 @@ public static class Seed
 
         context.Cars.Add(new Car
         {
+            City = "dubai",
+            WorkingStartHour = TimeSpan.FromHours(5), WorkingEndHour = TimeSpan.FromHours(17),
+            WorkingDays = new List<CarWorkingDay>
+            {
+                new CarWorkingDay
+                {
+                    Day = DayOfWeek.Friday,
+                },
+
+                new CarWorkingDay
+                {
+                    Day = DayOfWeek.Thursday,
+                },
+
+                new CarWorkingDay
+                {
+                    Day = DayOfWeek.Monday,
+                }
+            }
+        });
+        context.Cars.Add(new Car
+        {
+            City = "abu dhabi",
+            WorkingStartHour = TimeSpan.FromHours(5), WorkingEndHour = TimeSpan.FromHours(17),
+            WorkingDays = new List<CarWorkingDay>
+            {
+                new CarWorkingDay
+                {
+                    Day = DayOfWeek.Friday,
+                },
+
+                new CarWorkingDay
+                {
+                    Day = DayOfWeek.Thursday,
+                },
+
+                new CarWorkingDay
+                {
+                    Day = DayOfWeek.Monday,
+                }
+            }
+        });context.Cars.Add(new Car
+        {
+            City = "al ain",
             WorkingStartHour = TimeSpan.FromHours(5), WorkingEndHour = TimeSpan.FromHours(17),
             WorkingDays = new List<CarWorkingDay>
             {
@@ -209,7 +253,13 @@ public static class Seed
             new Booking { CarId = 1, UserId = 3, StartTime = DateTime.UtcNow, EndTime = DateTime.UtcNow.AddHours(2) },
             new Booking
             {
-                CarId = 1, UserId = 2, StartTime = DateTime.UtcNow.AddDays(1),
+                CarId = 2, UserId = 2, StartTime = DateTime.UtcNow.AddDays(1),
+                EndTime = DateTime.UtcNow.AddDays(1).AddHours(4)
+            },
+            new Booking { CarId = 3, UserId = 3, StartTime = DateTime.UtcNow, EndTime = DateTime.UtcNow.AddHours(2) },
+            new Booking
+            {
+                CarId = 3, UserId = 2, StartTime = DateTime.UtcNow.AddDays(1),
                 EndTime = DateTime.UtcNow.AddDays(1).AddHours(4)
             }
             // Add more bookings as needed
@@ -576,11 +626,10 @@ public static class Seed
         var categories = new List<Category>
         {
             new Category("Main Course", "الطبق الرئيسي", "Description for main courses"),
-            new Category("Appetizers", "المقبلات", "Description for appetizers"),
+            new Category("snacks", "المقبلات", "Description for appetizers"),
             new Category("Salads", "السلطات", "Description for salads"),
             new Category("Desserts", "الحلويات", "Description for desserts"),
-            new Category("Drinks", "المشروبات", "Description for drinks"),
-            new Category("Snacks", "المقبلات", "Description for sides")
+            new Category("Drinks", "المشروبات", "Description for drinks")
         };
 
         await _context.Categories.AddRangeAsync(categories);

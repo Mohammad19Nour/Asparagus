@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AsparagusN.Controllers.Dashboard;
 
-[Authorize(Roles = nameof(DashboardRoles.Packaging) + "," + nameof(Roles.Admin))]
 public class PackagingController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -25,6 +24,7 @@ public class PackagingController : BaseApiController
         _mapper = mapper;
     }
 
+    [Authorize(Roles = nameof(DashboardRoles.Packaging) + "," + nameof(Roles.Admin))]
     [HttpGet]
     public async Task<ActionResult> GetMealsForPackaging([FromQuery] string dayDate)
     {
@@ -57,10 +57,35 @@ public class PackagingController : BaseApiController
             packageDto.Drinks = _mapper.Map<List<DrinkInfoDto>>(day.SelectedDrinks);
             packageDto.Nuts = _mapper.Map<List<NutsInfoDto>>(nuts);
             packageDto.Salads = _mapper.Map<List<SaladInfoDto>>(salads);
+            packageDto.Id = day.Id;
             resultList.Add(packageDto);
         }
 
         resultList.Sort(new PackageDtoComparer());
         return Ok(new ApiOkResponse<List<PackageDto>>(resultList));
+    }
+
+    [Authorize(Roles = nameof(DashboardRoles.Packaging) + "," + nameof(Roles.Admin))]
+    [HttpPut]
+    public async Task<ActionResult> MakePrint([FromBody]List<int> dayIds)
+    {
+        var planDays = await _unitOfWork.Repository<UserPlanDay>().ListAllAsync();
+        var ids = planDays.Select(c => c.Id).ToList();
+
+        if (dayIds.Any(d => ids.All(c => c != d)))
+            return Ok(new ApiResponse(400,"some ids not found"));
+
+        Console.WriteLine("GGGGGG");
+        planDays = planDays.Where(c => dayIds.Contains(c.Id)).ToList();
+
+        foreach (var day in planDays)
+        {
+            day.IsMealsInfoPrinted = true;
+            _unitOfWork.Repository<UserPlanDay>().Update(day);
+        }
+
+        if (await _unitOfWork.SaveChanges())
+            return Ok(new ApiResponse(200));
+        return Ok(new ApiResponse(400, "Some error happened"));
     }
 }

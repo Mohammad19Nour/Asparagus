@@ -36,4 +36,27 @@
       <Folder Include="wwwroot\videos\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240225141003_dbf506e3-cc8f-4d5f-9375-f8a59123687c.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240225141010_dbf506e3-cc8f-4d5f-9375-f8a59123687c.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240225141013_dbf506e3-cc8f-4d5f-9375-f8a59123687c.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240227201432_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240227201859_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240227202650_49daee0f-568d-4fae-b5cf-4707f6bf63b4.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240301142855_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240301145541_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240301182138_49daee0f-568d-4fae-b5cf-4707f6bf63b4.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240301182509_49daee0f-568d-4fae-b5cf-4707f6bf63b4.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240302093351_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240303160451_56.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240303160457_56.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240303160644_56.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240303160823_56.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240303161524_56.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240303161530_56.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240304094439_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240305112711_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240309140934_49daee0f-568d-4fae-b5cf-4707f6bf63b4.jpg" />
+    </ItemGroup>
+
 </Project>

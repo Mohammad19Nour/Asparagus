@@ -9,4 +9,5 @@ public class Car
     public TimeSpan WorkingStartHour { get; set; }
     public TimeSpan WorkingEndHour { get; set; }
     public List<CarWorkingDay> WorkingDays { get; set; } = new List<CarWorkingDay>();
+    public string City { get; set; }
 }

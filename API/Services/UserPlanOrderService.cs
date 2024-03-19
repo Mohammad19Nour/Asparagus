@@ -40,9 +40,11 @@ public class UserPlanOrderService : IUserPlanOrderService
         var driverOrders = await _unitOfWork.Repository<UserPlanDay>().ListWithSpecAsync(allSpec);
 
         var priorities = driverOrders.Select(x => x.Priority).ToList();
+        priorities.Sort();
         if (priorities.Contains(priority))
         {
             var available = 1;
+         
             foreach (var p in priorities.TakeWhile(p => p == available))
             {
                 available++;

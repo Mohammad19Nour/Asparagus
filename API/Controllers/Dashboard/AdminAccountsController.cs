@@ -111,7 +111,6 @@ public class AdminAccountsController : BaseApiController
         }
         else
         {
-            Console.WriteLine(roles[0]);
             return Ok(new ApiResponse(404, "Not found"));
         }
 
@@ -127,6 +126,24 @@ public class AdminAccountsController : BaseApiController
             .FirstAsync();
         var roles = (await _userManager.GetRolesAsync(user)).Select(c => c.ToLower()).ToList();
         //Console.WriteLine(roles.Contains(Roles.Employee.GetDisplayName().ToLower()));
+       
+        if (roles.Contains(Roles.Admin.GetDisplayName().ToLower()))
+        {
+            var res = new AdminAccountDto();
+            _mapper.Map(user, res);
+            res.Role = "admin";
+            res.Name = user.FullName;
+            var mp = new Dictionary<string, bool>();
+            foreach (DashboardRoles role in Enum.GetValues(typeof(DashboardRoles)))
+            {
+                var roleName = role.GetDisplayName().ToLower();
+               
+                 mp[roleName] = true;
+            }
+
+            res.Roles = mp;
+            return Ok(new ApiOkResponse<AdminAccountDto>(res));
+        }
         if (roles.Contains(Roles.Cashier.GetDisplayName().ToLower()))
         {
             var spec = new CashierWithBranchSpecification(email.ToLower());
@@ -148,7 +165,6 @@ public class AdminAccountsController : BaseApiController
 
         if (roles.Contains(Roles.Employeee.GetDisplayName().ToLower()))
         {
-            Console.WriteLine("FFF");
             var dto = new EmployeeDto();
             var employee = await _unitOfWork.Repository<Employee>().GetQueryable()
                 .Where(c => c.Email.ToLower() == email.ToLower()).FirstAsync();

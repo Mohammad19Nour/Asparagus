@@ -12,7 +12,13 @@ public class CarSpecification : BaseSpecification<Car>
         AddInclude(c => c.Include(y => y.Bookings));
     }
 
-    public CarSpecification(bool includeBooking = true) : base(x => true)
+    public CarSpecification(string city, bool includeBooking = true) : base(x => x.City.ToLower() == city.ToLower())
+    {
+        AddInclude(c => c.Include(y => y.WorkingDays));
+        if (includeBooking)
+            AddInclude(c => c.Include(y => y.Bookings).ThenInclude(u => u.User));
+    }
+    public CarSpecification( bool includeBooking = true) : base(x => true)
     {
         AddInclude(c => c.Include(y => y.WorkingDays));
         if (includeBooking)

@@ -4,6 +4,7 @@ namespace AsparagusN.DTOs.PackageDtos;
 
 public class PackageDto
 {
+    public int Id { get; set; }
     public CustomerInfoDto CustomerInfo { get; set; }
     public List<AllergyDto> Allergies;
     public List<MealInfoDto> Meals;

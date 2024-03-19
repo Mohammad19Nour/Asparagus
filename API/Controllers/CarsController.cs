@@ -35,13 +35,19 @@ public class CarsController : BaseApiController
         var spec = new CarSpecification();
         var car = await _unitOfWork.Repository<Car>().GetEntityWithSpec(spec);
 
-        return Ok(new ApiOkResponse<List<BookingDto>>(_mapper.Map<List<BookingDto>>(car.Bookings)));
+        var d = _mapper.Map<List<BookingDto>>(car.Bookings);
+
+        foreach (var a in d)
+        {
+            a.City = car.City;
+        }
+        return Ok(new ApiOkResponse<List<BookingDto>>(d));
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetCarInfo()
+    public async Task<ActionResult> GetCarInfo([FromQuery] string city)
     {
-        var spec = new CarSpecification(false);
+        var spec = new CarSpecification(city,false);
         var car = await _unitOfWork.Repository<Car>().GetEntityWithSpec(spec);
 
         return Ok(new ApiOkResponse<CatInfoDto>(_mapper.Map<CatInfoDto>(car)));
@@ -50,9 +56,13 @@ public class CarsController : BaseApiController
     //[Authorize(Roles = nameof(Roles.Admin))]
     [Authorize(Roles = nameof(DashboardRoles.Car) + "," + nameof(Roles.Admin))]
     [HttpPost]
-    public async Task<ActionResult> UpdateCar(UpdateCarDto dto)
+    public async Task<ActionResult> UpdateCar(UpdateCarDto dto )
     {
-        var res = await _carService.UpdateCar(dto, 1);
+        var spec = new CarSpecification(dto.City, false);
+        var car = await _unitOfWork.Repository<Car>().GetEntityWithSpec(spec);
+        if (car == null) return Ok(new ApiResponse(404, "Car not found"));
+        
+        var res = await _carService.UpdateCar(dto, car.Id);
         if (res.car == null)
             return Ok(new ApiResponse(400, res.Message));
 
@@ -61,12 +71,12 @@ public class CarsController : BaseApiController
 
     [Authorize(Roles = nameof(Roles.User))]
     [HttpPost("book")]
-    public async Task<ActionResult> MakeBooking(DateTime start)
+    public async Task<ActionResult> MakeBooking(DateTime start,string city)
     {
         var email = User.GetEmail();
         var user = await _unitOfWork.Repository<AppUser>().GetQueryable()
             .Where(c => c.Email.ToLower() == email.ToLower()).FirstAsync();
-        var result = await _carService.MakeBooking(user.Id, start);
+        var result = await _carService.MakeBooking(user.Id, start,city);
 
         if (result.Success)
             return Ok(new ApiResponse(200));
@@ -74,9 +84,9 @@ public class CarsController : BaseApiController
     }
 
     [HttpGet("available")]
-    public async Task<ActionResult<List<List<(DateTime Start, DateTime End)>>>> GetAvailable()
+    public async Task<ActionResult<List<List<(DateTime Start, DateTime End)>>>> GetAvailable(string city)
     {
-        var result = await _carService.GetAvailableDates();
+        var result = await _carService.GetAvailableDates(city);
         return Ok(new ApiOkResponse<object>(result));
     }
 }

@@ -8,4 +8,5 @@ public class CatInfoDto
     public string WorkingEndHour { get; set; }
     public List<BookingDto> Bookings { get; set; } = new List<BookingDto>();
     public List<bool> WorkingDays { get; set; } = new List<bool>();
+    public string City { get; set; }
 }

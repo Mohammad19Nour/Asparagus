@@ -66,10 +66,11 @@ public partial class PlanController
             var ml = await _unitOfWork.Repository<Meal>().GetByIdAsync(mealId);
 
             if (ml == null) return Ok(new ApiResponse(404, "Meal not found"));
+            if (!HelperFunctions.CanUpdate(adminDay.AvailableDate))
+                return Ok(new ApiResponse(403, "Can't update before two days or less"));
 
             if (adminDay.Meals.FirstOrDefault(c => c.MealId == mealId) == null)
             {
-                Console.WriteLine(mealId);
                 adminDay.Meals.Add(new AdminSelectedMeal { MealId = ml.Id });
 
                 if (await _unitOfWork.SaveChanges())
@@ -85,19 +86,17 @@ public partial class PlanController
         if (meal == null)
             return Ok(new ApiResponse(404, "meal not found"));
 
-        _unitOfWork.Repository<AdminSelectedMeal>().Delete(meal);
-
-        if (!await _unitOfWork.SaveChanges()) return Ok(new ApiResponse(400, "Failed to delete meal"));
-
-
+       
         var spec = new AdminPlanSpecification(meal.AdminPlanDayId);
         var planDay = await _unitOfWork.Repository<AdminPlanDay>().GetEntityWithSpec(spec);
         if (planDay == null) return Ok(new ApiResponse(404, messageEN: "Day not found"));
 
-        if (planDay.PlanType == PlanTypeEnum.CustomMealPlan)
-            return Ok(new ApiResponse(400, "Can't delete meal in custom plan"));
-        if (!HelperFunctions.CanUpdate(planDay.AvailableDate))
+       if (!HelperFunctions.CanUpdate(planDay.AvailableDate))
             return Ok(new ApiResponse(403, "Can't update before two days or less"));
+        _unitOfWork.Repository<AdminSelectedMeal>().Delete(meal);
+
+        if (!await _unitOfWork.SaveChanges()) return Ok(new ApiResponse(400, "Failed to delete meal"));
+
 
         return Ok(new ApiOkResponse<AdminPlanDayDto>(_mapper.Map<AdminPlanDayDto>(planDay)));
     }
