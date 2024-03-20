@@ -84,9 +84,26 @@ public class CarsController : BaseApiController
     }
 
     [HttpGet("available")]
-    public async Task<ActionResult<List<List<(DateTime Start, DateTime End)>>>> GetAvailable(string city)
+    public async Task<ActionResult<List<List<(DateTime Start, DateTime End)>>>> GetAvailable()
     {
-        var result = await _carService.GetAvailableDates(city);
-        return Ok(new ApiOkResponse<object>(result));
+        List<List<(DateTime Start, DateTime End,string )>>? answer = new List<List<(DateTime Start, DateTime End, string)>>(3);
+        var result = await _carService.GetAvailableDates("dubai");
+        var tmp = result.Select(c => c.Select(x => (x.Start, x.End, "dubai")).ToList()).ToList();
+       
+        answer.Add(tmp[0]);
+        answer.Add(tmp[1]);
+        answer.Add(tmp[2]);
+         result = await _carService.GetAvailableDates("dubai");
+         tmp = result.Select(c => c.Select(x => (x.Start, x.End, "abu dhabi")).ToList()).ToList();
+       
+         answer[0].AddRange(tmp[0]);
+        answer[1].AddRange(tmp[1]);
+        answer[2].AddRange(tmp[2]);
+/*result = await _carService.GetAvailableDates("al ain");
+         tmp = result.Select(c => c.Select(x => (x.Start, x.End, "al ain")).ToList()).ToList();
+        answer[0].AddRange(tmp[0]);
+        answer[1].AddRange(tmp[1]);
+        answer[2].AddRange(tmp[2]);*/
+        return Ok(new ApiOkResponse<object>(answer));
     }
 }

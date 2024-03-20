@@ -40,8 +40,9 @@ public class CustomSubscriptionService : ICustomSubscriptionService
         user = await _unitOfWork.Repository<AppUser>()
             .GetEntityWithSpec(new UserWithAddressSpecification(user!.Email));
 
-        var plan = await GetUserSubscriptionAsync(user, subscriptionDto.PlanType);
+        var plan = await GetUserSubscriptionAsyncc(user, subscriptionDto.PlanType);
 
+        Console.WriteLine(plan == null);
         if (plan != null)
             return (null, "You have a subscription with this plan type");
 
@@ -73,7 +74,7 @@ public class CustomSubscriptionService : ICustomSubscriptionService
         {
             if (subscriptionDto.PlanType != PlanTypeEnum.CustomMealPlan)
                 return (null, "Can't update plan");
-            var plan = await GetUserSubscriptionAsync(user, subscriptionDto.PlanType);
+            var plan = await GetUserSubscriptionAsyncc(user, subscriptionDto.PlanType);
 
             if (plan == null)
                 return (null, "You don't have a subscription with this plan type");
@@ -102,7 +103,7 @@ public class CustomSubscriptionService : ICustomSubscriptionService
     {
         try
         {
-            var plan = await GetUserSubscriptionAsync(user, subscription.PlanType);
+            var plan = await GetUserSubscriptionAsyncc(user, subscription.PlanType);
             if (plan == null)
                 return (null, "You don't have a subscription with this plan type");
 
@@ -124,7 +125,7 @@ public class CustomSubscriptionService : ICustomSubscriptionService
     {
         try
         {
-            var plan = await GetUserSubscriptionAsync(user, subscription.PlanType);
+            var plan = await GetUserSubscriptionAsyncc(user, subscription.PlanType);
 
             if (plan != null)
                 return (null, "You have a subscription with this plan type");
@@ -176,7 +177,7 @@ public class CustomSubscriptionService : ICustomSubscriptionService
         }
     }
 
-    public async Task<UserPlan?> GetUserSubscriptionAsync(AppUser user, PlanTypeEnum planType)
+    private async Task<UserPlan?> GetUserSubscriptionAsyncc(AppUser user, PlanTypeEnum planType)
     {
         try
         {

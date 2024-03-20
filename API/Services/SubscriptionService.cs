@@ -33,7 +33,7 @@ public class SubscriptionService : ISubscriptionService
     {
         try
         {
-            var spec = new UserPlanWithMealsDrinksAndExtrasSpecification(user.Id, planType);
+                var spec = new UserPlanWithMealsDrinksAndExtrasSpecification(user.Id, planType);
             return await _unitOfWork.Repository<UserPlan>().GetEntityWithSpec(spec);
         }
         catch (Exception e)

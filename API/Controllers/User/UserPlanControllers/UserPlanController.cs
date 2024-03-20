@@ -53,7 +53,18 @@ public partial class UserPlanController : BaseApiController
             await AddAdminDayId(planType, day);
         }
 
-        if (result.Days.Count > 0 && result.Days.Count != 7)
+        if (result.Days.Count == 0)
+        {
+            var tmp = new UserPlanDayDto
+            {
+                IsSubscriptionDay = false,
+                Day = HelperFunctions.WeekStartDay()
+            };
+            
+            result.Days.Add(tmp);
+        }
+
+        if ( result.Days.Count != 7)
         {
             var day = result.Days.Last().Day.Date;
             var lastDayOfWeek = HelperFunctions.WeekEndDay().Date;
