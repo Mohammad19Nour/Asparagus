@@ -10,7 +10,7 @@ public class UserPlanWithMealsDrinksAndExtrasSpecification : BaseSpecification<U
 {
     public UserPlanWithMealsDrinksAndExtrasSpecification(int userId, PlanTypeEnum planType)
         : base(x => x.PlanType == planType && userId == x.AppUserId 
-                                           && x.StartDate.Date.AddDays(x.Duration) > DateTime.Today)
+                                           && x.StartDate.Date.AddDays(x.Duration) >= DateTime.Today)
     {
         AddInclude(x => x.Include(y => y.Allergies));
         AddInclude(x => x.Include(y => y.Days).ThenInclude(

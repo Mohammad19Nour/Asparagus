@@ -993,7 +993,7 @@ public static class Seed
                 CategoryId = 2,
                 Ingredients = new List<MealIngredient>
                 {
-                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 1), Weight = 180 },
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 3), Weight = 100 },
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 4), Weight = 80 },
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 5), Weight = 20 }
@@ -1018,7 +1018,7 @@ public static class Seed
                 CategoryId = 2,
                 Ingredients = new List<MealIngredient>
                 {
-                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 2), Weight = 180 },
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 3), Weight = 100 },
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 4), Weight = 80 },
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 5), Weight = 20 }
@@ -1039,10 +1039,10 @@ public static class Seed
                 PictureUrl = "images/vegetable_stir_fry.jpg",
                 IsMealPlan = false,
                 IsMainMenu = true,
-                CategoryId = 6,
+                CategoryId = 3,
                 Ingredients = new List<MealIngredient>
                 {
-                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 2), Weight = 180 },
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 3), Weight = 100 },
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 4), Weight = 80 },
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 5), Weight = 20 }
@@ -1066,7 +1066,7 @@ public static class Seed
                 CategoryId = 3,
                 Ingredients = new List<MealIngredient>
                 {
-                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 7), Weight = 180 },
+                    new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 1), Weight = 180 },
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 3), Weight = 100 },
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 4), Weight = 80 },
                     new MealIngredient { Ingredient = ingredients.FirstOrDefault(i => i.Id == 5), Weight = 20 }
