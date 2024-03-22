@@ -118,7 +118,9 @@ public static class Seed
                         NumberOfMealPerDay = bundle.MealsPerDay,
                         NumberOfSnacks = bundle.Duration * bundle.MealsPerDay,
                         DeliveryCity = "Test",
-                        PlanType = plan
+                        PlanType = plan,
+                        TransactionId = "ff"
+                        
                     };
                     var result = await subscriptionService.CreateSubscriptionAsync(sub, user, true);
                 }
@@ -1202,14 +1204,18 @@ public static class Seed
             var users = await context.Users.Where(x => x.IsNormalUser).ToListAsync();
             var meals = await context.Meals.ToListAsync();
 
+            int cnt = 1;
             for (int j = 1; j <= 3; j++)
             {
                 foreach (var user in users)
                 {
                     var items = new List<OrderItem>();
 
-                    for (int k = 1; k <= 2; k++)
+                    for (int k = 1; k <= 4; k++)
                     {
+                        if (j == 2)
+                        cnt++;
+                        if (cnt > 12) cnt = 1;
                         var item = new OrderItem();
                         var mealOrder = mapper.Map<MealItemOrdered>(meals[k]);
                         item.OrderedMeal = mealOrder;
@@ -1224,10 +1230,10 @@ public static class Seed
                         BuyerPhoneNumber = user.PhoneNumber,
                         Items = items,
 
-                        OrderDate = DateTime.Now,
+                        OrderDate = new DateTime(2023,cnt,1),
                         BranchId = j,
                         Subtotal = items.Sum(c => c.Price * c.Quantity),
-                        Status = OrderStatus.Pending,
+                        Status = (j==2)?OrderStatus.Pending:OrderStatus.Done,
                         PaymentType = PaymentType.Cash,
                         PointsPrice = 0,
                         GainedPoints = 0,

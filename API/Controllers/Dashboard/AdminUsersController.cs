@@ -38,7 +38,7 @@ public class AdminUsersController : BaseApiController
             .Where(c => c.Day.Date >= DateTime.Now)
             .ToListAsync();
 
-        plans = plans.Where(c => c.EndDate() >= DateTime.Today).ToList();
+        plans = plans.Where(c => c.EndDate() > DateTime.Today).ToList();
 
         foreach (var user in users)
         {
@@ -52,6 +52,7 @@ public class AdminUsersController : BaseApiController
                 var days = planDays.Where(c => c.UserPlanId == userPlan.Id).ToList();
                 numOfMeals += days.Sum(v => userPlan.NumberOfMealPerDay - v.SelectedMeals.Count);
                 numOdSnacks += userPlan.NumberOfRemainingSnacks;
+              
             }
 
             var mappedUser = mappedUsers.First(c => c.Email.ToLower() == user.Email.ToLower());

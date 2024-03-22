@@ -24,9 +24,11 @@ public partial class UserPlanController
                 .Include(x => x.ChangedCarb)
                 .Where(c => c.Id == mealId)
                 .FirstOrDefaultAsync();
-
+            
             if (meal == null)
                 return Ok(new ApiResponse(404, "Meal not found"));
+            if (!HelperFunctions.CanUpdate(meal.UserPlanDay.Day.Date))
+                return Ok(new ApiResponse(403, "Can't update before two days or less"));
 
             return Ok(new ApiOkResponse<UserMealCarbDto>(_mapper.Map<UserMealCarbDto>(meal.ChangedCarb)));
         }
@@ -45,11 +47,13 @@ public partial class UserPlanController
             var meal = await _unitOfWork.Repository<UserSelectedMeal>()
                 .GetQueryable()
                 .Include(c => c.ChangedCarb)
+                .Include(c => c.UserPlanDay)
                 .Where(m => m.Id == mealId).FirstOrDefaultAsync();
 
             if (meal == null)
                 return Ok(new ApiResponse(404, "Meal not found"));
 
+            
             var carb = await _unitOfWork.Repository<AdminSelectedCarb>().GetQueryable()
                 .Where(x => x.Id == adminCarbId)
                 .Include(x => x.Carb).FirstOrDefaultAsync();

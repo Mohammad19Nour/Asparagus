@@ -20,6 +20,7 @@ public class NewSubscriptionDto
     public List<int>? Allergies { get; set; }
     public string? Notes { get; set; }
     public string DeliveryCity { get; set; }
+    public string? TransactionId { get; set; }
 }
 
 public class Item

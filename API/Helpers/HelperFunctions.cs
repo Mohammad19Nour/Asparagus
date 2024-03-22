@@ -112,10 +112,16 @@ public static class HelperFunctions
                !string.IsNullOrEmpty(address.BuildingName);
     }
 
-    public static bool CanUpdate(DateTime day)
+    public static bool CanUpdate(DateTime day, int days = 2)
     {
-        Console.WriteLine((day.Date - DateTime.Now.Date).Days);
-        return (day.Date - DateTime.Now.Date).Days >= 2;
+        return (day.Date - DateTime.Now.Date).Days >= days;
+    }
+    public static bool CanUpdateInHours(DateTime day)
+    {
+        Console.WriteLine(DateTime.Now.Date);
+        Console.WriteLine(day.Date);
+        Console.WriteLine((day.Date - DateTime.Now.Date).TotalHours);
+        return (day.Date - DateTime.Now.Date).TotalHours > 0;
     }
 
     public static bool InThisWeek(DateTime day)

@@ -18,6 +18,7 @@ public class UserPlanProfile : Profile
         CreateMap<UserMealCarb, UserMealCarbDto>();
         CreateMap<Allergy, UserPlanAllergy>().ForMember(dest => dest.Id, opt => opt.Ignore());
         CreateMap<UserSelectedSnack, UserSelectedMealDto>();
+        CreateMap<UserSelectedSnack, UserSnackDto>();
         CreateMap<UserSelectedMeal, UserSelectedMealDto>();
         CreateMap<UserSelectedExtraOption, UserSelectedExtraOptionDto>();
         CreateMap<UserSelectedDrink, UserSelectedDrinkDto>();

@@ -18,12 +18,14 @@ namespace AsparagusN.Services;
 
 public class SubscriptionService : ISubscriptionService
 {
+    private readonly IPaymentService _paymentService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly IValidationService _validationService;
 
-    public SubscriptionService(IUnitOfWork unitOfWork, IMapper mapper, IValidationService validationService)
+    public SubscriptionService(IPaymentService paymentService,IUnitOfWork unitOfWork, IMapper mapper, IValidationService validationService)
     {
+        _paymentService = paymentService;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _validationService = validationService;
@@ -69,10 +71,11 @@ public class SubscriptionService : ISubscriptionService
             if (plan == null)
                 return (null, "You don't have a subscription with this plan type");
 
+            var tmp = plan.Price;
             var t = await Update((UpdateSubscriptionDto)subscription, user, plan);
 
             if (!t.Success) return (null, t.Message);
-            return (plan.Price, "Ok");
+            return (plan.Price - tmp, "Ok");
         }
         catch (Exception e)
         {
@@ -131,11 +134,27 @@ public class SubscriptionService : ISubscriptionService
 
             var result = await Add(subscriptionDto, user, plan, seed);
             if (!result.Succes) return (null, result.Message);
-            user!.IsMealPlanMember = true;
-            user!.IsNormalUser = false;
+
+            if (!seed)
+            {
+                
+                if (subscriptionDto.TransactionId == null)
+                    return (null, "you have to pay first");
+                
+                var resultPayment = await _paymentService
+                    .CheckPaymentStatus(subscriptionDto.TransactionId,(double) plan.Price);
+                
+                if (!resultPayment.Success)
+                    return (null,resultPayment.Message);
+                plan.TransactionId = subscriptionDto.TransactionId;
+
+            }
+            user.IsMealPlanMember = true;
+            user.IsNormalUser = false;
             plan.NumberOfRemainingSnacks = plan.NumberOfSnacks;
 
             plan.User.LoyaltyPoints += planPoints;
+            
             _unitOfWork.Repository<UserPlan>().Add(plan);
 
             if (await _unitOfWork.SaveChanges()) return (plan, "Success");
@@ -161,10 +180,22 @@ public class SubscriptionService : ISubscriptionService
             if (plan == null)
                 return (null, "You don't have a subscription with this plan type");
 
+            var tmp = plan.Price;
             var result = await Update(subscriptionDto, user, plan);
 
             if (!result.Success) return (null, result.Message);
 
+            if (subscriptionDto.TransactionId == null)
+                return (null, "you have to pay first");
+            
+            var resultPayment = await _paymentService
+                .CheckPaymentStatus(subscriptionDto.TransactionId,(double) (plan.Price - tmp));
+                
+            if (!resultPayment.Success)
+                return (null,resultPayment.Message);
+          
+            plan.TransactionId = subscriptionDto.TransactionId;
+            
             _unitOfWork.Repository<UserPlan>().Update(plan);
 
             if (await _unitOfWork.SaveChanges())

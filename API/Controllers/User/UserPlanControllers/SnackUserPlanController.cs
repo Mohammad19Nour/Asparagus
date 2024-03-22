@@ -5,6 +5,7 @@ using AsparagusN.DTOs.SnackDtos;
 using AsparagusN.DTOs.UserPlanDtos;
 using AsparagusN.Enums;
 using AsparagusN.Errors;
+using AsparagusN.Helpers;
 using AsparagusN.Specifications.AdminPlanSpecifications;
 using AsparagusN.Specifications.UserSpecifications;
 using Microsoft.AspNetCore.Authorization;
@@ -44,13 +45,15 @@ public partial class UserPlanController
         var planDay = await _unitOfWork.Repository<UserPlanDay>().GetEntityWithSpec(spec);
 
         if (planDay == null) return Ok(new ApiResponse(404, "day not found"));
+ if (!HelperFunctions.CanUpdate(planDay.Day.Date))
+            return Ok(new ApiResponse(403, "Can't update before two days or less"));
 
         if (planDay.UserPlan.NumberOfRemainingSnacks == 0)
             return Ok(new ApiResponse(400, "You have used up all your snacks"));
 
         if (planDay.UserPlan.NumberOfRemainingSnacks < quantity)
             return Ok(new ApiResponse(400, "You have no enough snacks"));
-
+       
         Meal? skToAdd;
         if (planDay.UserPlan.PlanType == PlanTypeEnum.CustomMealPlan)
         {
@@ -104,6 +107,8 @@ public partial class UserPlanController
         var oldSnack = planDay.SelectedSnacks.FirstOrDefault(x => x.Id == snackDto.UserOldSnackId);
 
         if (oldSnack == null) return Ok(new ApiResponse(404, "Your snack not found"));
+        if (!HelperFunctions.CanUpdate(planDay.Day.Date))
+            return Ok(new ApiResponse(403, "Can't update before two days or less"));
 
         if (planDay.UserPlan.NumberOfRemainingSnacks + oldSnack.Quantity - snackDto.Quantity < 0)
             return Ok(new ApiResponse(400, "You have no enough snacks"));
@@ -164,6 +169,8 @@ public partial class UserPlanController
         var planDay = await _unitOfWork.Repository<UserPlanDay>().GetEntityWithSpec(spec);
 
         if (planDay == null) return Ok(new ApiResponse(404, "day not found"));
+        if (!HelperFunctions.CanUpdate(planDay.Day.Date))
+            return Ok(new ApiResponse(403, "Can't update before two days or less"));
 
         var snack = planDay.SelectedSnacks.FirstOrDefault(x => x.Id == snackId);
 

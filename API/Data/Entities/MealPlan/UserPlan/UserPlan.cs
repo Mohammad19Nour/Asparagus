@@ -22,6 +22,7 @@ public class UserPlan
     public string DeliveryCity { get; set; }
     public int CarbPerMealForCustomPlan { get; set; }
     public int ProteinPerMealForCustomPlan { get; set; }
+    public string TransactionId { get; set; }
 
     public DateTime EndDate()
     {

@@ -78,6 +78,7 @@ public class OrderService : IOrderService
 
                 order.BuyerPhoneNumber = user.PhoneNumber;
                 order.BuyerId = user.Id;
+                
                 if (order.PaymentType == PaymentType.Card)
                 {
                     if (newOrderInfoDto.BillId == null)
@@ -212,9 +213,10 @@ public class OrderService : IOrderService
             if (newOrderInfoDto.PaymentType != PaymentType.Points)
             {
                 if (coupon.Type == AppCouponType.FixedAmount) order.CouponValue = coupon.Value;
-                else order.CouponValue = order.Subtotal * coupon.Value;
+                else order.CouponValue = order.Subtotal * coupon.Value/100;
             }
         }
+        Console.WriteLine(coupon == null);
 
         basket.Items.Clear();
         return (order, "Done");

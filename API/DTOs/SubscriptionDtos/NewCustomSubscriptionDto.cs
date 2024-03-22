@@ -26,4 +26,6 @@ public class NewCustomSubscriptionDto
     public decimal? ProteinPerMeal { get; set; }
     [Range(120,int.MaxValue,ErrorMessage = "Carb must be at least 120")]
     public decimal? CarbPerMeal { get; set; }
+
+    public string? TransactionId { get; set; }
 }

@@ -27,7 +27,8 @@ public class BackgroundTask : IHostedService, IDisposable
         var nextThursday = now.AddDays(daysUntilNextThursday).Date;
 
         var timeUntilNextThursday = nextThursday - now;
-
+        if (timeUntilNextThursday < TimeSpan.Zero) timeUntilNextThursday = TimeSpan.Zero;
+        
         _timer = new Timer(_addPlanDays, null, timeUntilNextThursday, TimeSpan.FromDays(7));
         return Task.CompletedTask;
     }

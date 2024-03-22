@@ -10,7 +10,7 @@ public class PlanRecommendationService : IPlanRecommendationService
     {
         var bmr = GetBMR(input);
         var tdee = GetTDEE(bmr, input.ActivityLevel);
-        return PlanTypeEnum.MaintainWeight;
+        return input.TargetPlan;
     }
 
     private double GetBMR(RecommendationInput input)

@@ -57,7 +57,7 @@ public class StatisticService : IStatisticService
     {
         var spec = new DoneOrdersWithoutPointsPaymentSpecification();
         var orders = await _unitOfWork.Repository<Order>().ListWithSpecAsync(spec);
-
+        Console.WriteLine(orders.Count);
         return orders.Sum(x => x.GetTotal());
     }
 

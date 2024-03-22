@@ -15,14 +15,14 @@ namespace AsparagusN.Migrations
                 name: "Address",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    City = table.Column<string>(type: "TEXT", nullable: false),
-                    StreetName = table.Column<string>(type: "TEXT", nullable: false),
-                    BuildingName = table.Column<string>(type: "TEXT", nullable: false),
-                    ApartmentNumber = table.Column<int>(type: "INTEGER", nullable: false),
-                    Longitude = table.Column<double>(type: "REAL", nullable: false),
-                    Latitude = table.Column<double>(type: "REAL", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StreetName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BuildingName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApartmentNumber = table.Column<int>(type: "int", nullable: false),
+                    Longitude = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Latitude = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,10 +33,10 @@ namespace AsparagusN.Migrations
                 name: "AdminPlans",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     AvailableDate = table.Column<DateTime>(type: "date", nullable: false),
-                    PlanType = table.Column<string>(type: "TEXT", nullable: false)
+                    PlanType = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -47,11 +47,11 @@ namespace AsparagusN.Migrations
                 name: "Allergies",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ArabicName = table.Column<string>(type: "TEXT", nullable: false),
-                    EnglishName = table.Column<string>(type: "TEXT", nullable: false),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ArabicName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EnglishName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,12 +62,12 @@ namespace AsparagusN.Migrations
                 name: "AppCoupons",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Code = table.Column<string>(type: "TEXT", nullable: false),
-                    Value = table.Column<double>(type: "REAL", nullable: false),
-                    Type = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -78,11 +78,11 @@ namespace AsparagusN.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -93,11 +93,11 @@ namespace AsparagusN.Migrations
                 name: "Bundles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Price = table.Column<double>(type: "REAL", nullable: false),
-                    Duration = table.Column<int>(type: "INTEGER", nullable: false),
-                    MealsPerDay = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Duration = table.Column<int>(type: "int", nullable: false),
+                    MealsPerDay = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -108,13 +108,13 @@ namespace AsparagusN.Migrations
                 name: "Cars",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    IsAvailable = table.Column<bool>(type: "INTEGER", nullable: false),
-                    WorkingStartHour = table.Column<TimeSpan>(type: "TEXT", nullable: false),
-                    WorkingEndHour = table.Column<TimeSpan>(type: "TEXT", nullable: false),
-                    City = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false),
+                    WorkingStartHour = table.Column<TimeSpan>(type: "time", nullable: false),
+                    WorkingEndHour = table.Column<TimeSpan>(type: "time", nullable: false),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -125,11 +125,11 @@ namespace AsparagusN.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    NameEN = table.Column<string>(type: "TEXT", nullable: false),
-                    NameAR = table.Column<string>(type: "TEXT", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -140,7 +140,7 @@ namespace AsparagusN.Migrations
                 name: "CustomerBaskets",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -151,19 +151,19 @@ namespace AsparagusN.Migrations
                 name: "Drinks",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    NameArabic = table.Column<string>(type: "TEXT", nullable: false),
-                    NameEnglish = table.Column<string>(type: "TEXT", nullable: false),
-                    Price = table.Column<double>(type: "REAL", nullable: false),
-                    Volume = table.Column<string>(type: "TEXT", nullable: false),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Protein = table.Column<double>(type: "REAL", nullable: false),
-                    Carb = table.Column<double>(type: "REAL", nullable: false),
-                    Fat = table.Column<double>(type: "REAL", nullable: false),
-                    Fiber = table.Column<double>(type: "REAL", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameArabic = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameEnglish = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Volume = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carb = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fat = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fiber = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -174,13 +174,13 @@ namespace AsparagusN.Migrations
                 name: "Employees",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    FullName = table.Column<string>(type: "TEXT", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: false),
-                    Password = table.Column<string>(type: "TEXT", nullable: false),
-                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -191,20 +191,20 @@ namespace AsparagusN.Migrations
                 name: "ExtraOptions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    NameArabic = table.Column<string>(type: "TEXT", nullable: false),
-                    NameEnglish = table.Column<string>(type: "TEXT", nullable: false),
-                    Price = table.Column<double>(type: "REAL", nullable: false),
-                    Weight = table.Column<double>(type: "REAL", nullable: false),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    OptionType = table.Column<string>(type: "TEXT", nullable: false),
-                    Protein = table.Column<double>(type: "REAL", nullable: false),
-                    Carb = table.Column<double>(type: "REAL", nullable: false),
-                    Fat = table.Column<double>(type: "REAL", nullable: false),
-                    Fiber = table.Column<double>(type: "REAL", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameArabic = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameEnglish = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Weight = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    OptionType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carb = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fat = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fiber = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -215,20 +215,20 @@ namespace AsparagusN.Migrations
                 name: "Ingredients",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    NameEN = table.Column<string>(type: "TEXT", nullable: false),
-                    NameAR = table.Column<string>(type: "TEXT", nullable: false),
-                    ExtraInfo = table.Column<string>(type: "TEXT", nullable: false),
-                    Weight = table.Column<double>(type: "REAL", nullable: false),
-                    Price = table.Column<double>(type: "REAL", nullable: false),
-                    Protein = table.Column<double>(type: "REAL", nullable: false),
-                    Carb = table.Column<double>(type: "REAL", nullable: false),
-                    Fat = table.Column<double>(type: "REAL", nullable: false),
-                    Fiber = table.Column<double>(type: "REAL", nullable: false),
-                    TypeOfIngredient = table.Column<string>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExtraInfo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Weight = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carb = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fat = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fiber = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    TypeOfIngredient = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -239,12 +239,12 @@ namespace AsparagusN.Migrations
                 name: "Location",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    City = table.Column<string>(type: "TEXT", nullable: false),
-                    StreetName = table.Column<string>(type: "TEXT", nullable: false),
-                    Longitude = table.Column<double>(type: "REAL", nullable: false),
-                    Latitude = table.Column<double>(type: "REAL", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StreetName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Longitude = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Latitude = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -255,10 +255,10 @@ namespace AsparagusN.Migrations
                 name: "MediaUrls",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Url = table.Column<string>(type: "TEXT", nullable: false),
-                    IsSplashScreenUrl = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsSplashScreenUrl = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -269,13 +269,13 @@ namespace AsparagusN.Migrations
                 name: "Notifications",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserEmail = table.Column<string>(type: "TEXT", nullable: false),
-                    ArabicContent = table.Column<string>(type: "TEXT", nullable: false),
-                    EnglishContent = table.Column<string>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    IsSent = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ArabicContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EnglishContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsSent = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -286,11 +286,11 @@ namespace AsparagusN.Migrations
                 name: "PlanPrices",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Duration = table.Column<int>(type: "INTEGER", nullable: false),
-                    NumberOfMealsPerDay = table.Column<int>(type: "INTEGER", nullable: false),
-                    Price = table.Column<double>(type: "REAL", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Duration = table.Column<int>(type: "int", nullable: false),
+                    NumberOfMealsPerDay = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -301,8 +301,8 @@ namespace AsparagusN.Migrations
                 name: "PlanTypes",
                 columns: table => new
                 {
-                    PlanTypeE = table.Column<string>(type: "TEXT", nullable: false),
-                    Points = table.Column<int>(type: "INTEGER", nullable: false)
+                    PlanTypeE = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Points = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -313,10 +313,10 @@ namespace AsparagusN.Migrations
                 name: "Questions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Title = table.Column<string>(type: "TEXT", nullable: false),
-                    ParentFAQId = table.Column<int>(type: "INTEGER", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParentFAQId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -332,14 +332,14 @@ namespace AsparagusN.Migrations
                 name: "UserMealCarb",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    NameEN = table.Column<string>(type: "TEXT", nullable: false),
-                    NameAR = table.Column<string>(type: "TEXT", nullable: false),
-                    Protein = table.Column<double>(type: "REAL", nullable: false),
-                    Carb = table.Column<double>(type: "REAL", nullable: false),
-                    Fat = table.Column<double>(type: "REAL", nullable: false),
-                    Fiber = table.Column<double>(type: "REAL", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carb = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fat = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fiber = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -350,10 +350,10 @@ namespace AsparagusN.Migrations
                 name: "Zones",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    NameAR = table.Column<string>(type: "TEXT", nullable: false),
-                    NameEN = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameEN = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -364,32 +364,32 @@ namespace AsparagusN.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    FullName = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: false),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    Birthday = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    RegistrationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Gender = table.Column<string>(type: "TEXT", nullable: false),
-                    IsMealPlanMember = table.Column<bool>(type: "INTEGER", nullable: false),
-                    LoyaltyPoints = table.Column<int>(type: "INTEGER", nullable: false),
-                    HomeAddressId = table.Column<int>(type: "INTEGER", nullable: false),
-                    WorkAddressId = table.Column<int>(type: "INTEGER", nullable: false),
-                    IsNormalUser = table.Column<bool>(type: "INTEGER", nullable: false),
-                    UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),
-                    PasswordHash = table.Column<string>(type: "TEXT", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "TEXT", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "TEXT", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsMealPlanMember = table.Column<bool>(type: "bit", nullable: false),
+                    LoyaltyPoints = table.Column<int>(type: "int", nullable: false),
+                    HomeAddressId = table.Column<int>(type: "int", nullable: false),
+                    WorkAddressId = table.Column<int>(type: "int", nullable: false),
+                    IsNormalUser = table.Column<bool>(type: "bit", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -411,11 +411,11 @@ namespace AsparagusN.Migrations
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    RoleId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ClaimType = table.Column<string>(type: "TEXT", nullable: true),
-                    ClaimValue = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -432,10 +432,10 @@ namespace AsparagusN.Migrations
                 name: "CarWorkingDay",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Day = table.Column<int>(type: "INTEGER", nullable: false),
-                    CarId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Day = table.Column<int>(type: "int", nullable: false),
+                    CarId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -452,27 +452,27 @@ namespace AsparagusN.Migrations
                 name: "Meals",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    NameEN = table.Column<string>(type: "TEXT", nullable: false),
-                    NameAR = table.Column<string>(type: "TEXT", nullable: false),
-                    DescriptionEN = table.Column<string>(type: "TEXT", nullable: false),
-                    DescriptionAR = table.Column<string>(type: "TEXT", nullable: false),
-                    Price = table.Column<double>(type: "decimal(18,2)", nullable: false),
-                    Points = table.Column<int>(type: "INTEGER", nullable: false),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    IsMealPlan = table.Column<bool>(type: "INTEGER", nullable: false),
-                    IsMainMenu = table.Column<bool>(type: "INTEGER", nullable: false),
-                    LoyaltyPoints = table.Column<int>(type: "INTEGER", nullable: true),
-                    CategoryId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Protein = table.Column<double>(type: "REAL", nullable: false),
-                    Carbs = table.Column<double>(type: "REAL", nullable: false),
-                    Fats = table.Column<double>(type: "REAL", nullable: false),
-                    Fibers = table.Column<double>(type: "REAL", nullable: false),
-                    PricePerProtein = table.Column<double>(type: "REAL", nullable: false),
-                    PricePerCarb = table.Column<double>(type: "REAL", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescriptionEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescriptionAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Points = table.Column<int>(type: "int", nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsMealPlan = table.Column<bool>(type: "bit", nullable: false),
+                    IsMainMenu = table.Column<bool>(type: "bit", nullable: false),
+                    LoyaltyPoints = table.Column<int>(type: "int", nullable: true),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carbs = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fats = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fibers = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    PricePerProtein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    PricePerCarb = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -489,10 +489,10 @@ namespace AsparagusN.Migrations
                 name: "AdminSelectedDrinks",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    DrinkId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PlanTypeEnum = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DrinkId = table.Column<int>(type: "int", nullable: false),
+                    PlanTypeEnum = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -509,10 +509,10 @@ namespace AsparagusN.Migrations
                 name: "AdminSelectedExtraOptions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ExtraOptionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PlanTypeEnum = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ExtraOptionId = table.Column<int>(type: "int", nullable: false),
+                    PlanTypeEnum = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -529,10 +529,10 @@ namespace AsparagusN.Migrations
                 name: "AdminSelectedCarbs",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    CarbId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PlanTypeEnum = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CarbId = table.Column<int>(type: "int", nullable: false),
+                    PlanTypeEnum = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -549,11 +549,11 @@ namespace AsparagusN.Migrations
                 name: "Branches",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    NameEN = table.Column<string>(type: "TEXT", nullable: false),
-                    NameAR = table.Column<string>(type: "TEXT", nullable: false),
-                    AddressId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AddressId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -570,18 +570,18 @@ namespace AsparagusN.Migrations
                 name: "Drivers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: false),
-                    Password = table.Column<string>(type: "TEXT", nullable: false),
-                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ZoneId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    Period = table.Column<string>(type: "TEXT", nullable: false),
-                    RegistrationDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Status = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    ZoneId = table.Column<int>(type: "int", nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Period = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -598,11 +598,11 @@ namespace AsparagusN.Migrations
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ClaimType = table.Column<string>(type: "TEXT", nullable: true),
-                    ClaimValue = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -619,10 +619,10 @@ namespace AsparagusN.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
-                    ProviderKey = table.Column<string>(type: "TEXT", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "TEXT", nullable: true),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -639,8 +639,8 @@ namespace AsparagusN.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    RoleId = table.Column<int>(type: "INTEGER", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -663,10 +663,10 @@ namespace AsparagusN.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    LoginProvider = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Value = table.Column<string>(type: "TEXT", nullable: true)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -683,12 +683,12 @@ namespace AsparagusN.Migrations
                 name: "Bookings",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    CarId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    StartTime = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CarId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -711,21 +711,22 @@ namespace AsparagusN.Migrations
                 name: "UserPlans",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    AppUserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Price = table.Column<double>(type: "REAL", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Duration = table.Column<int>(type: "INTEGER", nullable: false),
-                    PlanType = table.Column<int>(type: "INTEGER", nullable: false),
-                    NumberOfMealPerDay = table.Column<int>(type: "INTEGER", nullable: false),
-                    NumberOfSnacks = table.Column<int>(type: "INTEGER", nullable: false),
-                    NumberOfRemainingSnacks = table.Column<int>(type: "INTEGER", nullable: false),
-                    Notes = table.Column<string>(type: "TEXT", nullable: true),
-                    DeliveryCity = table.Column<string>(type: "TEXT", nullable: false),
-                    CarbPerMealForCustomPlan = table.Column<int>(type: "INTEGER", nullable: false),
-                    ProteinPerMealForCustomPlan = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AppUserId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Duration = table.Column<int>(type: "int", nullable: false),
+                    PlanType = table.Column<int>(type: "int", nullable: false),
+                    NumberOfMealPerDay = table.Column<int>(type: "int", nullable: false),
+                    NumberOfSnacks = table.Column<int>(type: "int", nullable: false),
+                    NumberOfRemainingSnacks = table.Column<int>(type: "int", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeliveryCity = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CarbPerMealForCustomPlan = table.Column<int>(type: "int", nullable: false),
+                    ProteinPerMealForCustomPlan = table.Column<int>(type: "int", nullable: false),
+                    TransactionId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -742,10 +743,10 @@ namespace AsparagusN.Migrations
                 name: "AdminSelectedMeals",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    MealId = table.Column<int>(type: "INTEGER", nullable: false),
-                    AdminPlanDayId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MealId = table.Column<int>(type: "int", nullable: false),
+                    AdminPlanDayId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -768,10 +769,10 @@ namespace AsparagusN.Migrations
                 name: "AdminSelectedSnacks",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    SnackId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PlanTypeEnum = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SnackId = table.Column<int>(type: "int", nullable: false),
+                    PlanTypeEnum = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -788,13 +789,13 @@ namespace AsparagusN.Migrations
                 name: "BasketItems",
                 columns: table => new
                 {
-                    CustomerBasketId = table.Column<int>(type: "INTEGER", nullable: false),
-                    MealId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    AddedCarb = table.Column<int>(type: "INTEGER", nullable: false),
-                    AddedProtein = table.Column<int>(type: "INTEGER", nullable: false),
-                    Note = table.Column<string>(type: "TEXT", nullable: false),
-                    RemoveSauce = table.Column<bool>(type: "INTEGER", nullable: false)
+                    CustomerBasketId = table.Column<int>(type: "int", nullable: false),
+                    MealId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    AddedCarb = table.Column<int>(type: "int", nullable: false),
+                    AddedProtein = table.Column<int>(type: "int", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RemoveSauce = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -817,11 +818,11 @@ namespace AsparagusN.Migrations
                 name: "GiftSelections",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Month = table.Column<int>(type: "INTEGER", nullable: false),
-                    MonthName = table.Column<string>(type: "TEXT", nullable: false),
-                    MealId = table.Column<int>(type: "INTEGER", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Month = table.Column<int>(type: "int", nullable: false),
+                    MonthName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MealId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -838,8 +839,8 @@ namespace AsparagusN.Migrations
                 name: "MealAllergies",
                 columns: table => new
                 {
-                    MealId = table.Column<int>(type: "INTEGER", nullable: false),
-                    AllergyId = table.Column<int>(type: "INTEGER", nullable: false)
+                    MealId = table.Column<int>(type: "int", nullable: false),
+                    AllergyId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -862,9 +863,9 @@ namespace AsparagusN.Migrations
                 name: "MealIngredients",
                 columns: table => new
                 {
-                    MealId = table.Column<int>(type: "INTEGER", nullable: false),
-                    IngredientId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Weight = table.Column<double>(type: "REAL", nullable: false)
+                    MealId = table.Column<int>(type: "int", nullable: false),
+                    IngredientId = table.Column<int>(type: "int", nullable: false),
+                    Weight = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -887,18 +888,18 @@ namespace AsparagusN.Migrations
                 name: "Cashiers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: false),
-                    Password = table.Column<string>(type: "TEXT", nullable: false),
-                    AllowLoyal = table.Column<bool>(type: "INTEGER", nullable: false),
-                    AllowOrder = table.Column<bool>(type: "INTEGER", nullable: false),
-                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
-                    BranchId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    Period = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AllowLoyal = table.Column<bool>(type: "bit", nullable: false),
+                    AllowOrder = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Period = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -915,20 +916,20 @@ namespace AsparagusN.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    BuyerEmail = table.Column<string>(type: "TEXT", nullable: false),
-                    BuyerId = table.Column<int>(type: "INTEGER", nullable: false),
-                    BuyerPhoneNumber = table.Column<string>(type: "TEXT", nullable: false),
-                    OrderDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    BranchId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Subtotal = table.Column<double>(type: "REAL", nullable: false),
-                    Status = table.Column<string>(type: "TEXT", nullable: false),
-                    PaymentType = table.Column<string>(type: "TEXT", nullable: false),
-                    PointsPrice = table.Column<int>(type: "INTEGER", nullable: false),
-                    BillId = table.Column<string>(type: "TEXT", nullable: true),
-                    GainedPoints = table.Column<int>(type: "INTEGER", nullable: false),
-                    CouponValue = table.Column<double>(type: "REAL", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BuyerEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BuyerId = table.Column<int>(type: "int", nullable: false),
+                    BuyerPhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BranchId = table.Column<int>(type: "int", nullable: false),
+                    Subtotal = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PointsPrice = table.Column<int>(type: "int", nullable: false),
+                    BillId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GainedPoints = table.Column<int>(type: "int", nullable: false),
+                    CouponValue = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -945,12 +946,12 @@ namespace AsparagusN.Migrations
                 name: "UserPlanAllergy",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ArabicName = table.Column<string>(type: "TEXT", nullable: false),
-                    EnglishName = table.Column<string>(type: "TEXT", nullable: false),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    UserPlanId = table.Column<int>(type: "INTEGER", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ArabicName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EnglishName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserPlanId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -967,19 +968,19 @@ namespace AsparagusN.Migrations
                 name: "UserPlanDays",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserPlanId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Day = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    DeliveryLocationId = table.Column<int>(type: "INTEGER", nullable: false),
-                    DeliveryPeriod = table.Column<string>(type: "TEXT", nullable: false),
-                    IsHomeAddress = table.Column<bool>(type: "INTEGER", nullable: false),
-                    DriverId = table.Column<int>(type: "INTEGER", nullable: true),
-                    Priority = table.Column<int>(type: "INTEGER", nullable: true),
-                    DayOrderStatus = table.Column<int>(type: "INTEGER", nullable: false),
-                    IsCustomerInfoPrinted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    IsMealsInfoPrinted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    DriverId1 = table.Column<int>(type: "INTEGER", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserPlanId = table.Column<int>(type: "int", nullable: false),
+                    Day = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeliveryLocationId = table.Column<int>(type: "int", nullable: false),
+                    DeliveryPeriod = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsHomeAddress = table.Column<bool>(type: "bit", nullable: false),
+                    DriverId = table.Column<int>(type: "int", nullable: true),
+                    Priority = table.Column<int>(type: "int", nullable: true),
+                    DayOrderStatus = table.Column<int>(type: "int", nullable: false),
+                    IsCustomerInfoPrinted = table.Column<bool>(type: "bit", nullable: false),
+                    IsMealsInfoPrinted = table.Column<bool>(type: "bit", nullable: false),
+                    DriverId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1012,27 +1013,28 @@ namespace AsparagusN.Migrations
                 name: "OrderItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false),
-                    OrderedMeal_MealId = table.Column<int>(type: "INTEGER", nullable: false),
-                    OrderedMeal_NameEN = table.Column<string>(type: "TEXT", nullable: false),
-                    OrderedMeal_NameAR = table.Column<string>(type: "TEXT", nullable: false),
-                    OrderedMeal_DescriptionEN = table.Column<string>(type: "TEXT", nullable: false),
-                    OrderedMeal_DescriptionAR = table.Column<string>(type: "TEXT", nullable: false),
-                    OrderedMeal_PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    OrderedMeal_PricePerProtein = table.Column<double>(type: "REAL", nullable: false),
-                    OrderedMeal_PricePerCarb = table.Column<double>(type: "REAL", nullable: false),
-                    OrderedMeal_Calories = table.Column<double>(type: "REAL", nullable: false),
-                    OrderedMeal_Fibers = table.Column<double>(type: "REAL", nullable: false),
-                    OrderedMeal_Fats = table.Column<double>(type: "REAL", nullable: false),
-                    OrderedMeal_Carbs = table.Column<double>(type: "REAL", nullable: false),
-                    OrderedMeal_Protein = table.Column<double>(type: "REAL", nullable: false),
-                    OrderedMeal_AddedCarb = table.Column<int>(type: "INTEGER", nullable: false),
-                    OrderedMeal_AddedProtein = table.Column<int>(type: "INTEGER", nullable: false),
-                    Price = table.Column<double>(type: "decimal(18,2)", nullable: false),
-                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    PointsPrice = table.Column<int>(type: "INTEGER", nullable: false),
-                    GainedPoint = table.Column<int>(type: "INTEGER", nullable: false),
-                    OrderId = table.Column<int>(type: "INTEGER", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderedMeal_MealId = table.Column<int>(type: "int", nullable: false),
+                    OrderedMeal_NameEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderedMeal_NameAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderedMeal_DescriptionEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderedMeal_DescriptionAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderedMeal_PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderedMeal_PricePerProtein = table.Column<double>(type: "float", nullable: false),
+                    OrderedMeal_PricePerCarb = table.Column<double>(type: "float", nullable: false),
+                    OrderedMeal_Calories = table.Column<double>(type: "float", nullable: false),
+                    OrderedMeal_Fibers = table.Column<double>(type: "float", nullable: false),
+                    OrderedMeal_Fats = table.Column<double>(type: "float", nullable: false),
+                    OrderedMeal_Carbs = table.Column<double>(type: "float", nullable: false),
+                    OrderedMeal_Protein = table.Column<double>(type: "float", nullable: false),
+                    OrderedMeal_AddedCarb = table.Column<int>(type: "int", nullable: false),
+                    OrderedMeal_AddedProtein = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    PointsPrice = table.Column<int>(type: "int", nullable: false),
+                    GainedPoint = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1049,18 +1051,18 @@ namespace AsparagusN.Migrations
                 name: "UserSelectedDrinks",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserPlanDayId = table.Column<int>(type: "INTEGER", nullable: false),
-                    NameArabic = table.Column<string>(type: "TEXT", nullable: false),
-                    NameEnglish = table.Column<string>(type: "TEXT", nullable: false),
-                    Volume = table.Column<int>(type: "INTEGER", nullable: false),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    Price = table.Column<double>(type: "REAL", nullable: false),
-                    Protein = table.Column<double>(type: "REAL", nullable: false),
-                    Carb = table.Column<double>(type: "REAL", nullable: false),
-                    Fat = table.Column<double>(type: "REAL", nullable: false),
-                    Fiber = table.Column<double>(type: "REAL", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserPlanDayId = table.Column<int>(type: "int", nullable: false),
+                    NameArabic = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameEnglish = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Volume = table.Column<int>(type: "int", nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carb = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fat = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fiber = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1077,19 +1079,19 @@ namespace AsparagusN.Migrations
                 name: "UserSelectedExtraOptions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserPlanDayId = table.Column<int>(type: "INTEGER", nullable: false),
-                    NameArabic = table.Column<string>(type: "TEXT", nullable: false),
-                    NameEnglish = table.Column<string>(type: "TEXT", nullable: false),
-                    Weight = table.Column<double>(type: "REAL", nullable: false),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    OptionType = table.Column<int>(type: "INTEGER", nullable: false),
-                    Price = table.Column<double>(type: "REAL", nullable: false),
-                    Protein = table.Column<double>(type: "REAL", nullable: false),
-                    Carb = table.Column<double>(type: "REAL", nullable: false),
-                    Fat = table.Column<double>(type: "REAL", nullable: false),
-                    Fiber = table.Column<double>(type: "REAL", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserPlanDayId = table.Column<int>(type: "int", nullable: false),
+                    NameArabic = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameEnglish = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Weight = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OptionType = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carb = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fat = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fiber = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1106,23 +1108,23 @@ namespace AsparagusN.Migrations
                 name: "UserSelectedMeals",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserPlanDayId = table.Column<int>(type: "INTEGER", nullable: false),
-                    NameEN = table.Column<string>(type: "TEXT", nullable: false),
-                    NameAR = table.Column<string>(type: "TEXT", nullable: false),
-                    DescriptionEN = table.Column<string>(type: "TEXT", nullable: false),
-                    DescriptionAR = table.Column<string>(type: "TEXT", nullable: false),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    PricePerProtein = table.Column<double>(type: "REAL", nullable: false),
-                    PricePerCarb = table.Column<double>(type: "REAL", nullable: false),
-                    Calories = table.Column<double>(type: "REAL", nullable: false),
-                    Fibers = table.Column<double>(type: "REAL", nullable: false),
-                    Fats = table.Column<double>(type: "REAL", nullable: false),
-                    Carbs = table.Column<double>(type: "REAL", nullable: false),
-                    Protein = table.Column<double>(type: "REAL", nullable: false),
-                    ChangedCarbId = table.Column<int>(type: "INTEGER", nullable: false),
-                    OriginalMealId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserPlanDayId = table.Column<int>(type: "int", nullable: false),
+                    NameEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescriptionEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescriptionAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PricePerProtein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    PricePerCarb = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Calories = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fibers = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fats = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carbs = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    ChangedCarbId = table.Column<int>(type: "int", nullable: false),
+                    OriginalMealId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1145,19 +1147,19 @@ namespace AsparagusN.Migrations
                 name: "UserSelectedSnacks",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    NameEN = table.Column<string>(type: "TEXT", nullable: false),
-                    NameAR = table.Column<string>(type: "TEXT", nullable: false),
-                    DescriptionEN = table.Column<string>(type: "TEXT", nullable: false),
-                    DescriptionAR = table.Column<string>(type: "TEXT", nullable: false),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    Protein = table.Column<double>(type: "REAL", nullable: false),
-                    Carbs = table.Column<double>(type: "REAL", nullable: false),
-                    Fats = table.Column<double>(type: "REAL", nullable: false),
-                    Fibers = table.Column<double>(type: "REAL", nullable: false),
-                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserPlanDayId = table.Column<int>(type: "INTEGER", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescriptionEN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescriptionAR = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Protein = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Carbs = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fats = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Fibers = table.Column<decimal>(type: "decimal(38,3)", precision: 38, scale: 3, nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    UserPlanDayId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1208,7 +1210,8 @@ namespace AsparagusN.Migrations
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
-                unique: true);
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -1244,7 +1247,8 @@ namespace AsparagusN.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true);
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BasketItems_MealId",

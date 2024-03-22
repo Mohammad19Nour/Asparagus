@@ -114,6 +114,7 @@ public class SubscriptionsController : BaseApiController
             (price, message) = await _subscriptionService.GetPriceForUpdate(dto, user);
         else (price, message) = await _customSubscriptionService.GetPriceForUpdate(dto, user);
 
+       
         return Ok(price == null ? new ApiResponse(400, message) : new ApiOkResponse<decimal>(price.Value));
     }
 
@@ -131,7 +132,8 @@ public class SubscriptionsController : BaseApiController
         if (dto.PlanType != PlanTypeEnum.CustomMealPlan)
             (price, message) = await _subscriptionService.GetPriceForCreate(normal, user);
         else (price, message) = await _customSubscriptionService.GetPriceForCreate(dto, user);
-
+        Console.WriteLine(price);
+        Console.WriteLine(message);
         return Ok(price == null ? new ApiResponse(400, message) : new ApiOkResponse<decimal>(price.Value));
     }
 

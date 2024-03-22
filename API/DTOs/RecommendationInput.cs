@@ -9,4 +9,5 @@ public class RecommendationInput
     public double WeightKg { get; set; }
     public Gender Gender { get; set; }
     public ActivityLevel ActivityLevel { get; set; }
+    public PlanTypeEnum TargetPlan { get; set; }
 }

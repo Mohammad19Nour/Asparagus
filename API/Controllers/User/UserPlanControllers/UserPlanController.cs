@@ -60,11 +60,11 @@ public partial class UserPlanController : BaseApiController
                 IsSubscriptionDay = false,
                 Day = HelperFunctions.WeekStartDay()
             };
-            
+
             result.Days.Add(tmp);
         }
 
-        if ( result.Days.Count != 7)
+        if (result.Days.Count != 7)
         {
             var day = result.Days.Last().Day.Date;
             var lastDayOfWeek = HelperFunctions.WeekEndDay().Date;
@@ -160,6 +160,9 @@ public partial class UserPlanController : BaseApiController
         if (planDay == null)
             return Ok(new ApiResponse(404, "Day not found"));
 
+        Console.WriteLine(planDay.Day.Date);
+        if (!HelperFunctions.CanUpdateInHours(planDay.Day.Date))
+            return Ok(new ApiResponse(400, "Can't update before 24 hours or less"));
         planDay.DeliveryPeriod = period;
         _unitOfWork.Repository<UserPlanDay>().Update(planDay);
         if (await _unitOfWork.SaveChanges())
@@ -178,6 +181,9 @@ public partial class UserPlanController : BaseApiController
         if (planDay == null)
             return Ok(new ApiResponse(404, "Day not found"));
 
+
+        if (!HelperFunctions.CanUpdateInHours(planDay.Day.Date))
+            return Ok(new ApiResponse(400, "Can't update before 24 hours or less"));
         planDay.DeliveryLocationId = addressType == 1 ? user!.HomeAddressId : user!.WorkAddressId;
         planDay.IsHomeAddress = addressType == 1;
 

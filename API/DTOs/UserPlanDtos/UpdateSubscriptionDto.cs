@@ -16,4 +16,5 @@ public class UpdateSubscriptionDto
     public List<int>? SelectedDrinks { get; set; }
     public List<Item>? SelectedExtras { get; set; }
     public List<Item>? SelectedSalads { get; set; }
+    public string? TransactionId { get; set; }
 }
