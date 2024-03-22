@@ -52,10 +52,11 @@ public class CategoryController : BaseApiController
     {
         var spec = new CategoryWithMealSpecification(categoryId);
         var category = await _unitOfWork.Repository<Category>().GetEntityWithSpec(spec);
+if (category == null)
+       return Ok( new ApiResponse(404, messageEN: "category not found"));
 
-        return Ok(category == null
-            ? new ApiResponse(404, messageEN: "category not found")
-            : new ApiOkResponse<CategoryDto>(_mapper.Map<CategoryDto>(category)));
+        category.Meals = category.Meals.Where(x => x.IsMainMenu).ToList();
+        return Ok( new ApiOkResponse<CategoryDto>(_mapper.Map<CategoryDto>(category)));
     }
 
     [Authorize(Roles = nameof(DashboardRoles.Category) + "," + nameof(Roles.Admin))]

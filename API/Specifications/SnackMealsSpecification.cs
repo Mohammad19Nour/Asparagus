@@ -10,4 +10,8 @@ public class SnackMealsSpecification:BaseSpecification<Meal>
     {
         AddInclude(x=>x.Include(y=>y.Category));
     }
+    public SnackMealsSpecification(bool isMenu) : base(x=>!x.IsDeleted && x.IsMainMenu && x.Category.NameEN.ToLower().Contains("snacks"))
+    {
+        AddInclude(x=>x.Include(y=>y.Category));
+    }
 }

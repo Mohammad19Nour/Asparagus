@@ -51,7 +51,7 @@ public class MealController : BaseApiController
     [HttpGet("snacks")]
     public async Task<ActionResult<IReadOnlyList<SnackDto>>> GetSnacks()
     {
-        var spec = new SnackMealsSpecification();
+        var spec = new SnackMealsSpecification(true);
         var meals = await _unitOfWork.Repository<Meal>().ListWithSpecAsync(spec);
 
         // Map each Meal entity to a SnackDto object
