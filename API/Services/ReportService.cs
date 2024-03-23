@@ -136,6 +136,7 @@ public class ReportService : IReportService
     public async Task<List<BookingReportDto>> GenerateBookingsReport(DateTime startDate, DateTime endDate)
     {
         var query = _unitOfWork.Repository<Booking>().GetQueryable();
+        query = query.Include(c => c.Car);
         query = query.Include(c => c.User);
         query = query.Where(c => c.StartTime >= startDate && c.EndTime <= endDate);
         query = query.OrderBy(c => c.StartTime);
@@ -149,6 +150,7 @@ public class ReportService : IReportService
             var tmp = _mapper.Map<BookingReportDto>(booking.User);
             tmp.StartTime = booking.StartTime;
             tmp.EndTime = booking.EndTime;
+            tmp.City = booking.Car.City;
             resultList.Add(tmp);
         }
 

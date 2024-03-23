@@ -105,13 +105,19 @@ public class AccountController : BaseApiController
             if (registerDto.Password != registerDto.ConfirmedPassword)
                 return Ok(new ApiResponse(400, messageEN: "passwords aren't identical"));
 
-            var photoRes = await _mediaService.AddPhotoAsync(registerDto.Image);
-
-            if (!photoRes.Success)
-                return Ok(new ApiResponse(400, photoRes.Message));
-
             user = new AppUser();
-            user.PictureUrl = photoRes.Url;
+            if (registerDto.Image != null)
+            {
+                var photoRes = await _mediaService.AddPhotoAsync(registerDto.Image);
+
+                if (!photoRes.Success)
+                    return Ok(new ApiResponse(400, photoRes.Message));
+                
+                user.PictureUrl = photoRes.Url;
+            }
+            else 
+                user.PictureUrl = "";
+
             _mapper.Map(registerDto, user);
             user.UserName = registerDto.Email;
             user.IsNormalUser = true;

@@ -22,5 +22,5 @@ public class RegisterDto
     
     [Required(ErrorMessage = "birthday required")]
     public DateTime Birthday { get; set; }
-    public IFormFile Image { get; set; }
+    public IFormFile? Image { get; set; }
 }

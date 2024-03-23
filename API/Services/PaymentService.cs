@@ -47,6 +47,8 @@ public class PaymentService : IPaymentService
             string email = json["data"]["customer"]["email"];
             double amount = json["data"]["merchant_amount"];
 
+            orderPrice = Math.Round(orderPrice, 2);
+
             if (amount < orderPrice)
                 return (false, "Paid price is lees than the order price");
             return (true, "Done");

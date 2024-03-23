@@ -277,6 +277,8 @@ public class AdminCashiersController : BaseApiController
         {
             try
             {
+                Console.WriteLine(allowLoyal);
+                Console.WriteLine(allowOrder);
                 var cashier = await _unitOfWork.Repository<Cashier>().GetByIdAsync(cashierId);
 
                 if (cashier == null)
@@ -287,6 +289,7 @@ public class AdminCashiersController : BaseApiController
                 if (userCashier == null)
                     return Ok(new ApiResponse(404, "Cashier not found"));
 
+                
                 cashier.AllowLoyal = allowLoyal;
                 cashier.AllowOrder = allowOrder;
                 _unitOfWork.Repository<Cashier>().Update(cashier);
