@@ -406,7 +406,7 @@ public class SubscriptionService : ISubscriptionService
             if (plan.NumberOfMealPerDay > subscriptionDto.NumberOfMealPerDay)
                 return (false, "Number of meal per day must be greater than or equal to the original");
 
-            var validation = await _validationService.IsValidSubscriptionDto(subscriptionDto);
+            var validation = await _validationService.IsValidSubscriptionDto(subscriptionDto,0);
 
             var numberOfUpdatedDays = subscriptionDto.Duration - plan.Duration;
             var numberOfUpdatedSnacks = subscriptionDto.NumberOfSnacks - plan.NumberOfSnacks;
@@ -527,7 +527,7 @@ public class SubscriptionService : ISubscriptionService
     {
         try
         {
-            var validate = await _validationService.IsValidSubscriptionDto(subscriptionDto);
+            var validate = await _validationService.IsValidSubscriptionDto(subscriptionDto,0);
             if (!validate.Success)
                 return (false, validate.Message);
             subscriptionDto.StartDate = subscriptionDto.StartDate.Date;

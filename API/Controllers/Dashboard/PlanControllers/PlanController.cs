@@ -184,6 +184,8 @@ public partial class PlanController : BaseApiController
         if (planTypeEnum == PlanTypeEnum.CustomMealPlan)
         {
             var ext = await _unitOfWork.Repository<ExtraOption>().ListAllAsync();
+           if (optionType != null)
+            ext = ext.Where(c => c.OptionType == optionType).ToList();
             return _mapper.Map<List<ExtraOptionDto>>(ext);
         }
 

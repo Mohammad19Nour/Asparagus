@@ -68,31 +68,27 @@ public partial class UserPlanController : BaseApiController
         {
             var day = result.Days.Last().Day.Date;
             var lastDayOfWeek = HelperFunctions.WeekEndDay().Date;
-            if (day != lastDayOfWeek)
+
+            while (result.Days.Count < 7 && day < lastDayOfWeek)
             {
-                int x = 1;
-                while (result.Days.Count < 7)
-                {
-                    var tmp = new UserPlanDayDto();
-                    tmp.IsSubscriptionDay = false;
-                    tmp.Day = day.AddDays(x);
-                    result.Days.Add(tmp);
-                    x++;
-                }
+                var tmp = new UserPlanDayDto();
+                tmp.IsSubscriptionDay = false;
+                tmp.Day = day.AddDays(1);
+                result.Days.Add(tmp);
+                day = day.AddDays(1);
             }
-            else
+
+
+            day = result.Days.First().Day.Date;
+            var firstDayOfTheWeek = HelperFunctions.WeekStartDay().Date;
+
+            while (result.Days.Count < 7 && day > firstDayOfTheWeek)
             {
-                day = result.Days.First().Day.Date;
-                var firstDayOfTheWeek = HelperFunctions.WeekStartDay().Date;
-                int x = -1;
-                while (result.Days.Count < 7)
-                {
-                    var tmp = new UserPlanDayDto();
-                    tmp.IsSubscriptionDay = false;
-                    tmp.Day = day.AddDays(x);
-                    result.Days.Insert(0, tmp);
-                    x--;
-                }
+                var tmp = new UserPlanDayDto();
+                tmp.IsSubscriptionDay = false;
+                tmp.Day = day.AddDays(-1);
+                result.Days.Insert(0, tmp);
+                day = day.AddDays(-1);
             }
         }
 

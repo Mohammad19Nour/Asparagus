@@ -19,7 +19,7 @@ public class ValidationService : IValidationService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<(bool Success, string Message)> IsValidSubscriptionDto(object tmp)
+    public async Task<(bool Success, string Message)> IsValidSubscriptionDto(object tmp,int oldDuration)
     {
         dynamic? subscriptionDto = tmp switch
         {
@@ -42,19 +42,19 @@ public class ValidationService : IValidationService
 
         if (subscriptionDto.SelectedDrinks != null)
         {
-            if (subscriptionDto.SelectedDrinks.Count > subscriptionDto.Duration)
+            if (subscriptionDto.SelectedDrinks.Count > subscriptionDto.Duration - oldDuration)
                 return (false, "Number of drinks should be smaller than or equal to duration of the plan");
         }
 
         if (subscriptionDto.SelectedSalads != null)
         {
-            if (subscriptionDto.SelectedSalads.Count > subscriptionDto.Duration)
+            if (subscriptionDto.SelectedSalads.Count > subscriptionDto.Duration - oldDuration)
                 return (false, "Number of salads should be smaller than or equal to duration of the plan");
         }
 
         if (subscriptionDto.SelectedExtras != null)
         {
-            if (subscriptionDto.SelectedExtras.Count > subscriptionDto.Duration)
+            if (subscriptionDto.SelectedExtras.Count > subscriptionDto.Duration- oldDuration)
                 return (false, "Number of extras should be smaller than or equal to duration of the plan");
         }
 

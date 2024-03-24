@@ -220,7 +220,7 @@ public class CustomSubscriptionService : ICustomSubscriptionService
     {
         try
         {
-            var validate = await _validationService.IsValidSubscriptionDto(subscriptionDto);
+            var validate = await _validationService.IsValidSubscriptionDto(subscriptionDto,plan.Duration);
             if (!validate.Success)
                 return (false, validate.Message);
 
@@ -290,7 +290,7 @@ public class CustomSubscriptionService : ICustomSubscriptionService
     {
         var addedCarb = subscriptionDtoCarbPerMeal.Value - 120;
         var addedProtein = subscriptionDtoProteinPerMeal.Value - 120;
-        return addedCarb / 10 * 50 + addedProtein / 10 * 50;
+        return addedCarb / 10 * 50 + addedProtein / 10 * 5;
     }
 
     private async Task<(bool Success, string Message)> AddExtrasOptionToDaysPlan(List<Item>? userSelectedExtras,
@@ -302,10 +302,11 @@ public class CustomSubscriptionService : ICustomSubscriptionService
             if (userSelectedExtras == null) return (true, "");
 
             var extras = await _unitOfWork.Repository<ExtraOption>().ListAllAsync();
+            extras = extras.Where(c => c.OptionType == optionType).ToList();
             var ids = extras.Select(x => x.Id).ToList();
             var exist = userSelectedExtras.All(c => ids.Contains(c.Id));
             if (!exist)
-                return (false, $"One or more {optionType.ToString()} not exist");
+                return (false, $"One or more {optionType.ToString()} not exist ");
 
             var extraIds = userSelectedExtras.Select(x => x.Id).ToList();
 
@@ -313,7 +314,7 @@ public class CustomSubscriptionService : ICustomSubscriptionService
             foreach (var extra in userSelectedExtras)
             {
                 var dr = extras.First(x => x.Id == extra.Id);
-
+                
                 var toAdd = _mapper.Map<UserSelectedExtraOption>(dr);
                 toAdd.Weight = extra.Weight;
                 toAdd.Price = dr.Price / dr.Weight * toAdd.Weight;
@@ -422,7 +423,7 @@ public class CustomSubscriptionService : ICustomSubscriptionService
             if (plan.NumberOfMealPerDay > subscriptionDto.NumberOfMealPerDay)
                 return (false, "Number of meal per day must be greater than or equal to the original");
 
-            var validation = await _validationService.IsValidSubscriptionDto(subscriptionDto);
+            var validation = await _validationService.IsValidSubscriptionDto(subscriptionDto,plan.Duration);
 
             var numberOfUpdatedDays = subscriptionDto.Duration - plan.Duration;
             var numberOfUpdatedSnacks = subscriptionDto.NumberOfSnacks - plan.NumberOfSnacks;
