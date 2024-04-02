@@ -55,6 +55,7 @@ public class CategoryController : BaseApiController
 if (category == null)
        return Ok( new ApiResponse(404, messageEN: "category not found"));
 
+Console.WriteLine(category.Meals.Count);
         category.Meals = category.Meals.Where(x => x.IsMainMenu).ToList();
         return Ok( new ApiOkResponse<CategoryDto>(_mapper.Map<CategoryDto>(category)));
     }

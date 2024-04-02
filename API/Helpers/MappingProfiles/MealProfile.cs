@@ -16,6 +16,7 @@ public class MealProfile : Profile
 {
     public MealProfile()
     {
+        CreateMap<Meal, AllMealsDto>();
         CreateMap<Meal, MealIfoForCustomPlanDto>()
             .ForMember(dest => dest.Carbs, opt => opt.MapFrom(src => 120))
             .ForMember(dest => dest.Protein, opt => opt.MapFrom(src => 120))

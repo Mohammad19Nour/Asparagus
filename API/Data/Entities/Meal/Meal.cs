@@ -82,7 +82,7 @@ public class Meal : ISoftDeletable
         decimal pri = 0;
         foreach (var item in Ingredients)
         {
-            if (item.Ingredient.TypeOfIngredient != type) continue;
+                if (item.Ingredient.TypeOfIngredient != type) continue;
             w = item.Ingredient.Weight;
             pri = item.Ingredient.Price;
             break;

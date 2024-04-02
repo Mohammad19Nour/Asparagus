@@ -8,7 +8,7 @@ public enum IngredientType
     Protein,
     [EnumMember(Value = "Carb")]
     Carb,
-    [EnumMember(Value = "Soup")]
-    Soup 
+    [EnumMember(Value = "Sauce")]
+    Sauce 
     
 }

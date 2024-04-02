@@ -13,4 +13,6 @@ public class UpdateMealDto
     
     public IFormFile? ImageFile { get; set; }
     public int? CategoryId { get; set; }
+    public bool? IsMainMenu { get; set; }
+    public bool? IsMealPlan { get; set; }
 }

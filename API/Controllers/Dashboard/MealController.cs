@@ -12,6 +12,7 @@ using AsparagusN.Specifications.UserSpecifications;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AsparagusN.Controllers.Dashboard;
 
@@ -47,7 +48,17 @@ public class MealController : BaseApiController
 
         return Ok(new ApiOkResponse<List<MealWithIngredientsDto>>(_mapper.Map<List<MealWithIngredientsDto>>(d)));
     }
+    [HttpGet("all")]
+    public async Task<ActionResult<List<AllMealsDto>>> GetAllMeals()
+    {
+        var query = _unitOfWork.Repository<Meal>().GetQueryable()
+            .Include(m => m.Allergies).ThenInclude(v => v.Allergy)
+            .Include(m => m.Ingredients).ThenInclude(v => v.Ingredient);
 
+        var d = await query.ToListAsync();
+        d = d.OrderByDescending(c=>c.CreatedAt).ToList();
+        return Ok(new ApiOkResponse<List<AllMealsDto>>(_mapper.Map<List<AllMealsDto>>(d)));
+    }
     [HttpGet("snacks")]
     public async Task<ActionResult<IReadOnlyList<SnackDto>>> GetSnacks()
     {

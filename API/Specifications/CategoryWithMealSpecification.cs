@@ -9,9 +9,9 @@ public class CategoryWithMealSpecification : BaseSpecification<Category>
     public CategoryWithMealSpecification(int id) : base(x=> x.Id == id)
     {
         AddInclude(x=>x.Include(y=>y.Meals)
-            .ThenInclude(x=>x.Allergies));
+            .ThenInclude(b=>b.Allergies).ThenInclude(t=>t.Allergy));
         
         AddInclude(x=>x.Include(y=>y.Meals)
-            .ThenInclude(x=>x.Ingredients).ThenInclude(x=>x.Ingredient));
+            .ThenInclude(c=>c.Ingredients).ThenInclude(b=>b.Ingredient));
     }
 }

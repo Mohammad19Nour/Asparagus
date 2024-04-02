@@ -257,6 +257,7 @@ public class AccountController : BaseApiController
         return Ok("Your Email is Confirmed try to login in now");
     }
 
+    [Authorize]
     [HttpPut("change-password")]
     public async Task<ActionResult> UpdatePassword([FromBody] UpdatePasswordDto dto)
     {

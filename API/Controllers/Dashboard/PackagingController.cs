@@ -41,7 +41,7 @@ public class PackagingController : BaseApiController
         var planDays = await _unitOfWork.Repository<UserPlanDay>().ListWithSpecAsync(spec);
         var customersSpec = new CustomersSpecification(false);
         var customers = await _unitOfWork.Repository<AppUser>().ListWithSpecAsync(customersSpec);
-
+        Console.WriteLine(dayDate);
         foreach (var day in planDays)
         {
             var packageDto = new PackageDto();
