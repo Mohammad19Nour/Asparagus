@@ -38,94 +38,94 @@ public class EmployeesController : BaseApiController
         using (var transaction = _unitOfWork.BeginTransaction())
         {
             try
-            {
-                newEmployeeDto.Email = newEmployeeDto.Email.ToLower();
-
-                var employee = _mapper.Map<Employee>(newEmployeeDto);
-
-                var employeeUser = new AppUser
                 {
-                    UserName = newEmployeeDto.Email,
-                    Email = newEmployeeDto.Email,
-                    FullName = newEmployeeDto.FullName,
-                };
+                    newEmployeeDto.Email = newEmployeeDto.Email.ToLower();
 
-                var result = await _userManager.CreateAsync(employeeUser, newEmployeeDto.Password);
-                if (!result.Succeeded)
-                {
+                    var employee = _mapper.Map<Employee>(newEmployeeDto);
+
+                    var employeeUser = new AppUser
+                    {
+                        UserName = newEmployeeDto.Email,
+                        Email = newEmployeeDto.Email,
+                        FullName = newEmployeeDto.FullName,
+                    };
+
+                    var result = await _userManager.CreateAsync(employeeUser, newEmployeeDto.Password);
+                    if (!result.Succeeded)
+                    {
+                        await transaction.RollbackAsync();
+                        return Ok(new ApiResponse(400,
+                            result.Errors.Aggregate("", (error, identityError) => error + identityError.Description)));
+                    }
+
+                    IdentityResult roleResult =
+                        await _userManager.AddToRoleAsync(employeeUser, Roles.Employeee.GetDisplayName());
+
+                    if (!roleResult.Succeeded)
+                    {
+                        await transaction.RollbackAsync();
+                        return Ok(new ApiResponse(400, "Failed to add roles"));
+                    }
+
+                    _unitOfWork.Repository<Employee>().Add(employee);
+
+                    if (await _unitOfWork.SaveChanges())
+                    {
+                        await transaction.CommitAsync();
+                        return Ok(new ApiOkResponse<EmployeeDto>(_mapper.Map<EmployeeDto>(employee)));
+                    }
+
                     await transaction.RollbackAsync();
-                    return Ok(new ApiResponse(400,
-                        result.Errors.Aggregate("", (error, identityError) => error + identityError.Description)));
+                    return Ok(new ApiResponse(400, "Failed to add employee"));
                 }
-
-                IdentityResult roleResult =
-                    await _userManager.AddToRoleAsync(employeeUser, Roles.Employeee.GetDisplayName());
-
-                if (!roleResult.Succeeded)
+                catch (Exception e)
                 {
+                    Console.WriteLine(e);
+
                     await transaction.RollbackAsync();
-                    return BadRequest(new ApiResponse(400, "Failed to add roles"));
+                    return Ok(new ApiResponse(400, "Exception happened.. failed to add employee"));
+                    throw;
                 }
-
-                _unitOfWork.Repository<Employee>().Add(employee);
-
-                if (await _unitOfWork.SaveChanges())
-                {
-                    await transaction.CommitAsync();
-                    return Ok(new ApiOkResponse<EmployeeDto>(_mapper.Map<EmployeeDto>(employee)));
-                }
-
-                await transaction.RollbackAsync();
-                return Ok(new ApiResponse(400, "Failed to add employee"));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-
-                await transaction.RollbackAsync();
-                return Ok(new ApiResponse(400, "Exception happened.. failed to add employee"));
-                throw;
             }
         }
-    }
 
-    [Authorize(Roles = nameof(DashboardRoles.Employee) + "," + nameof(Roles.Admin))]
-    [HttpGet]
-    public async Task<ActionResult> GetEmployees()
-    {
-        var employeeSpec = new EmployeesSpecification();
-        var employees = await _unitOfWork.Repository<AppUser>().ListWithSpecAsync(employeeSpec);
-
-        var resultList = new List<EmployeeDto>();
-        var cantEditRoles = new List<string>();
-        foreach (Roles role in Enum.GetValues(typeof(Roles)))
+        [Authorize(Roles = nameof(DashboardRoles.Employee) + "," + nameof(Roles.Admin))]
+        [HttpGet]
+        public async Task<ActionResult> GetEmployees()
         {
-            var roleName = role.GetDisplayName().ToLower();
-            cantEditRoles.Add(roleName);
-        }
+            var employeeSpec = new EmployeesSpecification();
+            var employees = await _unitOfWork.Repository<AppUser>().ListWithSpecAsync(employeeSpec);
 
-        var emTable = await _unitOfWork.Repository<Employee>().ListAllAsync();
-
-        foreach (var employee in employees)
-        {
-            var map = new Dictionary<string, bool>();
-
-            var userRole = employee.UserRoles.Select(c => c.Role.Name.ToLower()).ToList();
-            userRole = userRole.Except(cantEditRoles).ToList();
-            foreach (DashboardRoles role in Enum.GetValues(typeof(DashboardRoles)))
+            var resultList = new List<EmployeeDto>();
+            var cantEditRoles = new List<string>();
+            foreach (Roles role in Enum.GetValues(typeof(Roles)))
             {
                 var roleName = role.GetDisplayName().ToLower();
-                if (userRole.Contains(roleName)) map[roleName] = true;
-                else map[roleName] = false;
+                cantEditRoles.Add(roleName);
             }
 
-            var em = emTable.First(c => c.Email.ToLower() == employee.Email.ToLower());
-            var dto = _mapper.Map<EmployeeDto>(em);
-            dto.Roles = map;
-            resultList.Add(dto);
-        }
+            var emTable = await _unitOfWork.Repository<Employee>().ListAllAsync();
 
-        return Ok(new ApiOkResponse<List<EmployeeDto>>(resultList));
+            foreach (var employee in employees)
+            {
+                var map = new Dictionary<string, bool>();
+
+                var userRole = employee.UserRoles.Select(c => c.Role.Name.ToLower()).ToList();
+                userRole = userRole.Except(cantEditRoles).ToList();
+                foreach (DashboardRoles role in Enum.GetValues(typeof(DashboardRoles)))
+                {
+                    var roleName = role.GetDisplayName().ToLower();
+                    if (userRole.Contains(roleName)) map[roleName] = true;
+                    else map[roleName] = false;
+                }
+
+                var em = emTable.First(c => string.Equals(c.Email, employee.Email, StringComparison.CurrentCultureIgnoreCase));
+                var dto = _mapper.Map<EmployeeDto>(em);
+                dto.Roles = map;
+                resultList.Add(dto);
+            }
+
+            return Ok(new ApiOkResponse<List<EmployeeDto>>(resultList));
     }
 
     [Authorize(Roles = nameof(DashboardRoles.Role) + "," + nameof(Roles.Admin))]
@@ -205,8 +205,7 @@ public class EmployeesController : BaseApiController
                 var employeeUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == employee.Email);
                 if (employeeUser == null) return Ok(new ApiResponse(404, "Employee not found"));
 
-                _mapper.Map(updateEmployeeDto, employee);
-
+               
                 if (updateEmployeeDto.Password != null && !string.IsNullOrEmpty(updateEmployeeDto.Password.Trim()) &&
                     employee.Password != updateEmployeeDto.Password)
                 {
@@ -239,6 +238,8 @@ public class EmployeesController : BaseApiController
                     employeeUser.Email = updateEmployeeDto.Email.ToLower();
                     employeeUser.NormalizedUserName = _userManager.NormalizeEmail(updateEmployeeDto.Email);
                 }
+                _mapper.Map(updateEmployeeDto, employee);
+
 
                 _unitOfWork.Repository<Employee>().Update(employee);
 

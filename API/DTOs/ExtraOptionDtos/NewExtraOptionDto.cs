@@ -13,7 +13,7 @@ public class NewExtraOptionDto
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ExtraOptionType OptionType { get; set; }
     public decimal Protein{ get; set; }
-    public decimal Carbs{ get; set; }
-    public decimal Fats{ get; set; }
-    public decimal Fibers{ get; set; }
+    public decimal Carb{ get; set; }
+    public decimal Fat{ get; set; }
+    public decimal Fiber{ get; set; }
 }
