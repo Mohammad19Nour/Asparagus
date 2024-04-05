@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>AsparagusN</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="12.0.1" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+        <PackageReference Include="GeoCoordinate.NetCore" Version="1.0.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.14"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.4">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.2.0" />
+        <PackageReference Include="MSBuild.Microsoft.VisualStudio.Web.targets" Version="14.0.0.3" />
+        <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+        <PackageReference Include="StackExchange.Redis" Version="2.7.17" />
+        <PackageReference Include="Stripe.net" Version="43.17.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Specifications\StatisticSpecifications\" />
+      <Folder Include="wwwroot\videos\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240225141003_dbf506e3-cc8f-4d5f-9375-f8a59123687c.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240225141010_dbf506e3-cc8f-4d5f-9375-f8a59123687c.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240225141013_dbf506e3-cc8f-4d5f-9375-f8a59123687c.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240227201432_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240227201859_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240227202650_49daee0f-568d-4fae-b5cf-4707f6bf63b4.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240301142855_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240301145541_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240301182138_49daee0f-568d-4fae-b5cf-4707f6bf63b4.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240301182509_49daee0f-568d-4fae-b5cf-4707f6bf63b4.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240302093351_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240303160451_56.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240303160457_56.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240303160644_56.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240303160823_56.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240303161524_56.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240303161530_56.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240304094439_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240305112711_49daee0f-568d-4fae-b5cf-4707f6bf63b4(1).jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\20240309140934_49daee0f-568d-4fae-b5cf-4707f6bf63b4.jpg" />
+    </ItemGroup>
+
+</Project>
