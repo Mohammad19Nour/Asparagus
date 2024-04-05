@@ -155,7 +155,7 @@ public class AdminCashiersController : BaseApiController
                 var cashierUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == cashier.Email);
                 if (cashierUser == null) return Ok(new ApiResponse(404, "Cashier not found"));
 
-                _mapper.Map(updateCashierDto, cashier);
+               
 
                 if (updateCashierDto.BranchId != null)
                 {
@@ -204,7 +204,7 @@ public class AdminCashiersController : BaseApiController
                     cashierUser.Email = updateCashierDto.Email.ToLower();
                     cashierUser.NormalizedUserName = _userManager.NormalizeEmail(updateCashierDto.Email);
                 }
-
+                _mapper.Map(updateCashierDto, cashier);
 
                 _unitOfWork.Repository<Cashier>().Update(cashier);
 

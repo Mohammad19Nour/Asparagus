@@ -161,7 +161,7 @@ public class AdminDriverController : BaseApiController
                 var driverUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == driver.Email);
                 if (driverUser == null) return Ok(new ApiResponse(404, "Driver not found"));
 
-                _mapper.Map(updateDriverDto, driver);
+                
 
                 if (updateDriverDto.ZoneId != null)
                 {
@@ -209,7 +209,7 @@ public class AdminDriverController : BaseApiController
                     driverUser.Email = updateDriverDto.Email.ToLower();
                     driverUser.NormalizedUserName = _userManager.NormalizeEmail(updateDriverDto.Email);
                 }
-
+                _mapper.Map(updateDriverDto, driver);
                 _unitOfWork.Repository<Driver>().Update(driver);
 
                 if (await _unitOfWork.SaveChanges())
